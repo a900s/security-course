@@ -20,6 +20,21 @@
 
 ---
 
+## Google 表單回報
+
+三套教材的學生頁面都有一張一致的「📮 Google 表單回報」卡片（另開新分頁），作為匯出 JSON 以外的另一種回報方式：
+
+| 模組 | 卡片位置 | 表單 |
+|---|---|---|
+| `owasp-top10/` | 首頁「我的學習進度」面板下方 | [OWASP Top 10 學習進度](https://docs.google.com/forms/d/e/1FAIpQLSeb0akSXA-geWPuFf7kBFEp527PFeFVBs4j6lKjhu2gQY487g/viewform) |
+| `kali-top20/` | 標題下「我的學習進度」面板下方 | [Kali Top 20 學習進度](https://docs.google.com/forms/d/e/1FAIpQLScBsGy90SkZhNRVR6pcGr04NRZg2f0EVy8kI8c0JJ_cBqWZeA/viewform) |
+| `sql-injection-lab/` | 「📝 隨堂測驗」分頁下方 | [SQL Injection 測驗成績](https://docs.google.com/forms/d/e/1FAIpQLSdQ9g95fnnUkskOBre9-HFxB1OfreMbGxL0SbHUa5a8DqeW5w/viewform) |
+
+表單回覆會匯入各自的 Google 試算表。卡片樣式為各模組 `css/style.css` 中相同的 `.formcta` 區塊；
+Kali 的卡片由 `build.py` 產生，修改連結後請重新執行 `python3 build.py`。
+
+---
+
 ## 授權建議
 
 - **說明文件**（Markdown、教學文字）：建議採用 [CC BY-NC 4.0](https://creativecommons.org/licenses/by-nc/4.0/)

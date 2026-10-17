@@ -7,6 +7,9 @@ import pathlib, markdown
 here = pathlib.Path(__file__).parent
 md = (here / "README.md").read_text(encoding="utf-8")
 body = markdown.markdown(md, extensions=["tables", "toc", "sane_lists"])
+# Google 表單回報卡片：放在 h1 之後（學習進度面板由 progress.js 插在 h1 正後方）
+FORM_CTA = '''<aside class="formcta"><div class="formcta-txt"><b>📮 Google 表單回報</b><span>除了匯出 JSON，也可以把已讀／已複習的章節填進 Google 表單回報給老師（另開新分頁）。</span></div><a class="formcta-btn" href="https://docs.google.com/forms/d/e/1FAIpQLScBsGy90SkZhNRVR6pcGr04NRZg2f0EVy8kI8c0JJ_cBqWZeA/viewform" target="_blank" rel="noopener">📝 填寫學習進度表單 ↗</a></aside>'''
+body = body.replace("</h1>", "</h1>\n" + FORM_CTA, 1)
 html = f"""<!doctype html>
 <html lang="zh-Hant-TW">
 <head>

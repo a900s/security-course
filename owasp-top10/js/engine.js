@@ -74,6 +74,7 @@
         '<button type="button" class="btn" id="expBtn">⬇ 匯出進度</button></div>' +
         '<div class="hint">完成關卡後可匯出 JSON 交給老師。進度只存在本機瀏覽器。</div>' +
       '</div>' +
+      '<aside class="formcta"><div class="formcta-txt"><b>📮 Google 表單回報</b><span>除了匯出 JSON，也可以把已完成的關卡填進 Google 表單回報給老師（另開新分頁）。</span></div><a class="formcta-btn" href="https://docs.google.com/forms/d/e/1FAIpQLSeb0akSXA-geWPuFf7kBFEp527PFeFVBs4j6lKjhu2gQY487g/viewform" target="_blank" rel="noopener">📝 填寫學習進度表單 ↗</a></aside>' +
       '<div class="maphead"><h2>關卡</h2><div class="hint">完成一關後自動解鎖下一關</div></div>' +
       '<div class="grid">' + cells + '</div>' + final;
     progress();
