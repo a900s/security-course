@@ -12,7 +12,7 @@
 
 | 目錄 | 說明 | 開啟方式 |
 |---|---|---|
-| [`owasp-top10/`](owasp-top10/) | OWASP Top 10 **兩階段教學關卡**（重現弱點 → 讀程式碼 → 選修法 → 驗證）。含 A05 的 SQL / 指令 / XSS 三小關，共 12 關。純前端安全模擬。 | 開啟 `owasp-top10/index.html` |
+| [`owasp-top10/`](owasp-top10/) | OWASP Top 10 **兩階段教學關卡**（重現弱點 → 讀程式碼 → 選修法 → 驗證）。含 A05 的 SQL / 指令 / XSS 三小關，共 12 關。純前端安全模擬。可匯出學習進度 JSON；`teacher.html` 教師專區（與 SQL/Kali 同一組密碼雜湊）可匯入多份檔案並查看本機即時進度。 | 開啟 `owasp-top10/index.html` |
 | [`sql-injection-lab/`](sql-injection-lab/) | SQL Injection **原理、六種攻擊型態、各語言防禦程式碼、多層防禦、互動沙盒、18 題隨堂測驗**。教師解答區以 SHA-256 雜湊驗證密碼（前端不存明碼）。 | 開啟 `sql-injection-lab/index.html` |
 | [`kali-top20/`](kali-top20/) | **Kali Linux 最重要的 20 種破解手法與防治**：每項含用途、原理、跡象、防治。附倫理與法律聲明。每章可勾選「已讀／已複習」並匯出 JSON；`teacher.html` 教師區（與 SQL Lab 同一組密碼雜湊）可匯入多份檔案看完成度總覽。 | 閱讀 `kali-top20/README.md`，或開啟 `kali-top20/index.html` |
 
@@ -102,7 +102,8 @@ security-course/
 ├── owasp-top10/
 │   ├── index.html
 │   ├── css/style.css
-│   └── js/{challenges.js,engine.js}
+│   ├── teacher.html
+│   └── js/{challenges.js,engine.js,teacher.js}
 ├── sql-injection-lab/
 │   ├── index.html
 │   ├── css/style.css

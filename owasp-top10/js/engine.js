@@ -16,7 +16,18 @@
     catch (e) { return new Set(); }
   }
   function addSolved(i) { var s = getSolved(); s.add(i); try { localStorage.setItem(KEY, JSON.stringify(Array.from(s))); } catch (e) {} }
-  function reset() { try { localStorage.removeItem(KEY); } catch (e) {} }
+  /* 詳細學習紀錄（供教師區）：各階段時間、payload、選的修法、再驗證狀態 */
+  var DKEY = "owasp_course_progress_v1";
+  function loadP() { try { return JSON.parse(localStorage.getItem(DKEY)) || { name: "", challenges: {} }; } catch (e) { return { name: "", challenges: {} }; } }
+  function saveP(p) { try { localStorage.setItem(DKEY, JSON.stringify(p)); } catch (e) {} }
+  var CUR = null;
+  function rec(fn) {
+    if (!CUR) return;
+    var p = loadP(), c = p.challenges[CUR.slug] || { code: CUR.code, slug: CUR.slug, nm: CUR.nm, en: CUR.en };
+    fn(c); c.updatedAt = new Date().toISOString();
+    p.challenges[CUR.slug] = c; saveP(p);
+  }
+  function reset() { try { localStorage.removeItem(KEY); localStorage.removeItem(DKEY); } catch (e) {} }
   function isUnlocked(i) { return i <= 0 ? true : getSolved().has(i - 1); }
 
   function progress() {
@@ -30,6 +41,7 @@
 
   /* ---------- 關卡地圖 ---------- */
   function renderMap() {
+    CUR = null;
     var solved = getSolved();
     var cells = L.map(function (lv, i) {
       var unlocked = isUnlocked(i), done = solved.has(i);
@@ -56,9 +68,41 @@
       '<p>每一關都是兩階段：先在安全模擬中<b>重現弱點</b>，再閱讀示意用的<b>脆弱程式碼</b>、點出問題行、挑出正確修法，並用<b>同一招</b>驗證攻擊已失效。A05 注入分為 SQL、指令、XSS 三小關。</p>' +
       '<div class="warn">⚠ 全部為教學用<b>安全模擬</b>：使用假資料、不連線任何真實系統、不執行任何真實指令或腳本。僅限在你自己或已獲授權的環境中學習，請勿對未授權的系統進行測試。</div>' +
       '</section>' +
+      '<div class="studbar" id="studbar">' +
+        '<b>📒 我的學習進度</b> <span id="studSum"></span>' +
+        '<div class="studrow"><input id="stuName" placeholder="姓名（例如：資二甲 12 王小明）">' +
+        '<button type="button" class="btn" id="expBtn">⬇ 匯出進度</button></div>' +
+        '<div class="hint">完成關卡後可匯出 JSON 交給老師。進度只存在本機瀏覽器。</div>' +
+      '</div>' +
       '<div class="maphead"><h2>關卡</h2><div class="hint">完成一關後自動解鎖下一關</div></div>' +
       '<div class="grid">' + cells + '</div>' + final;
     progress();
+    bindStudentBar();
+  }
+
+  function bindStudentBar() {
+    var p = loadP();
+    var nameEl = document.getElementById("stuName");
+    if (!nameEl) return;
+    nameEl.value = p.name || "";
+    nameEl.oninput = function () { var x = loadP(); x.name = nameEl.value; saveP(x); };
+    var n = getSolved().size;
+    var sum = document.getElementById("studSum");
+    if (sum) sum.textContent = "已完成 " + n + "/" + L.length;
+    document.getElementById("expBtn").onclick = function () {
+      var x = loadP();
+      if (!x.name.trim()) { alert("請先填寫姓名再匯出。"); nameEl.focus(); return; }
+      // 補齊尚未完成關卡的骨架，方便老師對照
+      L.forEach(function (lv) {
+        if (!x.challenges[lv.slug]) x.challenges[lv.slug] = { code: lv.code, slug: lv.slug, nm: lv.nm, en: lv.en, solved: getSolved().has(L.indexOf(lv)) };
+      });
+      var out = { type: "owasp-top10-progress", version: 1, name: x.name.trim(), exportedAt: new Date().toISOString(), solvedCount: getSolved().size, total: L.length, challenges: x.challenges };
+      var blob = new Blob([JSON.stringify(out, null, 2)], { type: "application/json" });
+      var a = document.createElement("a");
+      a.href = URL.createObjectURL(blob);
+      a.download = "owasp-progress-" + x.name.trim().replace(/[\\/:*?"<>|\s]+/g, "_") + ".json";
+      document.body.appendChild(a); a.click(); a.remove();
+    };
   }
 
   /* ---------- 兩階段：程式碼修復 ---------- */
@@ -86,12 +130,14 @@
           lineDone = true; row.classList.add("bad");
           fb.style.display = ""; fb.className = "fb ok";
           fb.textContent = "✓ 沒錯，問題就在這一行。接著挑出正確的修法。";
+          rec(function (c) { c.badLine = i + 1; c.badLineAt = new Date().toISOString(); });
           showPick();
         } else {
           row.classList.add("miss");
           setTimeout(function () { row.classList.remove("miss"); }, 500);
           fb.style.display = ""; fb.className = "fb no";
           fb.textContent = "✗ 這一行沒問題，再找找。";
+          rec(function (c) { c.wrongLines = (c.wrongLines || []).concat([i + 1]); });
         }
       };
       box.appendChild(row);
@@ -111,10 +157,12 @@
           if (o.ok) {
             pick.classList.add("done"); card.classList.add("ok");
             fb.className = "fb ok"; fb.textContent = "✓ 正確，正在套用這個修法…";
+            rec(function (c) { c.chosenFix = o.t; c.fixCorrect = true; c.fixedAt = new Date().toISOString(); c.phase = "fixed"; });
             setTimeout(function () { host.hidden = true; onDone(); }, 600);
           } else {
             card.classList.add("wrong");
             fb.className = "fb no"; fb.textContent = "✗ 這個改法擋不住這種攻擊，再想想。";
+            rec(function (c) { c.wrongFixes = (c.wrongFixes || []).concat([o.t]); });
           }
         };
         pick.appendChild(card);
@@ -125,7 +173,7 @@
 
   /* ---------- 單一關卡 ---------- */
   function renderLevel(idx) {
-    var lv = L[idx];
+    var lv = L[idx]; CUR = lv;
     if (!isUnlocked(idx)) { location.hash = "#/"; return; }
     var next = L[idx + 1];
     var html =
@@ -153,11 +201,12 @@
   }
 
   var state = {};
-  function toPhase2(lv, idx, foundMsg) {
+  function toPhase2(lv, idx, foundMsg, payload) {
     document.getElementById("ph1").className = "phase done";
     document.getElementById("ph2").className = "phase active";
     var step = document.getElementById("step");
     step.innerHTML = "✓ <b>重現成功！</b>" + foundMsg + " 現在到下方漏洞程式碼點出問題行、挑出修法。";
+    rec(function (c) { c.foundAt = c.foundAt || new Date().toISOString(); if (payload != null) c.payload = String(payload); c.phase = "found"; });
     renderCodeFix(document.getElementById("fixwrap"), lv.codefix, function () {
       applyFix(lv, idx);
     });
@@ -173,6 +222,7 @@
   function verified(lv, idx) {
     document.getElementById("ph2").className = "phase done";
     addSolved(idx); progress();
+    rec(function (c) { c.solved = true; c.reVerified = true; c.verifiedAt = new Date().toISOString(); c.phase = "verified"; });
     var s = document.getElementById("success"); s.classList.add("show");
     s.scrollIntoView({ behavior: "smooth", block: "center" });
   }
@@ -188,7 +238,7 @@
         '<div id="out"></div>';
       document.getElementById("go").onclick = function () {
         document.getElementById("out").innerHTML = '<div class="leak">' + p.leak + '</div>';
-        if (!state.found) { state.found = true; toPhase2(lv, idx, lv.success.split("——")[0]); }
+        if (!state.found) { state.found = true; toPhase2(lv, idx, lv.success.split("——")[0], "[action]"); }
         else if (state.fixed && !state.verified) {} // action 類別重現即算，不重複驗證
       };
       // action 類別：修復後不需再操作，直接在套用修法後驗證
@@ -206,7 +256,7 @@
           var i = +el.getAttribute("data-i");
           if (i === p.answer) {
             document.getElementById("out").innerHTML = '<div class="leak">' + p.leak + '</div>';
-            if (!state.found) { state.found = true; toPhase2(lv, idx, "你挑對了。"); }
+            if (!state.found) { state.found = true; toPhase2(lv, idx, "你挑對了。", p.options[i]); }
           } else {
             document.getElementById("out").innerHTML = '<div class="note">這個看起來是正常的套件，再看看哪個名稱／來源／版本最可疑。</div>';
           }
@@ -259,7 +309,7 @@
           } else {
             out.innerHTML = "<div class='leak'>" + p.leak + "</div>";
           }
-          if (!state.found) { state.found = true; toPhase2(lv, idx, lv.success.split("——")[0]); }
+          if (!state.found) { state.found = true; toPhase2(lv, idx, lv.success.split("——")[0], v); }
         } else {
           var r = p.onFail ? p.onFail(v) : { note: "沒有觸發弱點，再試試。" };
           out.innerHTML = "<div class='note'>" + esc(r.note) + "</div>";

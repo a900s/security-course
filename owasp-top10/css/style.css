@@ -100,3 +100,9 @@ input[type=text],select{width:100%;background:var(--bg);border:1px solid var(--l
 .pagenav .sp{flex:1}
 footer{border-top:1px solid var(--line);margin-top:30px;padding:18px 0;color:var(--muted);font-size:.84rem}
 .reset{cursor:pointer;background:none;border:1px solid var(--line);color:var(--muted);border-radius:8px;padding:4px 10px;font-family:var(--mono);font-size:.78rem}
+
+/* student progress bar */
+.studbar{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:14px 16px;margin:16px 0}
+.studbar .studrow{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
+.studbar input{flex:1;min-width:200px;background:var(--bg);border:1px solid var(--line);border-radius:8px;color:var(--ink);padding:8px 10px;font-family:var(--sans)}
+.studbar .hint{color:var(--muted);font-size:.85rem;margin-top:6px}
