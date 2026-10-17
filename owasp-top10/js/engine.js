@@ -35,6 +35,10 @@
     var a = document.getElementById("pnum"); if (a) a.textContent = n;
     var b = document.getElementById("ptot"); if (b) b.textContent = t;
     var f = document.getElementById("pfill"); if (f) f.style.width = (t ? n / t * 100 : 0) + "%";
+    // 同步頂端 Google 登入列的進度文字與地圖上的「我的學習進度」（每次進度變動都要更新）
+    var sum = document.getElementById("studSum");
+    if (sum) sum.textContent = "已完成 " + n + "/" + t;
+    if (window.StudentAuth) window.StudentAuth.setStatus("OWASP Top 10 進度：已完成 " + n + "/" + t + " 關");
   }
 
   var app = document.getElementById("app");
@@ -76,14 +80,6 @@
       '<div class="maphead"><h2>關卡</h2><div class="hint">完成一關後自動解鎖下一關</div></div>' +
       '<div class="grid">' + cells + '</div>' + final;
     progress();
-    bindStudentBar();
-  }
-
-  function bindStudentBar() {
-    var n = getSolved().size;
-    var sum = document.getElementById("studSum");
-    if (sum) sum.textContent = "已完成 " + n + "/" + L.length;
-    if (window.StudentAuth) window.StudentAuth.setStatus("OWASP Top 10 進度：已完成 " + n + "/" + L.length + " 關");
   }
 
   /* ---------- 兩階段：程式碼修復 ---------- */
