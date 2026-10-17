@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="zh-Hant-TW">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>資安課程自製教材</title>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700;900&display=swap">
+<style>
+:root{--bg:#0c1118;--panel:#141c28;--line:#273549;--ink:#eaf1fb;--muted:#8ca0bf;--a:#5ad1b4;--b:#7aa2ff}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(900px 400px at 80% -10%,#1a2740,var(--bg));color:var(--ink);font-family:"Noto Sans TC",system-ui,sans-serif;line-height:1.7}
+.wrap{max-width:960px;margin:0 auto;padding:40px 20px}
+h1{font-size:2rem;margin:.2em 0}p{color:var(--muted)}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:16px;margin-top:28px}
+.card{display:block;background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:22px;color:inherit;text-decoration:none;transition:transform .12s,border-color .12s}
+.card:hover{transform:translateY(-3px);border-color:var(--a)}
+.card h2{margin:.2em 0;font-size:1.2rem}.card .tag{font-size:.75rem;color:var(--a);letter-spacing:.08em}
+.card p{font-size:.92rem}
+.warn{margin-top:28px;background:rgba(255,201,107,.1);border:1px solid rgba(255,201,107,.4);color:#ffe3a3;border-radius:12px;padding:12px 14px;font-size:.9rem}
+footer{margin-top:40px;color:var(--muted);font-size:.84rem;border-top:1px solid var(--line);padding-top:16px}
+</style>
+</head>
+<body><div class="wrap">
+  <h1>🛡️ 資安課程自製教材</h1>
+  <p>自行撰寫的課堂教材，可自由上傳至你的 GitHub Pages。純前端、安全模擬、防禦導向。</p>
+  <div class="grid">
+    <a class="card" href="owasp-top10/">
+      <div class="tag">INTERACTIVE</div>
+      <h2>OWASP Top 10 漏洞實作</h2>
+      <p>兩階段關卡：重現弱點 → 讀程式碼 → 選修法 → 驗證。含 A05 三小關，共 12 關。</p>
+    </a>
+    <a class="card" href="sql-injection-lab/">
+      <div class="tag">LAB + QUIZ</div>
+      <h2>SQL Injection 教學實驗室</h2>
+      <p>原理、六種攻擊型態、各語言防禦程式碼、互動沙盒與 18 題隨堂測驗。</p>
+    </a>
+    <a class="card" href="kali-top20/">
+      <div class="tag">DOCUMENT</div>
+      <h2>Kali 20 種手法與防治</h2>
+      <p>每項含用途、原理、跡象、防治。附倫理與法律使用聲明。</p>
+    </a>
+  </div>
+  <div class="warn">⚠ 僅供在你自己擁有、或已取得書面授權的環境中學習。請勿對未授權系統進行測試。</div>
+  <footer>授權建議：文件 CC BY-NC 4.0 · 程式碼 MIT · 詳見 README.md 與 LICENSE</footer>
+</div></body>
+</html>

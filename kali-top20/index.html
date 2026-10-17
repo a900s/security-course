@@ -1,0 +1,388 @@
+<!doctype html>
+<html lang="zh-Hant-TW">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Kali Linux 最重要的 20 種破解手法與防治</title>
+<meta name="description" content="自製資安防禦教材：20 種常見攻擊手法的原理、跡象與防治。僅供授權環境教學。">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&family=JetBrains+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body><main class="wrap">
+<h1 id="kali-linux-20">Kali Linux 最重要的 20 種破解手法與防治</h1>
+<blockquote>
+<p>自製資安教學教材（zh-Hant-TW）。本文以<strong>防禦教育</strong>為出發點，說明攻擊者常用的工具與手法「概念上如何運作」、
+會留下哪些<strong>跡象</strong>，以及<strong>對應的防治措施</strong>。<strong>不提供針對第三方系統的逐步實戰攻擊步驟</strong>。</p>
+</blockquote>
+<hr />
+<h2 id="_1">⚠️ 倫理與法律使用聲明（請務必先讀）</h2>
+<ul>
+<li>本教材僅供在<strong>你自己擁有、或已取得書面授權</strong>的實驗環境中學習與演練。</li>
+<li>未經授權對他人系統、網路、無線訊號進行掃描、入侵、破解或攔截，在多數司法管轄區（含我國《刑法》妨害電腦使用罪章）屬於<strong>違法行為</strong>，可能涉及刑責與民事賠償。</li>
+<li>進行滲透測試或紅隊演練前，務必取得<strong>明確的授權範圍（scope）與書面同意</strong>，並遵守「不逾越授權、不破壞資料、不外洩」的原則。</li>
+<li>本文刻意以「原理與防治」為主、略過可直接照抄的攻擊指令細節，目的是培養<strong>防禦者視角</strong>。請把重點放在「我方該如何偵測與阻擋」。</li>
+</ul>
+<p>建議的練習靶場：自架的 DVWA、OWASP Juice Shop、Metasploitable、VulnHub / HackTheBox / TryHackMe 等<strong>合法授權</strong>的練習環境。</p>
+<hr />
+<h2 id="_2">如何使用本教材</h2>
+<ul>
+<li>每一項包含四個區塊：<strong>用途</strong> → <strong>運作原理（概念）</strong> → <strong>常見跡象（偵測）</strong> → <strong>防治措施</strong>。</li>
+<li>教學順序大致依「偵察 → 取得入口 → 憑證與橫向移動 → 持久化與擴大」的攻擊生命週期排列，方便對照防禦縱深。</li>
+<li>建議搭配藍隊工具一起講：SIEM（如 Wazuh、Elastic）、IDS/IPS（Suricata、Snort）、EDR 與網路分段。</li>
+</ul>
+<hr />
+<h2 id="_3">攻防對照總覽</h2>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>技術 / 工具</th>
+<th>階段</th>
+<th>一句話防治重點</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>Nmap 網路偵察</td>
+<td>偵察</td>
+<td>網路分段、最小暴露面、IDS 偵測掃描</td>
+</tr>
+<tr>
+<td>2</td>
+<td>Hydra / Medusa 線上暴力破解</td>
+<td>入口</td>
+<td>帳戶鎖定、限流、MFA</td>
+</tr>
+<tr>
+<td>3</td>
+<td>John the Ripper / Hashcat 離線破解</td>
+<td>憑證</td>
+<td>強雜湊加鹽、長密碼、保護雜湊檔</td>
+</tr>
+<tr>
+<td>4</td>
+<td>Aircrack-ng WPA 破解</td>
+<td>無線</td>
+<td>WPA3 / 強 PSK / 企業級認證</td>
+</tr>
+<tr>
+<td>5</td>
+<td>Wireshark 封包嗅探</td>
+<td>偵察/憑證</td>
+<td>全程加密、交換式網路、802.1X</td>
+</tr>
+<tr>
+<td>6</td>
+<td>Ettercap / Bettercap MITM</td>
+<td>中間人</td>
+<td>動態 ARP 檢測、HSTS、憑證釘選</td>
+</tr>
+<tr>
+<td>7</td>
+<td>Metasploit 滲透框架</td>
+<td>入口/後滲透</td>
+<td>及時修補、EDR、最小權限</td>
+</tr>
+<tr>
+<td>8</td>
+<td>SQLmap 自動化 SQL 注入</td>
+<td>Web</td>
+<td>參數化查詢、WAF、最小 DB 權限</td>
+</tr>
+<tr>
+<td>9</td>
+<td>Burp Suite 攔截代理</td>
+<td>Web</td>
+<td>伺服器端驗證、不信任前端</td>
+</tr>
+<tr>
+<td>10</td>
+<td>Nikto Web 伺服器掃描</td>
+<td>偵察</td>
+<td>移除預設檔、修補、隱藏版本</td>
+</tr>
+<tr>
+<td>11</td>
+<td>Gobuster / dirb 目錄列舉</td>
+<td>偵察</td>
+<td>關閉目錄列出、404 一致化、監控</td>
+</tr>
+<tr>
+<td>12</td>
+<td>Responder LLMNR/NBT-NS 毒化</td>
+<td>內網憑證</td>
+<td>關閉 LLMNR/NBT-NS、SMB 簽章</td>
+</tr>
+<tr>
+<td>13</td>
+<td>CrackMapExec / SMB 橫向移動</td>
+<td>橫向</td>
+<td>分段、禁用本機管理員重用、LAPS</td>
+</tr>
+<tr>
+<td>14</td>
+<td>憑證擷取（Mimikatz 類）</td>
+<td>憑證</td>
+<td>Credential Guard、限制特權登入</td>
+</tr>
+<tr>
+<td>15</td>
+<td>社交工程 / 釣魚（SET）</td>
+<td>入口</td>
+<td>使用者教育、郵件防護、MFA</td>
+</tr>
+<tr>
+<td>16</td>
+<td>DNS 欺騙 / 快取毒化</td>
+<td>中間人</td>
+<td>DNSSEC、加密 DNS、固定解析器</td>
+</tr>
+<tr>
+<td>17</td>
+<td>密碼噴灑 Password Spraying</td>
+<td>入口</td>
+<td>MFA、智慧鎖定、密碼政策</td>
+</tr>
+<tr>
+<td>18</td>
+<td>Wifite 自動化無線</td>
+<td>無線</td>
+<td>WPA3、關閉 WPS、監控流氓 AP</td>
+</tr>
+<tr>
+<td>19</td>
+<td>隱寫術 / 憑證收集</td>
+<td>外洩/持久化</td>
+<td>DLP、出口監控、檔案完整性</td>
+</tr>
+<tr>
+<td>20</td>
+<td>權限提升 Privilege Escalation</td>
+<td>提權</td>
+<td>修補、最小權限、設定基準線</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="1-nmap">1. Nmap — 網路偵察與連接埠掃描</h2>
+<ul>
+<li><strong>用途</strong>：攻擊者在行動初期用來盤點「有哪些主機活著、開了哪些服務、可能是什麼作業系統與版本」，據此規劃後續目標。</li>
+<li><strong>運作原理（概念）</strong>：對目標送出各種探測封包，依回應判斷連接埠狀態（開放/關閉/被過濾）與服務指紋。它是「畫地圖」的動作，本身不入侵，但決定了攻擊面。</li>
+<li><strong>常見跡象</strong>：短時間內單一來源對大量連接埠或大量主機發出連線；非業務時段的掃描；SYN 掃描造成的半開連線；防火牆/IDS 的掃描告警。</li>
+<li><strong>防治措施</strong>：</li>
+<li>落實<strong>網路分段</strong>與最小暴露面，只開放必要服務。</li>
+<li>在邊界與內網部署 <strong>IDS/IPS（Suricata/Snort）</strong> 偵測掃描特徵並限速。</li>
+<li>關閉/隱藏不必要的服務橫幅（banner），定期自行掃描盤點（以攻制守）。</li>
+</ul>
+<h2 id="2-hydra-medusa">2. Hydra / Medusa — 線上帳密暴力破解</h2>
+<ul>
+<li><strong>用途</strong>：針對登入服務（SSH、RDP、FTP、HTTP 表單等）嘗試大量帳密組合，直到猜中。</li>
+<li><strong>運作原理（概念）</strong>：以字典或規則產生大量帳密，自動化地逐一送出登入請求，依「成功/失敗」回應判斷是否命中。</li>
+<li><strong>常見跡象</strong>：同一帳號或同一來源在短時間內大量登入失敗；來自異常地理位置的嘗試；多個帳號被同一 IP 輪流嘗試。</li>
+<li><strong>防治措施</strong>：</li>
+<li><strong>帳戶鎖定 / 漸進式延遲 / 限流</strong>，讓暴力破解在時間成本上不可行。</li>
+<li>全面導入 <strong>MFA（多因素驗證）</strong>。</li>
+<li>限制管理服務對外暴露（VPN / 允許清單），監控並封鎖異常來源。</li>
+</ul>
+<h2 id="3-john-the-ripper-hashcat">3. John the Ripper / Hashcat — 離線密碼破解</h2>
+<ul>
+<li><strong>用途</strong>：當攻擊者已取得密碼<strong>雜湊檔</strong>，在自己機器上離線還原出明文。</li>
+<li><strong>運作原理（概念）</strong>：用字典、規則變形或暴力法產生候選密碼，計算其雜湊與目標比對。GPU 讓每秒可嘗試的數量極高，弱雜湊（無鹽 MD5/SHA1）幾乎瞬破。</li>
+<li><strong>常見跡象</strong>：此步驟多在攻擊者端離線進行，<strong>難以直接偵測</strong>；重點放在「雜湊檔外洩」這個前置事件（異常讀取 /etc/shadow、SAM、資料庫 dump）。</li>
+<li><strong>防治措施</strong>：</li>
+<li>使用<strong>慢雜湊且加鹽</strong>（bcrypt、scrypt、Argon2），淘汰 MD5/SHA1。</li>
+<li>強制<strong>長且高熵的密碼/通關密語</strong>，鼓勵密碼管理器。</li>
+<li>嚴格保護雜湊存放處，監控對憑證檔的異常存取。</li>
+</ul>
+<h2 id="4-aircrack-ng-wifiwpawpa2">4. Aircrack-ng — Wi‑Fi（WPA/WPA2）破解</h2>
+<ul>
+<li><strong>用途</strong>：針對無線網路，嘗試還原 WPA/WPA2 預共享金鑰（PSK）。</li>
+<li><strong>運作原理（概念）</strong>：擷取裝置連線時的交握（handshake）封包，再<strong>離線</strong>用字典比對推算金鑰；弱 PSK 容易被猜中。</li>
+<li><strong>常見跡象</strong>：出現未知的監聽介面或大量去認證（deauth）封包；使用者頻繁被踢下線；附近出現異常探測。</li>
+<li><strong>防治措施</strong>：</li>
+<li>採用 <strong>WPA3</strong>（或至少 WPA2 + 高強度隨機 PSK，長度足夠）。</li>
+<li>企業環境改用 <strong>WPA2/3-Enterprise（802.1X）</strong> 搭配個別帳號。</li>
+<li>啟用管理框架保護（PMF/802.11w），監控流氓 AP 與 deauth 攻擊。</li>
+</ul>
+<h2 id="5-wireshark">5. Wireshark — 封包嗅探與流量分析</h2>
+<ul>
+<li><strong>用途</strong>：擷取並分析網路流量，攻擊者用來找明文憑證或敏感資料；藍隊也用它做鑑識。</li>
+<li><strong>運作原理（概念）</strong>：把網卡設為可接收流量並解析各層協定。若流量未加密，內容（含帳密）一覽無遺。</li>
+<li><strong>常見跡象</strong>：介面進入混雜模式；在交換式網路中出現搭配 ARP 欺騙才能嗅探的情形（見第 6 項）。</li>
+<li><strong>防治措施</strong>：</li>
+<li><strong>全程加密</strong>（TLS、SSH、VPN），淘汰明文協定（Telnet、FTP、HTTP）。</li>
+<li>使用交換式網路、<strong>802.1X 埠認證</strong>，限制可接取點。</li>
+<li>對敏感網段做監控，偵測異常的大量鏡像/嗅探行為。</li>
+</ul>
+<h2 id="6-ettercap-bettercap-arp">6. Ettercap / Bettercap — 中間人攻擊與 ARP 欺騙</h2>
+<ul>
+<li><strong>用途</strong>：讓攻擊者插入到兩方通訊之間，竊聽或竄改流量。</li>
+<li><strong>運作原理（概念）</strong>：以偽造的 ARP 回應讓受害者把攻擊者當成閘道（ARP 欺騙），流量於是繞經攻擊者；再搭配嗅探或降級攻擊取得資料。</li>
+<li><strong>常見跡象</strong>：ARP 表中同一 IP 對應到多個/變動的 MAC；閘道 MAC 突然改變；大量 ARP 回應。</li>
+<li><strong>防治措施</strong>：</li>
+<li>交換器啟用 <strong>Dynamic ARP Inspection（DAI）+ DHCP Snooping</strong>。</li>
+<li>對重要主機設<strong>靜態 ARP</strong>；全站強制 <strong>HTTPS + HSTS</strong>，必要服務用憑證釘選。</li>
+<li>網路分段，縮小單一廣播域的受害範圍。</li>
+</ul>
+<h2 id="7-metasploit-framework">7. Metasploit Framework — 漏洞利用與後滲透框架</h2>
+<ul>
+<li><strong>用途</strong>：整合已知漏洞的利用模組、載荷（payload）與後滲透工具，是最常見的滲透測試框架。</li>
+<li><strong>運作原理（概念）</strong>：對有已知弱點的服務投遞對應的利用模組，取得執行權或連線（如 Meterpreter），再進行後續操作。核心前提是「目標存在未修補的弱點」。</li>
+<li><strong>常見跡象</strong>：已知 exploit 的網路特徵；可疑的反向連線（callback）；異常新進程/服務；EDR 對常見載荷的告警。</li>
+<li><strong>防治措施</strong>：</li>
+<li><strong>及時修補</strong>，建立弱點管理流程（優先處理可被遠端利用者）。</li>
+<li>部署 <strong>EDR/AV</strong> 偵測常見載荷，網路出口限制可疑的 C2 連線。</li>
+<li>最小權限與應用白名單，降低利用成功後的影響。</li>
+</ul>
+<h2 id="8-sqlmap-sql">8. SQLmap — 自動化 SQL 注入</h2>
+<ul>
+<li><strong>用途</strong>：自動偵測並利用 Web 應用的 SQL 注入弱點，撈取資料庫內容。</li>
+<li><strong>運作原理（概念）</strong>：對輸入點自動送出各種探測，依回應差異/延遲判斷是否可注入，再自動化地抽取資料。它把人工注入流程自動化。</li>
+<li><strong>常見跡象</strong>：參數中出現大量含 SQL 關鍵字、註解符號、布林/時間測試的請求；單一來源對同一端點高頻試探；WAF 告警。</li>
+<li><strong>防治措施</strong>：</li>
+<li><strong>參數化查詢 / Prepared Statement</strong>（根本防禦），識別字用白名單。</li>
+<li>資料庫帳號<strong>最小權限</strong>、一般化錯誤訊息，避免資訊洩漏。</li>
+<li>WAF 作為輔助防線，搭配日誌與告警（可參閱本專案的 <code>sql-injection-lab</code>）。</li>
+</ul>
+<h2 id="9-burp-suite-web">9. Burp Suite — Web 攔截代理與測試平台</h2>
+<ul>
+<li><strong>用途</strong>：攔截、檢視、修改瀏覽器與伺服器之間的 HTTP(S) 請求，是 Web 滲透測試的主力工具。</li>
+<li><strong>運作原理（概念）</strong>：作為中間代理，讓測試者能改掉「前端看似鎖定」的參數、重放請求、模糊測試，藉此找出伺服器端驗證不足的弱點。</li>
+<li><strong>常見跡象</strong>：同一端點出現被竄改的參數、異常的重放與高頻模糊測試；不符合正常前端流程的請求序列。</li>
+<li><strong>防治措施</strong>：</li>
+<li><strong>永遠在伺服器端重新驗證</strong>授權與輸入，絕不信任前端送來的值。</li>
+<li>對敏感操作做權限檢查、速率限制與異常行為監控。</li>
+<li>實作 CSRF/授權等防護，記錄並告警異常請求樣式。</li>
+</ul>
+<h2 id="10-nikto-web">10. Nikto — Web 伺服器弱點掃描</h2>
+<ul>
+<li><strong>用途</strong>：快速掃描 Web 伺服器的已知問題，如危險檔案、過時版本、錯誤設定。</li>
+<li><strong>運作原理（概念）</strong>：對伺服器比對一份已知問題清單，逐一請求並檢查回應。屬於「盤點已知弱點」的偵察動作。</li>
+<li><strong>常見跡象</strong>：短時間大量請求各種已知路徑/檔名；User-Agent 具掃描器特徵；大量 404/403。</li>
+<li><strong>防治措施</strong>：</li>
+<li>移除<strong>預設檔案、範例與後台</strong>，關閉不必要模組。</li>
+<li>持續修補並隱藏版本橫幅；以 WAF/速率限制削弱自動掃描。</li>
+<li>定期自掃，把自己的伺服器維持在已知無弱點狀態。</li>
+</ul>
+<h2 id="11-gobuster-dirb-feroxbuster">11. Gobuster / dirb / feroxbuster — 目錄與檔案列舉</h2>
+<ul>
+<li><strong>用途</strong>：以字典猜測網站上「沒有被連結、但確實存在」的目錄或檔案（備份、後台、API）。</li>
+<li><strong>運作原理（概念）</strong>：對大量候選路徑發出請求，依狀態碼/回應大小判斷哪些存在。</li>
+<li><strong>常見跡象</strong>：單一來源在短時間產生大量 404、規律字典式路徑請求。</li>
+<li><strong>防治措施</strong>：</li>
+<li><strong>關閉目錄列出（directory listing）</strong>，不要把備份/機密檔放在網站根目錄。</li>
+<li>讓不存在與禁止存取的回應<strong>一致化</strong>（避免用回應差異洩漏存在性）。</li>
+<li>速率限制與監控異常列舉行為。</li>
+</ul>
+<h2 id="12-responder-llmnr-nbt-ns">12. Responder — LLMNR / NBT-NS 毒化</h2>
+<ul>
+<li><strong>用途</strong>：在內網（尤其 Windows 環境）誘騙主機送出認證，藉以擷取挑戰雜湊。</li>
+<li><strong>運作原理（概念）</strong>：當主機找不到名稱解析時會廣播求助，Responder 冒充回應，使受害者向攻擊者認證，進而取得可離線破解或轉送的雜湊。</li>
+<li><strong>常見跡象</strong>：內網出現對 LLMNR/NBT-NS 廣播的異常回應；非預期主機回應名稱查詢。</li>
+<li><strong>防治措施</strong>：</li>
+<li><strong>停用 LLMNR 與 NBT-NS</strong>，改用正確的 DNS。</li>
+<li>啟用 <strong>SMB 簽章</strong>，降低 relay 風險；導入 MFA 與分層管理。</li>
+<li>監控內網廣播回應異常。</li>
+</ul>
+<h2 id="13-crackmapexec-smb">13. CrackMapExec / SMB — 內網橫向移動</h2>
+<ul>
+<li><strong>用途</strong>：在取得一組憑證後，快速驗證它能登入哪些主機、並在內網橫向擴展。</li>
+<li><strong>運作原理（概念）</strong>：用同一組帳密對大量主機測試 SMB/WinRM 等登入，找出可用之處；常與雜湊傳遞（pass-the-hash）等概念結合。</li>
+<li><strong>常見跡象</strong>：同一帳號在短時間登入大量主機；異常的 SMB/WinRM 連線；本機管理員帳號被重複使用。</li>
+<li><strong>防治措施</strong>：</li>
+<li>禁止<strong>本機管理員密碼重用</strong>，導入 <strong>LAPS</strong>（每台獨立隨機密碼）。</li>
+<li>網路分段、限制管理協定、<strong>分層式管理帳號（tiering）</strong>。</li>
+<li>監控異常橫向登入行為，啟用 SMB 簽章。</li>
+</ul>
+<h2 id="14-mimikatz">14. 憑證擷取（Mimikatz 類情境）</h2>
+<ul>
+<li><strong>用途</strong>：在已取得主機高權限後，從記憶體或系統中抽取登入憑證/票證，用以擴大控制。</li>
+<li><strong>運作原理（概念）</strong>：利用系統保存登入憑證的機制，抽出明文、雜湊或 Kerberos 票證，再拿去登入其他系統。<strong>前提是攻擊者已握有本機高權限</strong>。</li>
+<li><strong>常見跡象</strong>：對 LSASS 等憑證處理程序的異常存取；異常票證請求；EDR 針對憑證擷取行為的告警。</li>
+<li><strong>防治措施</strong>：</li>
+<li>啟用 <strong>Credential Guard / 受保護的 LSASS</strong>，更新作業系統。</li>
+<li>限制特權帳號登入一般工作站（避免高權憑證落地），縮短票證效期。</li>
+<li>部署 EDR 偵測憑證存取行為，落實最小權限。</li>
+</ul>
+<h2 id="15-set">15. 社交工程 / 釣魚（SET 類工具情境）</h2>
+<ul>
+<li><strong>用途</strong>：不打系統、改打「人」——以假冒郵件、網站或訊息誘使使用者交出帳密或執行惡意檔案。</li>
+<li><strong>運作原理（概念）</strong>：製造信任或急迫感（冒充 IT、主管、廠商），引導受害者點連結、輸入憑證或開啟附件。這是最常見的初始入口。</li>
+<li><strong>常見跡象</strong>：寄件網域相近但不符、連結導向假登入頁、不尋常的急迫語氣與附件；回報的可疑郵件增加。</li>
+<li><strong>防治措施</strong>：</li>
+<li>持續性<strong>使用者資安意識教育</strong>與演練（模擬釣魚）。</li>
+<li>郵件防護（SPF/DKIM/DMARC、附件沙箱、連結改寫）、全面 <strong>MFA</strong>。</li>
+<li>建立<strong>容易回報</strong>的通報管道與快速處置流程。</li>
+</ul>
+<h2 id="16-dns">16. DNS 欺騙 / 快取毒化</h2>
+<ul>
+<li><strong>用途</strong>：把使用者導向攻擊者控制的伺服器（假網站、憑證竊取、惡意下載）。</li>
+<li><strong>運作原理（概念）</strong>：偽造 DNS 回應或污染解析快取，使網域名稱被解析到錯誤 IP。常與中間人位置搭配。</li>
+<li><strong>常見跡象</strong>：同一網域解析結果異常改變；使用者被導向可疑站點；DNS 回應來源異常。</li>
+<li><strong>防治措施</strong>：</li>
+<li>部署 <strong>DNSSEC</strong>，使用可信且加密的解析器（DoH/DoT）。</li>
+<li>固定/鎖定內部 DNS 設定，防止被竄改；配合 HTTPS/HSTS 降低影響。</li>
+<li>監控 DNS 解析異常與可疑網域查詢。</li>
+</ul>
+<h2 id="17-password-spraying">17. 密碼噴灑（Password Spraying）</h2>
+<ul>
+<li><strong>用途</strong>：用<strong>少數幾個常見密碼</strong>去試<strong>大量帳號</strong>，以避開「單一帳號多次失敗」的鎖定機制。</li>
+<li><strong>運作原理（概念）</strong>：橫向鋪開：每個帳號只試一兩個熱門密碼，再換下一個帳號，整體命中率仍可觀，卻不易觸發傳統鎖定。</li>
+<li><strong>常見跡象</strong>：<strong>大量不同帳號</strong>各出現少量失敗、且時間/來源相近；跨帳號的規律嘗試。</li>
+<li><strong>防治措施</strong>：</li>
+<li><strong>MFA</strong> 是最有效的緩解。</li>
+<li>採用<strong>以來源/行為為基礎的智慧鎖定與偵測</strong>（而非只看單帳號失敗次數）。</li>
+<li>禁用常見弱密碼（密碼黑名單），監控跨帳號失敗樣式。</li>
+</ul>
+<h2 id="18-wifite">18. Wifite — 自動化無線攻擊</h2>
+<ul>
+<li><strong>用途</strong>：把多種無線攻擊（擷取交握、WPS、去認證等）自動化、一鍵對周遭網路發動。</li>
+<li><strong>運作原理（概念）</strong>：自動掃描周遭 AP，依弱點挑選對應手法（如弱 WPS PIN、弱 PSK）嘗試取得金鑰。降低了攻擊門檻。</li>
+<li><strong>常見跡象</strong>：大量 deauth 封包、對 WPS 的連續嘗試、附近出現監聽裝置。</li>
+<li><strong>防治措施</strong>：</li>
+<li><strong>關閉 WPS</strong>，改用 WPA3 或高強度隨機 PSK。</li>
+<li>啟用管理框架保護（802.11w），監控 deauth 與流氓 AP。</li>
+<li>企業級 802.1X 認證，定期巡檢無線環境。</li>
+</ul>
+<h2 id="19">19. 隱寫術與憑證收集（資料外洩/持久化情境）</h2>
+<ul>
+<li><strong>用途</strong>：攻擊者把竊得資料藏進看似無害的檔案（圖片、文件）以躲避偵測，或在環境中蒐集散落的憑證。</li>
+<li><strong>運作原理（概念）</strong>：隱寫術把資料嵌入媒體檔的冗餘位元，使外洩流量看似正常；憑證收集則掃描設定檔、腳本、歷史紀錄中殘留的帳密與金鑰。</li>
+<li><strong>常見跡象</strong>：異常大的媒體檔外送、出口流量異常；對設定檔/金鑰檔的大範圍讀取；非預期的壓縮/編碼行為。</li>
+<li><strong>防治措施</strong>：</li>
+<li>部署 <strong>DLP</strong> 與<strong>出口流量監控</strong>，對異常外送告警。</li>
+<li>不要把密碼/金鑰寫死在檔案或程式碼中，改用秘密管理（vault）。</li>
+<li>檔案完整性監控與定期掃描殘留憑證。</li>
+</ul>
+<h2 id="20-privilege-escalation">20. 權限提升（Privilege Escalation）</h2>
+<ul>
+<li><strong>用途</strong>：從低權限立足點提升到更高權限（本機 root/SYSTEM，或網域層級），以完全掌控系統。</li>
+<li><strong>運作原理（概念）</strong>：利用設定錯誤（過寬權限、可寫服務、sudo 設定不當）、未修補的本機漏洞，或憑證重用，把權限一步步往上抬。</li>
+<li><strong>常見跡象</strong>：異常的 sudo/提權呼叫、可疑的新服務或排程、對敏感設定的修改、EDR 的提權告警。</li>
+<li><strong>防治措施</strong>：</li>
+<li><strong>及時修補</strong>本機漏洞，建立並稽核<strong>設定基準線</strong>（CIS Benchmark）。</li>
+<li>嚴守<strong>最小權限</strong>，謹慎設定 sudo/服務權限、檔案 ACL。</li>
+<li>部署 EDR 偵測提權行為，分層管理特權帳號。</li>
+</ul>
+<hr />
+<h2 id="_4">教學建議與課堂活動</h2>
+<ul>
+<li><strong>藍隊對照</strong>：每講一項攻擊，立刻對照「我方偵測與阻擋方式」，培養防禦思維。</li>
+<li><strong>實驗靶場</strong>：在隔離的虛擬網路中，用合法授權的靶機（Metasploitable、DVWA、Juice Shop）演練，嚴禁對外。</li>
+<li><strong>事件分析</strong>：給學生一段（去識別化的）日誌，練習辨識上述手法的跡象。</li>
+<li><strong>評量</strong>：可結合本專案 <code>owasp-top10</code> 與 <code>sql-injection-lab</code> 的互動教材與測驗。</li>
+</ul>
+<h2 id="_5">參考主題（供延伸自學，請以官方文件為準）</h2>
+<ul>
+<li>OWASP Top 10、MITRE ATT&amp;CK 戰術與技術框架</li>
+<li>NIST SP 800 系列、CIS Benchmarks</li>
+<li>各工具的<strong>官方說明文件</strong>（用於理解防禦，而非照抄攻擊步驟）</li>
+</ul>
+<blockquote>
+<p>本文為自行撰寫之教學內容；工具名稱與標準分類（如 OWASP、ATT&amp;CK 類別）為業界通用名詞。
+授權建議：文件採 CC BY-NC 4.0、程式碼採 MIT（詳見專案根目錄 README 與 LICENSE 說明）。</p>
+</blockquote>
+<footer>自製教學教材 · 僅供合法授權環境之防禦教育使用 · 由 build.py 自 README.md 產生</footer>
+</main></body></html>
