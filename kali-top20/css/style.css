@@ -19,3 +19,13 @@ hr{border:0;border-top:1px solid var(--line);margin:2em 0}
 strong{color:#fff}
 .toc{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:12px 18px}
 footer{color:var(--muted);font-size:.84rem;border-top:1px solid var(--line);margin-top:40px;padding-top:16px}
+/* 學習進度與教師區 */
+.progpanel{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:14px 18px;margin:16px 0}
+.progpanel .row{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.progpanel input{flex:1;min-width:200px;background:var(--bg);border:1px solid var(--line);border-radius:8px;color:var(--ink);padding:8px 10px;font-family:var(--sans)}
+.progpanel button,#unlockBtn{cursor:pointer;background:var(--accent2);border:1px solid var(--accent2);color:#0b1220;font-weight:700;border-radius:8px;padding:8px 14px;font-family:var(--sans)}
+.progpanel button.ghost{background:transparent;color:var(--ink);border-color:var(--line)}
+.hint{color:var(--muted);font-size:.85rem;margin-top:6px;white-space:pre-wrap}
+.progbar{display:flex;gap:18px;margin:4px 0 8px;font-size:.9rem;color:var(--muted)}
+.progbar input{accent-color:var(--accent);margin-right:4px}
+td.c0{color:var(--muted);text-align:center} td.c1{color:var(--accent2);text-align:center} td.c2{color:var(--accent);text-align:center;font-weight:700}

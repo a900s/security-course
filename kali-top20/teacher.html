@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="zh-Hant-TW">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>教師區 — Kali 20 種手法與防治 學習進度</title>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&family=JetBrains+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body><main class="wrap">
+<h1>👨‍🏫 教師區：學習進度總覽</h1>
+<p><a href="index.html">← 回教材</a></p>
+
+<div id="lock" class="progpanel" style="text-align:center">
+  <p>輸入教師密碼以開啟進度總覽。</p>
+  <div class="row" style="justify-content:center">
+    <input id="pw" type="password" placeholder="教師密碼" style="max-width:280px">
+    <button id="unlockBtn">解鎖</button>
+  </div>
+  <div id="lockMsg" class="hint"></div>
+</div>
+
+<div id="panel" hidden>
+  <div class="progpanel">
+    <b>📥 匯入學生進度</b>
+    <div class="row"><input id="files" type="file" accept=".json,application/json" multiple>
+      <button id="clearBtn" class="ghost">清空</button></div>
+    <div class="hint">可一次選多個 JSON。同名學生只保留最新一次匯出。資料只在瀏覽器內處理，不會上傳。</div>
+    <pre id="importLog" class="hint"></pre>
+  </div>
+  <p id="stats"></p>
+  <div id="overview" style="overflow:auto"></div>
+  <p class="hint">圖例：✔ 已讀　✔✔ 已複習　· 未讀</p>
+  <p class="hint" id="legend"></p>
+  <blockquote>密碼以 SHA-256 雜湊比對（與 SQL Lab 相同），程式碼中不存明碼；但前端驗證仍可被離線嘗試，請勿用於高機密用途。更換方式見 <code>js/teacher.js</code> 註解。</blockquote>
+</div>
+<footer>自製教學教材 · 教師區</footer>
+</main>
+<script src="js/teacher.js"></script>
+</body></html>

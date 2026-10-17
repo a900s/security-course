@@ -20,8 +20,10 @@ html = f"""<!doctype html>
 </head>
 <body><main class="wrap">
 {body}
-<footer>自製教學教材 · 僅供合法授權環境之防禦教育使用 · 由 build.py 自 README.md 產生</footer>
-</main></body></html>
+<footer>自製教學教材 · 僅供合法授權環境之防禦教育使用 · 由 build.py 自 README.md 產生 · <a href="teacher.html">👨‍🏫 教師區（學習進度）</a></footer>
+</main>
+<script src="js/progress.js"></script>
+</body></html>
 """
 (here / "index.html").write_text(html, encoding="utf-8")
 print("index.html 已產生")
