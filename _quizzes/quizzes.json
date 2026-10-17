@@ -14,12 +14,12 @@
           "question": "【A01 存取控制失效】學生把網址的 ?id=1001 改成 ?id=1002 就看到別人的成績。最根本的修正是？",
           "options": {
             "A": "把 id 改成較長的亂數就好",
-            "B": "伺服器端每次都檢查「目前登入者是否有權讀取這筆資料」",
-            "C": "在前端把網址列隱藏起來",
+            "B": "在前端把網址列隱藏起來",
+            "C": "伺服器端每次都檢查「目前登入者是否有權讀取這筆資料」",
             "D": "要求使用者換更長的密碼"
           },
-          "correctIndex": 1,
-          "correctLetter": "B",
+          "correctIndex": 2,
+          "correctLetter": "C",
           "points": 1,
           "explanation": "隱藏或打亂 id 只是增加猜測難度；真正的防線是伺服器端逐筆授權檢查（物件層級授權）。"
         },
@@ -28,13 +28,13 @@
           "icon": "🔐",
           "question": "【A02 加密機制失效】網站要儲存使用者密碼，下列哪種做法最適當？",
           "options": {
-            "A": "用 Base64 編碼後存起來",
-            "B": "用 MD5 雜湊一次就好",
-            "C": "用 bcrypt / Argon2 等加鹽、刻意放慢的密碼雜湊",
+            "A": "用 bcrypt / Argon2 等加鹽、刻意放慢的密碼雜湊",
+            "B": "用 Base64 編碼後存起來",
+            "C": "用 MD5 雜湊一次就好",
             "D": "以明碼存放但資料庫設密碼"
           },
-          "correctIndex": 2,
-          "correctLetter": "C",
+          "correctIndex": 0,
+          "correctLetter": "A",
           "points": 1,
           "explanation": "Base64 不是加密；MD5 太快且易破。密碼應使用加鹽、計算成本高的專用雜湊。"
         },
@@ -44,12 +44,12 @@
           "question": "【A03 注入】要從根本防止 SQL Injection，最主要的技術是？",
           "options": {
             "A": "把錯誤訊息藏起來",
-            "B": "參數化查詢（Prepared Statement），讓資料與指令分離",
-            "C": "限制輸入長度到 10 字",
-            "D": "把網站改成 HTTPS"
+            "B": "限制輸入長度到 10 字",
+            "C": "把網站改成 HTTPS",
+            "D": "參數化查詢（Prepared Statement），讓資料與指令分離"
           },
-          "correctIndex": 1,
-          "correctLetter": "B",
+          "correctIndex": 3,
+          "correctLetter": "D",
           "points": 1,
           "explanation": "參數化查詢讓資料庫先固定語句結構，使用者輸入只當資料帶入，無法改變語意。"
         },
@@ -73,13 +73,13 @@
           "icon": "⚙️",
           "question": "【A05 安全設定錯誤】下列何者是常見的『安全設定錯誤』？",
           "options": {
-            "A": "關閉不必要的服務與預設帳號",
-            "B": "保留管理後台的預設帳號密碼並對外開放",
+            "A": "保留管理後台的預設帳號密碼並對外開放",
+            "B": "關閉不必要的服務與預設帳號",
             "C": "定期套用安全更新",
             "D": "移除詳細的對外錯誤訊息"
           },
-          "correctIndex": 1,
-          "correctLetter": "B",
+          "correctIndex": 0,
+          "correctLetter": "A",
           "points": 1,
           "explanation": "沿用預設帳密、開放不必要介面都是典型設定錯誤；其餘三者反而是正確作法。"
         },
@@ -89,12 +89,12 @@
           "question": "【A06 易受攻擊的元件】對於使用的第三方套件／函式庫，較好的做法是？",
           "options": {
             "A": "只要能動就永遠不要更新",
-            "B": "建立清單並持續追蹤已知漏洞、即時更新",
-            "C": "越多套件越好",
+            "B": "越多套件越好",
+            "C": "建立清單並持續追蹤已知漏洞、即時更新",
             "D": "直接複製不明來源的程式碼"
           },
-          "correctIndex": 1,
-          "correctLetter": "B",
+          "correctIndex": 2,
+          "correctLetter": "C",
           "points": 1,
           "explanation": "要掌握相依元件清單（SBOM）、追蹤 CVE 並及時更新有漏洞的版本。"
         },
@@ -104,12 +104,12 @@
           "question": "【A07 認證失效】為了降低帳號被暴力破解或憑證填充的風險，最有效的措施是？",
           "options": {
             "A": "允許無限次密碼嘗試",
-            "B": "導入多因素驗證（MFA）並限制登入嘗試次數",
-            "C": "把密碼長度上限設為 4",
-            "D": "把登入頁藏在隱密網址"
+            "B": "把密碼長度上限設為 4",
+            "C": "把登入頁藏在隱密網址",
+            "D": "導入多因素驗證（MFA）並限制登入嘗試次數"
           },
-          "correctIndex": 1,
-          "correctLetter": "B",
+          "correctIndex": 3,
+          "correctLetter": "D",
           "points": 1,
           "explanation": "MFA 加上登入次數限制／鎖定，可大幅降低猜測與自動化攻擊的成功率。"
         },
@@ -134,12 +134,12 @@
           "question": "【A09 記錄與監控不足】缺乏足夠的日誌與監控，最直接的後果是？",
           "options": {
             "A": "網站會變慢",
-            "B": "入侵發生後難以偵測、告警與事後調查",
-            "C": "使用者體驗變好",
+            "B": "使用者體驗變好",
+            "C": "入侵發生後難以偵測、告警與事後調查",
             "D": "密碼自動變強"
           },
-          "correctIndex": 1,
-          "correctLetter": "B",
+          "correctIndex": 2,
+          "correctLetter": "C",
           "points": 1,
           "explanation": "沒有日誌與告警，攻擊往往無聲無息、事後也難追查；應記錄並監控關鍵事件。"
         },
@@ -148,13 +148,13 @@
           "icon": "🛰️",
           "question": "【A10 SSRF】伺服器端請求偽造（SSRF）常見的防禦是？",
           "options": {
-            "A": "允許伺服器存取任意內部網址",
-            "B": "對出站請求的目標位址做白名單與網路隔離",
+            "A": "對出站請求的目標位址做白名單與網路隔離",
+            "B": "允許伺服器存取任意內部網址",
             "C": "把所有輸入都轉成大寫",
             "D": "停用 HTTPS"
           },
-          "correctIndex": 1,
-          "correctLetter": "B",
+          "correctIndex": 0,
+          "correctLetter": "A",
           "points": 1,
           "explanation": "應限制伺服器可存取的目的地（白名單）、隔離內網並封鎖對中繼資料端點的存取。"
         }
@@ -187,12 +187,12 @@
           "question": "【線上暴力破解】對 SSH / RDP 等服務的帳密暴力破解，有效的防治是？",
           "options": {
             "A": "停用帳號鎖定",
-            "B": "強密碼＋MFA＋限制嘗試次數／來源 IP",
-            "C": "把密碼縮短方便記憶",
-            "D": "把服務改用非加密連線"
+            "B": "把密碼縮短方便記憶",
+            "C": "把服務改用非加密連線",
+            "D": "強密碼＋MFA＋限制嘗試次數／來源 IP"
           },
-          "correctIndex": 1,
-          "correctLetter": "B",
+          "correctIndex": 3,
+          "correctLetter": "D",
           "points": 1,
           "explanation": "強認證、MFA、速率限制與鎖定可大幅削弱線上猜測攻擊。"
         },
@@ -201,13 +201,13 @@
           "icon": "🧮",
           "question": "【離線密碼破解】John/Hashcat 針對外洩的雜湊做離線破解，最有效的防治是？",
           "options": {
-            "A": "用快速且無鹽的雜湊",
-            "B": "使用加鹽、計算成本高的雜湊（bcrypt/Argon2）並防止雜湊外洩",
+            "A": "使用加鹽、計算成本高的雜湊（bcrypt/Argon2）並防止雜湊外洩",
+            "B": "用快速且無鹽的雜湊",
             "C": "把密碼存成明碼",
             "D": "縮短密碼長度"
           },
-          "correctIndex": 1,
-          "correctLetter": "B",
+          "correctIndex": 0,
+          "correctLetter": "A",
           "points": 1,
           "explanation": "加鹽、慢雜湊讓離線破解成本大增；同時要避免雜湊被竊。"
         },
@@ -217,12 +217,12 @@
           "question": "【Wi‑Fi 破解】針對家用／校園無線網路，較安全的設定是？",
           "options": {
             "A": "使用 WEP 加密",
-            "B": "採用 WPA2/WPA3＋夠長的隨機金鑰，並停用 WPS",
-            "C": "完全不設密碼",
+            "B": "完全不設密碼",
+            "C": "採用 WPA2/WPA3＋夠長的隨機金鑰，並停用 WPS",
             "D": "把 SSID 設成常見字串"
           },
-          "correctIndex": 1,
-          "correctLetter": "B",
+          "correctIndex": 2,
+          "correctLetter": "C",
           "points": 1,
           "explanation": "WEP 已不安全；WPA2/WPA3＋強金鑰、關閉 WPS 才能抵擋常見無線破解。"
         },
@@ -231,13 +231,13 @@
           "icon": "🕵️",
           "question": "【封包嗅探】在共享網路上用 Wireshark 竊聽流量，最根本的防治是？",
           "options": {
-            "A": "一律使用明碼協定",
-            "B": "全程使用 TLS/HTTPS 等加密傳輸",
+            "A": "全程使用 TLS/HTTPS 等加密傳輸",
+            "B": "一律使用明碼協定",
             "C": "把網速調慢",
             "D": "停用交換器"
           },
-          "correctIndex": 1,
-          "correctLetter": "B",
+          "correctIndex": 0,
+          "correctLetter": "A",
           "points": 1,
           "explanation": "端到端加密讓即使被攔截也讀不到內容，是對抗嗅探的核心。"
         },
@@ -247,12 +247,12 @@
           "question": "【中間人 / ARP 欺騙】偵測與防治 ARP 欺騙式中間人攻擊，較有效的是？",
           "options": {
             "A": "讓所有裝置共用同一 VLAN 無隔離",
-            "B": "使用動態 ARP 檢測、連接埠安全與加密連線",
-            "C": "關閉交換器日誌",
-            "D": "改用 HTTP"
+            "B": "關閉交換器日誌",
+            "C": "改用 HTTP",
+            "D": "使用動態 ARP 檢測、連接埠安全與加密連線"
           },
-          "correctIndex": 1,
-          "correctLetter": "B",
+          "correctIndex": 3,
+          "correctLetter": "D",
           "points": 1,
           "explanation": "交換器的 DAI／Port Security 搭配加密傳輸，可偵測並降低 ARP 欺騙影響。"
         },
@@ -277,12 +277,12 @@
           "question": "【自動化注入】SQLmap 能自動化利用 SQL 注入，對應的防治核心是？",
           "options": {
             "A": "在前端做輸入長度限制即可",
-            "B": "後端採參數化查詢並最小權限資料庫帳號",
-            "C": "只靠 WAF",
+            "B": "只靠 WAF",
+            "C": "後端採參數化查詢並最小權限資料庫帳號",
             "D": "把錯誤訊息完整回傳"
           },
-          "correctIndex": 1,
-          "correctLetter": "B",
+          "correctIndex": 2,
+          "correctLetter": "C",
           "points": 1,
           "explanation": "自動化工具一樣擋不住參數化查詢；最小權限可降低被利用後的衝擊。"
         },
@@ -292,12 +292,12 @@
           "question": "【目錄列舉】Gobuster 等工具列舉隱藏目錄／檔案，防治上應？",
           "options": {
             "A": "把備份檔與管理頁放在可猜到的路徑",
-            "B": "移除敏感檔、正確設定權限並監看大量 404",
-            "C": "開放目錄瀏覽",
-            "D": "停用存取日誌"
+            "B": "開放目錄瀏覽",
+            "C": "停用存取日誌",
+            "D": "移除敏感檔、正確設定權限並監看大量 404"
           },
-          "correctIndex": 1,
-          "correctLetter": "B",
+          "correctIndex": 3,
+          "correctLetter": "D",
           "points": 1,
           "explanation": "別依賴『路徑保密』；要移除敏感檔、設定存取控制並監看列舉跡象。"
         },
@@ -306,13 +306,13 @@
           "icon": "🎣",
           "question": "【社交工程 / 釣魚】對抗釣魚攻擊，最關鍵的防治組合是？",
           "options": {
-            "A": "完全依賴技術、不做教育",
-            "B": "使用者教育＋郵件過濾＋MFA 與網域驗證（SPF/DKIM/DMARC）",
+            "A": "使用者教育＋郵件過濾＋MFA 與網域驗證（SPF/DKIM/DMARC）",
+            "B": "完全依賴技術、不做教育",
             "C": "把所有附件自動開啟",
             "D": "停用垃圾郵件過濾"
           },
-          "correctIndex": 1,
-          "correctLetter": "B",
+          "correctIndex": 0,
+          "correctLetter": "A",
           "points": 1,
           "explanation": "釣魚利用『人』，需教育、郵件防護、MFA 與寄件網域驗證多管齊下。"
         }
@@ -330,12 +330,12 @@
           "question": "SQL Injection 最根本的成因是？",
           "options": {
             "A": "瀏覽器太舊",
-            "B": "程式沒有把『使用者資料』和『SQL 指令』分開",
-            "C": "網路延遲太高",
+            "B": "網路延遲太高",
+            "C": "程式沒有把『使用者資料』和『SQL 指令』分開",
             "D": "伺服器硬碟不足"
           },
-          "correctIndex": 1,
-          "correctLetter": "B",
+          "correctIndex": 2,
+          "correctLetter": "C",
           "points": 1,
           "explanation": "不可信輸入被直接拼進 SQL 字串時，資料就可能被當成語法執行。"
         },
@@ -344,13 +344,13 @@
           "icon": "🛡️",
           "question": "防禦 SQL Injection 最主要、最根本的做法是？",
           "options": {
-            "A": "參數化查詢（Prepared Statement）",
-            "B": "改用深色主題",
-            "C": "增加前端動畫",
-            "D": "壓縮圖片"
+            "A": "改用深色主題",
+            "B": "增加前端動畫",
+            "C": "壓縮圖片",
+            "D": "參數化查詢（Prepared Statement）"
           },
-          "correctIndex": 0,
-          "correctLetter": "A",
+          "correctIndex": 3,
+          "correctLetter": "D",
           "points": 1,
           "explanation": "參數化查詢讓資料庫先編譯語句結構，輸入只當參數帶入，無法改變語意。"
         },
@@ -374,13 +374,13 @@
           "icon": "🔗",
           "question": "UNION-based 注入主要利用哪個關鍵字把額外資料併進結果？",
           "options": {
-            "A": "JOIN",
-            "B": "GROUP BY",
-            "C": "UNION",
+            "A": "UNION",
+            "B": "JOIN",
+            "C": "GROUP BY",
             "D": "HAVING"
           },
-          "correctIndex": 2,
-          "correctLetter": "C",
+          "correctIndex": 0,
+          "correctLetter": "A",
           "points": 1,
           "explanation": "UNION 可將另一個 SELECT 的結果合併回來，前提是欄位數與型別相容。"
         },
@@ -390,12 +390,12 @@
           "question": "Time-based Blind Injection 用來判斷條件是否成立的訊號是？",
           "options": {
             "A": "回應的顏色",
-            "B": "回應所花的時間（延遲）",
-            "C": "回應的字數",
-            "D": "回應的編碼"
+            "B": "回應的字數",
+            "C": "回應的編碼",
+            "D": "回應所花的時間（延遲）"
           },
-          "correctIndex": 1,
-          "correctLetter": "B",
+          "correctIndex": 3,
+          "correctLetter": "D",
           "points": 1,
           "explanation": "讓資料庫在條件成立時延遲回應，用時間差當作 0/1 訊號。"
         },
@@ -404,13 +404,13 @@
           "icon": "📋",
           "question": "為什麼 ORDER BY 後的『欄位名稱』不能只靠參數化查詢防護？",
           "options": {
-            "A": "欄位名稱是 SQL 結構的一部分，不是可綁定的資料值",
-            "B": "ORDER BY 不支援參數",
-            "C": "欄位名稱一定安全",
+            "A": "ORDER BY 不支援參數",
+            "B": "欄位名稱一定安全",
+            "C": "欄位名稱是 SQL 結構的一部分，不是可綁定的資料值",
             "D": "資料庫會自動過濾"
           },
-          "correctIndex": 0,
-          "correctLetter": "A",
+          "correctIndex": 2,
+          "correctLetter": "C",
           "points": 1,
           "explanation": "參數綁定只處理『值』；識別字（欄位、表名、排序方向）屬結構，需用白名單。"
         },
@@ -434,13 +434,13 @@
           "icon": "🔑",
           "question": "資料庫帳號應遵循哪一項原則，以降低漏洞被利用後的衝擊？",
           "options": {
-            "A": "最大權限",
-            "B": "最小權限（Least Privilege）",
+            "A": "最小權限（Least Privilege）",
+            "B": "最大權限",
             "C": "所有應用共用 root",
             "D": "完全不設密碼"
           },
-          "correctIndex": 1,
-          "correctLetter": "B",
+          "correctIndex": 0,
+          "correctLetter": "A",
           "points": 1,
           "explanation": "應用帳號只給必要權限，就算被注入，可破壞的範圍也有限。"
         },
@@ -465,12 +465,12 @@
           "question": "把資料庫的完整錯誤訊息直接回傳給使用者，主要風險是？",
           "options": {
             "A": "會變慢",
-            "B": "可能洩漏資料表結構、SQL 片段等資訊，協助攻擊者",
-            "C": "會佔用頻寬",
-            "D": "沒有任何風險"
+            "B": "會佔用頻寬",
+            "C": "沒有任何風險",
+            "D": "可能洩漏資料表結構、SQL 片段等資訊，協助攻擊者"
           },
-          "correctIndex": 1,
-          "correctLetter": "B",
+          "correctIndex": 3,
+          "correctLetter": "D",
           "points": 1,
           "explanation": "詳細錯誤等於替攻擊者畫地圖；應回傳一般化訊息，細節只進日誌。"
         }

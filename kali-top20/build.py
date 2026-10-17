@@ -2,7 +2,7 @@
 """把 README.md 轉成 index.html（同一份內容、兩種格式）。
 需要：pip install markdown
 用法：python3 build.py"""
-import pathlib, markdown, json, random, html as H, re
+import pathlib, markdown, json, html as H, re
 
 here = pathlib.Path(__file__).parent
 md = (here / "README.md").read_text(encoding="utf-8")
@@ -21,8 +21,7 @@ def review_block(q):
     letters = list(q["options"].keys())
     texts = [q["options"][k] for k in letters]
     correct = texts[q["correctIndex"]]
-    order = list(range(len(texts)))
-    random.Random(45 + q["number"]).shuffle(order)   # 固定種子打散選項順序，避免答案位置固定
+    order = list(range(len(texts)))   # 與 quizzes.json／Google 表單相同順序（題庫已平均分配正解位置）
     stem = re.sub(r"^【[^】]*】", "", q["question"]).strip()
     opts = []
     for i, oi in enumerate(order):
