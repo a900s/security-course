@@ -30,6 +30,7 @@
 <h2 id="_2">如何使用本教材</h2>
 <ul>
 <li>每一項包含四個區塊：<strong>用途</strong> → <strong>運作原理（概念）</strong> → <strong>常見跡象（偵測）</strong> → <strong>防治措施</strong>。</li>
+<li>本頁為<strong>閱讀教材</strong>：部分章節末附有「🧠 隨堂複習」選擇題，閱讀時點選一次答案即可立即看到對錯與解說，加深印象（每題只能作答一次）。讀完後再作答上方的「📝 學習內容驗證」測驗。</li>
 <li>教學順序大致依「偵察 → 取得入口 → 憑證與橫向移動 → 持久化與擴大」的攻擊生命週期排列，方便對照防禦縱深。</li>
 <li>建議搭配藍隊工具一起講：SIEM（如 Wazuh、Elastic）、IDS/IPS（Suricata、Snort）、EDR 與網路分段。</li>
 </ul>
@@ -178,6 +179,7 @@
 <li>在邊界與內網部署 <strong>IDS/IPS（Suricata/Snort）</strong> 偵測掃描特徵並限速。</li>
 <li>關閉/隱藏不必要的服務橫幅（banner），定期自行掃描盤點（以攻制守）。</li>
 </ul>
+<section class="review" data-q="1" aria-label="隨堂複習第 1 題"><div class="rv-head"><span class="rv-ico">🔍</span><b>🧠 隨堂複習 1/10</b><span class="rv-tip">點選一次答案，立即看對錯</span></div><p class="rv-q">Nmap 這類連接埠掃描工具，在防禦上我方最該做的是？</p><ol class="rv-opts"><li><button type="button" class="rv-opt" data-ok="0"><span class="rv-l">A</span><span class="rv-t">關閉所有日誌</span></button></li><li><button type="button" class="rv-opt" data-ok="0"><span class="rv-l">B</span><span class="rv-t">相信內網一定安全</span></button></li><li><button type="button" class="rv-opt" data-ok="1"><span class="rv-l">C</span><span class="rv-t">只開放必要服務並以防火牆、IDS 監看異常掃描</span></button></li><li><button type="button" class="rv-opt" data-ok="0"><span class="rv-l">D</span><span class="rv-t">把所有連接埠都對外開放</span></button></li></ol><p class="rv-exp" hidden>💡 縮小攻擊面（最小化開放埠）並監看掃描跡象，是面對偵察的基本防禦。</p></section>
 <h2 id="2-hydra-medusa">2. Hydra / Medusa — 線上帳密暴力破解</h2>
 <ul>
 <li><strong>用途</strong>：針對登入服務（SSH、RDP、FTP、HTTP 表單等）嘗試大量帳密組合，直到猜中。</li>
@@ -188,6 +190,7 @@
 <li>全面導入 <strong>MFA（多因素驗證）</strong>。</li>
 <li>限制管理服務對外暴露（VPN / 允許清單），監控並封鎖異常來源。</li>
 </ul>
+<section class="review" data-q="2" aria-label="隨堂複習第 2 題"><div class="rv-head"><span class="rv-ico">🔑</span><b>🧠 隨堂複習 2/10</b><span class="rv-tip">點選一次答案，立即看對錯</span></div><p class="rv-q">對 SSH / RDP 等服務的帳密暴力破解，有效的防治是？</p><ol class="rv-opts"><li><button type="button" class="rv-opt" data-ok="0"><span class="rv-l">A</span><span class="rv-t">把服務改用非加密連線</span></button></li><li><button type="button" class="rv-opt" data-ok="1"><span class="rv-l">B</span><span class="rv-t">強密碼＋MFA＋限制嘗試次數／來源 IP</span></button></li><li><button type="button" class="rv-opt" data-ok="0"><span class="rv-l">C</span><span class="rv-t">停用帳號鎖定</span></button></li><li><button type="button" class="rv-opt" data-ok="0"><span class="rv-l">D</span><span class="rv-t">把密碼縮短方便記憶</span></button></li></ol><p class="rv-exp" hidden>💡 強認證、MFA、速率限制與鎖定可大幅削弱線上猜測攻擊。</p></section>
 <h2 id="3-john-the-ripper-hashcat">3. John the Ripper / Hashcat — 離線密碼破解</h2>
 <ul>
 <li><strong>用途</strong>：當攻擊者已取得密碼<strong>雜湊檔</strong>，在自己機器上離線還原出明文。</li>
@@ -198,6 +201,7 @@
 <li>強制<strong>長且高熵的密碼/通關密語</strong>，鼓勵密碼管理器。</li>
 <li>嚴格保護雜湊存放處，監控對憑證檔的異常存取。</li>
 </ul>
+<section class="review" data-q="3" aria-label="隨堂複習第 3 題"><div class="rv-head"><span class="rv-ico">🧮</span><b>🧠 隨堂複習 3/10</b><span class="rv-tip">點選一次答案，立即看對錯</span></div><p class="rv-q">John/Hashcat 針對外洩的雜湊做離線破解，最有效的防治是？</p><ol class="rv-opts"><li><button type="button" class="rv-opt" data-ok="0"><span class="rv-l">A</span><span class="rv-t">縮短密碼長度</span></button></li><li><button type="button" class="rv-opt" data-ok="1"><span class="rv-l">B</span><span class="rv-t">使用加鹽、計算成本高的雜湊（bcrypt/Argon2）並防止雜湊外洩</span></button></li><li><button type="button" class="rv-opt" data-ok="0"><span class="rv-l">C</span><span class="rv-t">用快速且無鹽的雜湊</span></button></li><li><button type="button" class="rv-opt" data-ok="0"><span class="rv-l">D</span><span class="rv-t">把密碼存成明碼</span></button></li></ol><p class="rv-exp" hidden>💡 加鹽、慢雜湊讓離線破解成本大增；同時要避免雜湊被竊。</p></section>
 <h2 id="4-aircrack-ng-wifiwpawpa2">4. Aircrack-ng — Wi‑Fi（WPA/WPA2）破解</h2>
 <ul>
 <li><strong>用途</strong>：針對無線網路，嘗試還原 WPA/WPA2 預共享金鑰（PSK）。</li>
@@ -208,6 +212,7 @@
 <li>企業環境改用 <strong>WPA2/3-Enterprise（802.1X）</strong> 搭配個別帳號。</li>
 <li>啟用管理框架保護（PMF/802.11w），監控流氓 AP 與 deauth 攻擊。</li>
 </ul>
+<section class="review" data-q="4" aria-label="隨堂複習第 4 題"><div class="rv-head"><span class="rv-ico">📶</span><b>🧠 隨堂複習 4/10</b><span class="rv-tip">點選一次答案，立即看對錯</span></div><p class="rv-q">針對家用／校園無線網路，較安全的設定是？</p><ol class="rv-opts"><li><button type="button" class="rv-opt" data-ok="0"><span class="rv-l">A</span><span class="rv-t">把 SSID 設成常見字串</span></button></li><li><button type="button" class="rv-opt" data-ok="0"><span class="rv-l">B</span><span class="rv-t">完全不設密碼</span></button></li><li><button type="button" class="rv-opt" data-ok="1"><span class="rv-l">C</span><span class="rv-t">採用 WPA2/WPA3＋夠長的隨機金鑰，並停用 WPS</span></button></li><li><button type="button" class="rv-opt" data-ok="0"><span class="rv-l">D</span><span class="rv-t">使用 WEP 加密</span></button></li></ol><p class="rv-exp" hidden>💡 WEP 已不安全；WPA2/WPA3＋強金鑰、關閉 WPS 才能抵擋常見無線破解。</p></section>
 <h2 id="5-wireshark">5. Wireshark — 封包嗅探與流量分析</h2>
 <ul>
 <li><strong>用途</strong>：擷取並分析網路流量，攻擊者用來找明文憑證或敏感資料；藍隊也用它做鑑識。</li>
@@ -218,6 +223,7 @@
 <li>使用交換式網路、<strong>802.1X 埠認證</strong>，限制可接取點。</li>
 <li>對敏感網段做監控，偵測異常的大量鏡像/嗅探行為。</li>
 </ul>
+<section class="review" data-q="5" aria-label="隨堂複習第 5 題"><div class="rv-head"><span class="rv-ico">🕵️</span><b>🧠 隨堂複習 5/10</b><span class="rv-tip">點選一次答案，立即看對錯</span></div><p class="rv-q">在共享網路上用 Wireshark 竊聽流量，最根本的防治是？</p><ol class="rv-opts"><li><button type="button" class="rv-opt" data-ok="0"><span class="rv-l">A</span><span class="rv-t">一律使用明碼協定</span></button></li><li><button type="button" class="rv-opt" data-ok="0"><span class="rv-l">B</span><span class="rv-t">把網速調慢</span></button></li><li><button type="button" class="rv-opt" data-ok="1"><span class="rv-l">C</span><span class="rv-t">全程使用 TLS/HTTPS 等加密傳輸</span></button></li><li><button type="button" class="rv-opt" data-ok="0"><span class="rv-l">D</span><span class="rv-t">停用交換器</span></button></li></ol><p class="rv-exp" hidden>💡 端到端加密讓即使被攔截也讀不到內容，是對抗嗅探的核心。</p></section>
 <h2 id="6-ettercap-bettercap-arp">6. Ettercap / Bettercap — 中間人攻擊與 ARP 欺騙</h2>
 <ul>
 <li><strong>用途</strong>：讓攻擊者插入到兩方通訊之間，竊聽或竄改流量。</li>
@@ -228,6 +234,7 @@
 <li>對重要主機設<strong>靜態 ARP</strong>；全站強制 <strong>HTTPS + HSTS</strong>，必要服務用憑證釘選。</li>
 <li>網路分段，縮小單一廣播域的受害範圍。</li>
 </ul>
+<section class="review" data-q="6" aria-label="隨堂複習第 6 題"><div class="rv-head"><span class="rv-ico">🔀</span><b>🧠 隨堂複習 6/10</b><span class="rv-tip">點選一次答案，立即看對錯</span></div><p class="rv-q">偵測與防治 ARP 欺騙式中間人攻擊，較有效的是？</p><ol class="rv-opts"><li><button type="button" class="rv-opt" data-ok="0"><span class="rv-l">A</span><span class="rv-t">改用 HTTP</span></button></li><li><button type="button" class="rv-opt" data-ok="0"><span class="rv-l">B</span><span class="rv-t">讓所有裝置共用同一 VLAN 無隔離</span></button></li><li><button type="button" class="rv-opt" data-ok="0"><span class="rv-l">C</span><span class="rv-t">關閉交換器日誌</span></button></li><li><button type="button" class="rv-opt" data-ok="1"><span class="rv-l">D</span><span class="rv-t">使用動態 ARP 檢測、連接埠安全與加密連線</span></button></li></ol><p class="rv-exp" hidden>💡 交換器的 DAI／Port Security 搭配加密傳輸，可偵測並降低 ARP 欺騙影響。</p></section>
 <h2 id="7-metasploit-framework">7. Metasploit Framework — 漏洞利用與後滲透框架</h2>
 <ul>
 <li><strong>用途</strong>：整合已知漏洞的利用模組、載荷（payload）與後滲透工具，是最常見的滲透測試框架。</li>
@@ -238,6 +245,7 @@
 <li>部署 <strong>EDR/AV</strong> 偵測常見載荷，網路出口限制可疑的 C2 連線。</li>
 <li>最小權限與應用白名單，降低利用成功後的影響。</li>
 </ul>
+<section class="review" data-q="7" aria-label="隨堂複習第 7 題"><div class="rv-head"><span class="rv-ico">🧰</span><b>🧠 隨堂複習 7/10</b><span class="rv-tip">點選一次答案，立即看對錯</span></div><p class="rv-q">面對 Metasploit 這類利用框架，組織最根本的防治是？</p><ol class="rv-opts"><li><button type="button" class="rv-opt" data-ok="0"><span class="rv-l">A</span><span class="rv-t">共用管理員帳號</span></button></li><li><button type="button" class="rv-opt" data-ok="1"><span class="rv-l">B</span><span class="rv-t">落實修補管理、關閉未用服務並強化縱深防禦</span></button></li><li><button type="button" class="rv-opt" data-ok="0"><span class="rv-l">C</span><span class="rv-t">永不更新系統</span></button></li><li><button type="button" class="rv-opt" data-ok="0"><span class="rv-l">D</span><span class="rv-t">停用防毒</span></button></li></ol><p class="rv-exp" hidden>💡 多數利用針對已知漏洞，及時修補＋最小化服務＋EDR 是關鍵防線。</p></section>
 <h2 id="8-sqlmap-sql">8. SQLmap — 自動化 SQL 注入</h2>
 <ul>
 <li><strong>用途</strong>：自動偵測並利用 Web 應用的 SQL 注入弱點，撈取資料庫內容。</li>
@@ -248,6 +256,7 @@
 <li>資料庫帳號<strong>最小權限</strong>、一般化錯誤訊息，避免資訊洩漏。</li>
 <li>WAF 作為輔助防線，搭配日誌與告警（可參閱本專案的 <code>sql-injection-lab</code>）。</li>
 </ul>
+<section class="review" data-q="8" aria-label="隨堂複習第 8 題"><div class="rv-head"><span class="rv-ico">💉</span><b>🧠 隨堂複習 8/10</b><span class="rv-tip">點選一次答案，立即看對錯</span></div><p class="rv-q">SQLmap 能自動化利用 SQL 注入，對應的防治核心是？</p><ol class="rv-opts"><li><button type="button" class="rv-opt" data-ok="0"><span class="rv-l">A</span><span class="rv-t">在前端做輸入長度限制即可</span></button></li><li><button type="button" class="rv-opt" data-ok="0"><span class="rv-l">B</span><span class="rv-t">只靠 WAF</span></button></li><li><button type="button" class="rv-opt" data-ok="0"><span class="rv-l">C</span><span class="rv-t">把錯誤訊息完整回傳</span></button></li><li><button type="button" class="rv-opt" data-ok="1"><span class="rv-l">D</span><span class="rv-t">後端採參數化查詢並最小權限資料庫帳號</span></button></li></ol><p class="rv-exp" hidden>💡 自動化工具一樣擋不住參數化查詢；最小權限可降低被利用後的衝擊。</p></section>
 <h2 id="9-burp-suite-web">9. Burp Suite — Web 攔截代理與測試平台</h2>
 <ul>
 <li><strong>用途</strong>：攔截、檢視、修改瀏覽器與伺服器之間的 HTTP(S) 請求，是 Web 滲透測試的主力工具。</li>
@@ -278,6 +287,7 @@
 <li>讓不存在與禁止存取的回應<strong>一致化</strong>（避免用回應差異洩漏存在性）。</li>
 <li>速率限制與監控異常列舉行為。</li>
 </ul>
+<section class="review" data-q="9" aria-label="隨堂複習第 9 題"><div class="rv-head"><span class="rv-ico">📁</span><b>🧠 隨堂複習 9/10</b><span class="rv-tip">點選一次答案，立即看對錯</span></div><p class="rv-q">Gobuster 等工具列舉隱藏目錄／檔案，防治上應？</p><ol class="rv-opts"><li><button type="button" class="rv-opt" data-ok="0"><span class="rv-l">A</span><span class="rv-t">把備份檔與管理頁放在可猜到的路徑</span></button></li><li><button type="button" class="rv-opt" data-ok="0"><span class="rv-l">B</span><span class="rv-t">開放目錄瀏覽</span></button></li><li><button type="button" class="rv-opt" data-ok="0"><span class="rv-l">C</span><span class="rv-t">停用存取日誌</span></button></li><li><button type="button" class="rv-opt" data-ok="1"><span class="rv-l">D</span><span class="rv-t">移除敏感檔、正確設定權限並監看大量 404</span></button></li></ol><p class="rv-exp" hidden>💡 別依賴『路徑保密』；要移除敏感檔、設定存取控制並監看列舉跡象。</p></section>
 <h2 id="12-responder-llmnr-nbt-ns">12. Responder — LLMNR / NBT-NS 毒化</h2>
 <ul>
 <li><strong>用途</strong>：在內網（尤其 Windows 環境）誘騙主機送出認證，藉以擷取挑戰雜湊。</li>
@@ -318,6 +328,7 @@
 <li>郵件防護（SPF/DKIM/DMARC、附件沙箱、連結改寫）、全面 <strong>MFA</strong>。</li>
 <li>建立<strong>容易回報</strong>的通報管道與快速處置流程。</li>
 </ul>
+<section class="review" data-q="10" aria-label="隨堂複習第 10 題"><div class="rv-head"><span class="rv-ico">🎣</span><b>🧠 隨堂複習 10/10</b><span class="rv-tip">點選一次答案，立即看對錯</span></div><p class="rv-q">對抗釣魚攻擊，最關鍵的防治組合是？</p><ol class="rv-opts"><li><button type="button" class="rv-opt" data-ok="1"><span class="rv-l">A</span><span class="rv-t">使用者教育＋郵件過濾＋MFA 與網域驗證（SPF/DKIM/DMARC）</span></button></li><li><button type="button" class="rv-opt" data-ok="0"><span class="rv-l">B</span><span class="rv-t">把所有附件自動開啟</span></button></li><li><button type="button" class="rv-opt" data-ok="0"><span class="rv-l">C</span><span class="rv-t">停用垃圾郵件過濾</span></button></li><li><button type="button" class="rv-opt" data-ok="0"><span class="rv-l">D</span><span class="rv-t">完全依賴技術、不做教育</span></button></li></ol><p class="rv-exp" hidden>💡 釣魚利用『人』，需教育、郵件防護、MFA 與寄件網域驗證多管齊下。</p></section>
 <h2 id="16-dns">16. DNS 欺騙 / 快取毒化</h2>
 <ul>
 <li><strong>用途</strong>：把使用者導向攻擊者控制的伺服器（假網站、憑證竊取、惡意下載）。</li>
@@ -386,11 +397,11 @@
 <p>本文為自行撰寫之教學內容；工具名稱與標準分類（如 OWASP、ATT&amp;CK 類別）為業界通用名詞。
 授權建議：文件採 CC BY-NC 4.0、程式碼採 MIT（詳見專案根目錄 README 與 LICENSE 說明）。</p>
 </blockquote>
-<footer>自製教學教材 · 僅供合法授權環境之防禦教育使用 · 由 build.py 自 README.md 產生 · <a href="teacher.html">👨‍🏫 教師區（學習進度）</a></footer>
+<footer>自製教學教材 · 僅供合法授權環境之防禦教育使用 · 由 build.py 自 README.md 產生 · <a href="teacher.html">👨‍🏫 教師區</a></footer>
 </main>
 <script src="https://accounts.google.com/gsi/client" async></script>
 <script src="../js/google-auth-config.js"></script>
 <script src="../js/forms-config.js"></script>
 <script src="../js/student-auth.js"></script>
-<script src="js/progress.js"></script>
+<script src="js/review.js"></script>
 </body></html>
