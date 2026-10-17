@@ -1,9 +1,8 @@
 /* 學習內容驗證（Google 表單測驗）連結設定（共用）。
-   三套教材的「📝 學習內容驗證（10 題）」按鈕都讀取這裡的網址。
-   表單建立後，把下面三個 REPLACE_ME 換成實際的表單填寫網址即可。 */
-window.OWASP_FORM_URL = "OWASP_FORM_URL_REPLACE_ME";
-window.KALI_FORM_URL  = "KALI_FORM_URL_REPLACE_ME";
-window.SQL_FORM_URL   = "SQL_FORM_URL_REPLACE_ME";
+   三套教材的「📝 學習內容驗證（10 題）」按鈕都讀取這裡的網址。 */
+window.OWASP_FORM_URL = "https://docs.google.com/forms/d/e/1FAIpQLSeYJxWyyHsc2PQSUW7gZrn1GXCwDkYl6XrO44NiM8t0-G6xuA/viewform";
+window.KALI_FORM_URL  = "https://docs.google.com/forms/d/e/1FAIpQLSfhZOqGQ09dhOrgMP-8wNz1-3WXi2ii-lPRDI63lx5EqHbubw/viewform";
+window.SQL_FORM_URL   = "https://docs.google.com/forms/d/e/1FAIpQLSeGC7T4YPnqbn_NPfJydzHlNSQ6NdQbqZFt6V8kV1h0fqCZBQ/viewform";
 
 (function () {
   "use strict";
