@@ -46,9 +46,9 @@ window.REVIEW_DATA = {
 "formQ": 10,
 "orig": true,
 "icon": "🛰️",
-"topic": "A01 存取控制（SSRF）",
+"topic": "A01 存取控制失效（SSRF）",
 "stem": "伺服器端請求偽造（SSRF）常見的防禦是？",
-"question": "【A10 SSRF】伺服器端請求偽造（SSRF）常見的防禦是？",
+"question": "【A01 存取控制失效（SSRF）】伺服器端請求偽造（SSRF）常見的防禦是？",
 "options": [
 {
 "l": "A",
@@ -73,7 +73,7 @@ window.REVIEW_DATA = {
 ],
 "correct": 0,
 "exp": "應限制伺服器可存取的目的地（白名單）、隔離內網並封鎖對中繼資料端點的存取。",
-"qv": "492fbf53cf",
+"qv": "ce0c15160a",
 "slug": "a01"
 },
 {
@@ -83,7 +83,7 @@ window.REVIEW_DATA = {
 "icon": "⚙️",
 "topic": "A02 安全設定錯誤",
 "stem": "下列何者是常見的『安全設定錯誤』？",
-"question": "【A05 安全設定錯誤】下列何者是常見的『安全設定錯誤』？",
+"question": "【A02 安全設定錯誤】下列何者是常見的『安全設定錯誤』？",
 "options": [
 {
 "l": "A",
@@ -108,7 +108,7 @@ window.REVIEW_DATA = {
 ],
 "correct": 0,
 "exp": "沿用預設帳密、開放不必要介面都是典型設定錯誤；其餘三者反而是正確作法。",
-"qv": "313e98eb44",
+"qv": "f7d28e990c",
 "slug": "a02"
 },
 {
@@ -151,9 +151,9 @@ window.REVIEW_DATA = {
 "formQ": 6,
 "orig": true,
 "icon": "📦",
-"topic": "A03 軟體供應鏈",
+"topic": "A03 軟體供應鏈失效",
 "stem": "對於使用的第三方套件／函式庫，較好的做法是？",
-"question": "【A06 易受攻擊的元件】對於使用的第三方套件／函式庫，較好的做法是？",
+"question": "【A03 軟體供應鏈失效】對於使用的第三方套件／函式庫，較好的做法是？",
 "options": [
 {
 "l": "A",
@@ -178,7 +178,7 @@ window.REVIEW_DATA = {
 ],
 "correct": 2,
 "exp": "要掌握相依元件清單（SBOM）、追蹤 CVE 並及時更新有漏洞的版本。",
-"qv": "22fde7f7da",
+"qv": "3287d6d638",
 "slug": "a03"
 },
 {
@@ -223,7 +223,7 @@ window.REVIEW_DATA = {
 "icon": "🔐",
 "topic": "A04 加密機制失效",
 "stem": "網站要儲存使用者密碼，下列哪種做法最適當？",
-"question": "【A02 加密機制失效】網站要儲存使用者密碼，下列哪種做法最適當？",
+"question": "【A04 加密機制失效】網站要儲存使用者密碼，下列哪種做法最適當？",
 "options": [
 {
 "l": "A",
@@ -248,7 +248,7 @@ window.REVIEW_DATA = {
 ],
 "correct": 0,
 "exp": "Base64 不是加密；MD5 太快且易破。密碼應使用加鹽、計算成本高的專用雜湊。",
-"qv": "37902dd7c7",
+"qv": "9f54c0ff8c",
 "slug": "a04"
 },
 {
@@ -293,7 +293,7 @@ window.REVIEW_DATA = {
 "icon": "💉",
 "topic": "A05 注入",
 "stem": "要從根本防止 SQL Injection，最主要的技術是？",
-"question": "【A03 注入】要從根本防止 SQL Injection，最主要的技術是？",
+"question": "【A05 注入】要從根本防止 SQL Injection，最主要的技術是？",
 "options": [
 {
 "l": "A",
@@ -318,7 +318,7 @@ window.REVIEW_DATA = {
 ],
 "correct": 3,
 "exp": "參數化查詢讓資料庫先固定語句結構，使用者輸入只當資料帶入，無法改變語意。",
-"qv": "374ced076f",
+"qv": "a1e1411220",
 "slug": "a05-sqli"
 },
 {
@@ -433,7 +433,7 @@ window.REVIEW_DATA = {
 "icon": "📐",
 "topic": "A06 不安全設計",
 "stem": "「不安全設計」強調的重點是？",
-"question": "【A04 不安全設計】「不安全設計」強調的重點是？",
+"question": "【A06 不安全設計】「不安全設計」強調的重點是？",
 "options": [
 {
 "l": "A",
@@ -457,8 +457,8 @@ window.REVIEW_DATA = {
 }
 ],
 "correct": 1,
-"exp": "A04 指的是設計本身缺乏安全考量；威脅建模、安全需求應在開發早期就導入。",
-"qv": "dc694330a9",
+"exp": "A06（不安全設計）指的是設計本身缺乏安全考量；威脅建模、安全需求應在開發早期就導入。",
+"qv": "77ebc9252f",
 "slug": "a06"
 },
 {
@@ -571,9 +571,9 @@ window.REVIEW_DATA = {
 "formQ": 8,
 "orig": true,
 "icon": "🧩",
-"topic": "A08 軟體與資料完整性失效",
+"topic": "A08 軟體或資料完整性失效",
 "stem": "自動更新或 CI/CD 流程中，確保『完整性』的做法是？",
-"question": "【A08 軟體與資料完整性失效】自動更新或 CI/CD 流程中，確保『完整性』的做法是？",
+"question": "【A08 軟體或資料完整性失效】自動更新或 CI/CD 流程中，確保『完整性』的做法是？",
 "options": [
 {
 "l": "A",
@@ -597,8 +597,8 @@ window.REVIEW_DATA = {
 }
 ],
 "correct": 1,
-"exp": "供應鏈與更新須驗證簽章與來源，避免被植入惡意程式（如 A08 的核心風險）。",
-"qv": "0a16db4834",
+"exp": "供應鏈與更新須驗證簽章與來源，避免被植入惡意程式（即 A08 的核心風險）。",
+"qv": "26d12fdb9c",
 "slug": "a08"
 },
 {
@@ -606,9 +606,9 @@ window.REVIEW_DATA = {
 "formQ": 9,
 "orig": true,
 "icon": "📝",
-"topic": "A09 記錄與監控不足",
+"topic": "A09 安全記錄與警示失效",
 "stem": "缺乏足夠的日誌與監控，最直接的後果是？",
-"question": "【A09 記錄與監控不足】缺乏足夠的日誌與監控，最直接的後果是？",
+"question": "【A09 安全記錄與警示失效】缺乏足夠的日誌與監控，最直接的後果是？",
 "options": [
 {
 "l": "A",
@@ -633,7 +633,7 @@ window.REVIEW_DATA = {
 ],
 "correct": 2,
 "exp": "沒有日誌與告警，攻擊往往無聲無息、事後也難追查；應記錄並監控關鍵事件。",
-"qv": "27e59a01ac",
+"qv": "6ce004a171",
 "slug": "a09"
 },
 {
