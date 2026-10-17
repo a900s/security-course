@@ -2,7 +2,11 @@
 """把 README.md 轉成 index.html（同一份內容、兩種格式）。
 需要：pip install markdown
 用法：python3 build.py"""
-import pathlib, markdown, json, html as H, re
+import pathlib, markdown, json, html as H, re, hashlib
+
+def fp(*parts, n=10):
+    """穩定指紋：題目/選項文字改變時就會不同，用來驗證本機作答紀錄是否仍對應目前題目"""
+    return hashlib.sha256("\u241f".join(parts).encode("utf-8")).hexdigest()[:n]
 
 here = pathlib.Path(__file__).parent
 md = (here / "README.md").read_text(encoding="utf-8")
@@ -46,8 +50,9 @@ def review_block(q):
     for i, oi in enumerate(order):
         t = texts[oi]
         ok = "1" if t == correct else "0"
-        opts.append(f'<li><button type="button" class="rv-opt" data-ok="{ok}"><span class="rv-l">{"ABCD"[i]}</span><span class="rv-t">{H.escape(t)}</span></button></li>')
-    return (f'<section class="review" data-q="{q["section"]}" aria-label="隨堂複習第 {q["section"]} 題">'
+        opts.append(f'<li><button type="button" class="rv-opt" data-ok="{ok}" data-id="{fp(t, n=8)}" data-l="{"ABCD"[i]}"><span class="rv-l">{"ABCD"[i]}</span><span class="rv-t">{H.escape(t)}</span></button></li>')
+    qv = fp(q["question"], *[texts[oi] for oi in order], correct)
+    return (f'<section class="review" data-q="{q["section"]}" data-qv="{qv}" aria-label="隨堂複習第 {q["section"]} 題">'
             f'<div class="rv-head"><span class="rv-ico">{q["icon"]}</span><b>🧠 隨堂複習 {q["section"]}/{N_SEC}</b><span class="rv-tip">點選一次答案，立即看對錯</span></div>'
             f'<p class="rv-q">{H.escape(stem)}</p><ol class="rv-opts">{"".join(opts)}</ol>'
             f'<p class="rv-exp" hidden>💡 {H.escape(q["explanation"])}</p></section>')
@@ -68,6 +73,9 @@ if body.count('class="review"') != N_SEC or sorted(n for n in blocks if n) != li
 for n in range(1, N_SEC + 1):
     if not re.search(rf'<h2[^>]*>{n}\.\s', body):
         raise SystemExit(f"找不到第 {n} 章標題")
+def asset(rel):
+    """cache-busting：資源網址加上內容雜湊 ?v=，檔案一改瀏覽器就會抓新版，避免新 HTML 配舊 JS/CSS"""
+    return f"{rel}?v={fp((here / rel).read_text(encoding='utf-8'), n=8)}"
 html = f"""<!doctype html>
 <html lang="zh-Hant-TW">
 <head>
@@ -77,13 +85,13 @@ html = f"""<!doctype html>
 <meta name="description" content="自製資安防禦教材：20 種常見攻擊手法的原理、跡象與防治。僅供授權環境教學。">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&family=JetBrains+Mono:wght@400;500&display=swap">
-<link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="{asset('css/style.css')}">
 </head>
 <body><main class="wrap">
 {body}
 <footer>自製教學教材 · 僅供合法授權環境之防禦教育使用 · 由 build.py 自 README.md 產生 · <a href="teacher.html">👨‍🏫 教師區</a></footer>
 </main>
-<script src="https://accounts.google.com/gsi/client" async></script>\n<script src="../js/google-auth-config.js"></script>\n<script src="../js/forms-config.js"></script>\n<script src="../js/student-auth.js"></script>\n<script src="js/review.js"></script>
+<script src="https://accounts.google.com/gsi/client" async></script>\n<script src="{asset('../js/google-auth-config.js')}"></script>\n<script src="{asset('../js/forms-config.js')}"></script>\n<script src="{asset('../js/student-auth.js')}"></script>\n<script src="{asset('js/review.js')}"></script>
 </body></html>
 """
 (here / "index.html").write_text(html, encoding="utf-8")
