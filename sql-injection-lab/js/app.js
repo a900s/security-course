@@ -4,11 +4,20 @@
 (function () {
   "use strict";
 
-  /* ===== 教師密碼（可設定的佔位值）=====
-     注意：這裡只是教學用的佔位示意，請務必改成你自己的值，
-     且不要把真實密碼寫死在前端——前端任何值都能被使用者看到。
-     正式使用時，教師解答應改由後端驗證。 */
-  var TEACHER_PASSWORD = "CHANGE_ME_教師密碼請自行修改";
+  /* ===== 教師密碼（SHA-256 雜湊比對）=====
+     前端只存雜湊，不存明碼。任何人仍可離線暴力嘗試，
+     正式使用時教師解答應改由後端驗證。
+     產生新雜湊：echo -n "你的密碼" | sha256sum */
+  var TEACHER_PASSWORD_HASH = "2962e8f9635e056b78825f80970517907447ce4e6c7537d553c24b446d1c3c70";
+
+  function sha256Hex(str) {
+    var data = new TextEncoder().encode(str);
+    return crypto.subtle.digest("SHA-256", data).then(function (buf) {
+      return Array.from(new Uint8Array(buf)).map(function (b) {
+        return b.toString(16).padStart(2, "0");
+      }).join("");
+    });
+  }
 
   function esc(t) {
     return String(t).replace(/[&<>"']/g, function (c) {
@@ -233,16 +242,20 @@
   window.teacherLogin = function () {
     var v = document.getElementById("teacherPw").value;
     var msg = document.getElementById("teacherMsg");
-    if (v === TEACHER_PASSWORD) {
-      document.getElementById("teacherPanel").classList.add("show");
-      msg.innerHTML = "<span class='good'>✓ 教師模式已解鎖。</span>";
-      var rows = window.QUIZ_BANK.map(function (q, i) {
-        return "<tr><td>" + (i + 1) + "</td><td>" + esc(q.options[q.answer]) + "</td><td>" + esc(q.exp) + "</td></tr>";
-      }).join("");
-      document.getElementById("answerTable").innerHTML = rows;
-    } else {
-      msg.innerHTML = "<span class='bad'>✗ 密碼錯誤。（預設為程式碼中的佔位值，請老師自行修改）</span>";
-    }
+    sha256Hex(v).then(function (h) {
+      if (h === TEACHER_PASSWORD_HASH) {
+        document.getElementById("teacherPanel").classList.add("show");
+        msg.innerHTML = "<span class='good'>✓ 教師模式已解鎖。</span>";
+        var rows = window.QUIZ_BANK.map(function (q, i) {
+          return "<tr><td>" + (i + 1) + "</td><td>" + esc(q.options[q.answer]) + "</td><td>" + esc(q.exp) + "</td></tr>";
+        }).join("");
+        document.getElementById("answerTable").innerHTML = rows;
+      } else {
+        msg.innerHTML = "<span class='bad'>✗ 密碼錯誤。</span>";
+      }
+    }).catch(function () {
+      msg.innerHTML = "<span class='bad'>✗ 瀏覽器不支援 Web Crypto，無法驗證。</span>";
+    });
   };
 
   /* ---------- 初始化 ---------- */

@@ -230,10 +230,11 @@ const sql =
   </div>
   <div id="teacherPanel" class="teacher-panel">
     <div class="warnbox">
-      <b>⚠ 教師密碼設定（請務必修改）</b><br>
-      目前密碼是寫在 <code>js/app.js</code> 最上方的佔位值：<code>CHANGE_ME_教師密碼請自行修改</code>。
-      請改成你自己的值。<b>提醒：</b>前端任何寫死的密碼都可被使用者在原始碼中看到，
-      正式課堂若需保密，應改由後端驗證，切勿在前端寫死真實密碼。
+      <b>🔒 教師密碼驗證</b><br>
+      前端以 SHA-256 雜湊比對，程式碼中不存放明碼。若要更換密碼，請產生新雜湊後寫入
+      <code>js/app.js</code> 的 <code>TEACHER_PASSWORD_HASH</code>：
+      <code>echo -n "你的密碼" | sha256sum</code>。
+      <b>提醒：</b>雜湊仍可能被離線暴力嘗試；正式課堂若需真正保密，應改由後端驗證。
     </div>
     <div class="card"><h2>📝 標準答案與解析</h2>
       <table><thead><tr><th>題號</th><th>正解</th><th>解析</th></tr></thead>

@@ -13,7 +13,7 @@
 | 目錄 | 說明 | 開啟方式 |
 |---|---|---|
 | [`owasp-top10/`](owasp-top10/) | OWASP Top 10 **兩階段教學關卡**（重現弱點 → 讀程式碼 → 選修法 → 驗證）。含 A05 的 SQL / 指令 / XSS 三小關，共 12 關。純前端安全模擬。 | 開啟 `owasp-top10/index.html` |
-| [`sql-injection-lab/`](sql-injection-lab/) | SQL Injection **原理、六種攻擊型態、各語言防禦程式碼、多層防禦、互動沙盒、18 題隨堂測驗**。教師解答區的密碼為可設定佔位值。 | 開啟 `sql-injection-lab/index.html` |
+| [`sql-injection-lab/`](sql-injection-lab/) | SQL Injection **原理、六種攻擊型態、各語言防禦程式碼、多層防禦、互動沙盒、18 題隨堂測驗**。教師解答區以 SHA-256 雜湊驗證密碼（前端不存明碼）。 | 開啟 `sql-injection-lab/index.html` |
 | [`kali-top20/`](kali-top20/) | **Kali Linux 最重要的 20 種破解手法與防治**：每項含用途、原理、跡象、防治。附倫理與法律聲明。 | 閱讀 `kali-top20/README.md`，或開啟 `kali-top20/index.html` |
 
 根目錄的 [`index.html`](index.html) 是三套教材的導覽入口。
@@ -71,14 +71,14 @@ git push -u origin main
 
 ### 教師密碼（SQL Lab）
 
-`sql-injection-lab/js/app.js` 最上方有：
+`sql-injection-lab/js/app.js` 以 SHA-256 雜湊比對教師密碼，前端不存明碼：
 
 ```js
-var TEACHER_PASSWORD = "CHANGE_ME_教師密碼請自行修改";
+var TEACHER_PASSWORD_HASH = "…";  // echo -n "你的密碼" | sha256sum
 ```
 
-請改成你自己的值。**提醒**：任何寫在前端的密碼都能被學生從原始碼看到；
-正式需要保密時，應改由後端驗證，切勿在前端寫死真實密碼。
+更換密碼時，產生新雜湊後覆寫 `TEACHER_PASSWORD_HASH`。**提醒**：雜湊仍可能被離線暴力嘗試；
+正式需要真正保密時，應改由後端驗證。
 
 ### 倫理與法律
 
