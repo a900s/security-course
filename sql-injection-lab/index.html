@@ -27,6 +27,8 @@
 
 <main class="wrap">
 
+<div id="gsiArea" class="gsi"></div>
+
 <!-- 原理 -->
 <section id="learn" class="section active">
   <div class="card">
@@ -217,7 +219,7 @@ const sql =
     <div class="card" id="quizQuestion"></div>
   </div>
   <div id="quizResult" style="display:none"></div>
-  <aside class="formcta"><div class="formcta-txt"><b>📮 Google 表單回報</b><span>完成測驗後，請把班級、座號、姓名與得分填進 Google 表單回報給老師（另開新分頁）。</span></div><a class="formcta-btn" href="https://docs.google.com/forms/d/e/1FAIpQLSdQ9g95fnnUkskOBre9-HFxB1OfreMbGxL0SbHUa5a8DqeW5w/viewform" target="_blank" rel="noopener">📝 填寫測驗成績表單 ↗</a></aside>
+  <aside class="formcta"><div class="formcta-txt"><b>📝 學習內容驗證（10 題）</b><span>除了頁內隨堂測驗，也請作答這份 10 題選擇題測驗（自動計分），檢核學習成效。</span></div><a class="formcta-btn" data-quiz-form="sql" href="#" target="_blank" rel="noopener">📝 開始學習內容驗證 ↗</a></aside>
 </section>
 
 <!-- 教師區 -->
@@ -254,6 +256,10 @@ const sql =
   <p>SQL Injection 教學實驗室 · 自製教材 · 僅供合法授權環境的教學與防禦學習之用。</p>
 </div></footer>
 
+<script src="https://accounts.google.com/gsi/client" async></script>
+<script src="../js/google-auth-config.js"></script>
+<script src="../js/forms-config.js"></script>
+<script src="../js/student-auth.js"></script>
 <script src="js/quiz.js"></script>
 <script src="js/app.js"></script>
 </body>

@@ -1,5 +1,5 @@
 /* Kali Top 20 學習進度（原創）：每個技術章節加上「已讀／已複習」勾選，
-   存在 localStorage，可匯出 JSON 交給老師彙整。純前端、不上傳任何資料。 */
+   存在 localStorage。學生以 Google 登入後整頁截圖繳交，純前端、不上傳任何資料。 */
 (function () {
   "use strict";
   var KEY = "kali_top20_progress_v1";
@@ -40,31 +40,19 @@
   panel.className = "progpanel";
   panel.innerHTML =
     '<b>📒 我的學習進度</b> <span id="progSum"></span>' +
-    '<div class="row"><input id="stuName" placeholder="姓名（例如：資二甲 12 王小明）">' +
-    '<button id="expBtn">⬇ 匯出進度 JSON</button><button id="clrBtn" class="ghost">清除</button></div>' +
-    '<div class="hint">勾選每一章的「已讀／已複習」，完成後匯出 JSON 交給老師。進度只存在本機瀏覽器。</div>';
+    '<div class="row"><button id="clrBtn" class="ghost">清除本機進度</button></div>' +
+    '<div class="hint">勾選每一章的「已讀／已複習」。登入上方 Google 帳號後，畫面會一起顯示姓名與進度，請整頁截圖繳交給老師。進度只存在本機瀏覽器。</div>';
   var h1 = document.querySelector("h1");
   h1.insertAdjacentElement("afterend", panel);
-  var nameEl = document.getElementById("stuName");
-  nameEl.value = st.name || "";
-  nameEl.oninput = function () { st.name = nameEl.value; save(st); };
 
   function summary() {
     var r = 0, v = 0;
     Object.keys(st.items).forEach(function (k) { if (st.items[k].read) r++; if (st.items[k].reviewed) v++; });
     document.getElementById("progSum").textContent = "已讀 " + r + "/20 · 已複習 " + v + "/20";
+    if (window.StudentAuth) window.StudentAuth.setStatus("Kali 教材進度：已讀 " + r + "/20 · 已複習 " + v + "/20");
   }
   summary();
 
-  document.getElementById("expBtn").onclick = function () {
-    if (!st.name.trim()) { alert("請先填寫姓名再匯出。"); nameEl.focus(); return; }
-    var out = { type: "kali-top20-progress", version: 1, name: st.name.trim(), exportedAt: new Date().toISOString(), items: st.items };
-    var blob = new Blob([JSON.stringify(out, null, 2)], { type: "application/json" });
-    var a = document.createElement("a");
-    a.href = URL.createObjectURL(blob);
-    a.download = "kali-progress-" + st.name.trim().replace(/[\\/:*?"<>|\s]+/g, "_") + ".json";
-    document.body.appendChild(a); a.click(); a.remove();
-  };
   document.getElementById("clrBtn").onclick = function () {
     if (!confirm("確定清除本機的學習進度？")) return;
     localStorage.removeItem(KEY); location.reload();

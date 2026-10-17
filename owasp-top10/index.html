@@ -19,6 +19,8 @@
   <div class="ptrack"><div class="pfill" id="pfill"></div></div>
 </header>
 
+<div class="wrap"><div id="gsiArea" class="gsi"></div></div>
+
 <main class="wrap" id="app"><!-- 由 engine.js 動態產生 --></main>
 
 <footer><div class="wrap">
@@ -26,6 +28,10 @@
   <p style="margin-top:8px">安全模擬教學用途 · <button class="reset" id="resetBtn">重設進度</button> · <a href="teacher.html" style="color:var(--muted);font-size:.85rem">教師專區</a></p>
 </div></footer>
 
+<script src="https://accounts.google.com/gsi/client" async></script>
+<script src="../js/google-auth-config.js"></script>
+<script src="../js/forms-config.js"></script>
+<script src="../js/student-auth.js"></script>
 <script src="js/challenges.js"></script>
 <script src="js/engine.js"></script>
 </body>

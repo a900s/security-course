@@ -220,6 +220,7 @@
     var box = document.getElementById("quizResult");
     box.style.display = "block";
     var pct = Math.round(st.correct / st.qs.length * 100);
+    if (window.StudentAuth) window.StudentAuth.setStatus("SQL 隨堂測驗：" + st.correct + "/" + st.qs.length + "（" + pct + " 分）");
     var cls = document.getElementById("studentClass").value || "—";
     var seat = document.getElementById("studentSeat").value || "—";
     var name = document.getElementById("studentName").value || "—";

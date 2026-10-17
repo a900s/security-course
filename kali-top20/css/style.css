@@ -38,3 +38,19 @@ td.c0{color:var(--muted);text-align:center} td.c1{color:var(--accent2);text-alig
 a.formcta-btn{display:inline-flex;align-items:center;gap:6px;background:var(--accent);border:1px solid var(--accent);color:#06231a;font-weight:700;font-family:var(--sans);text-decoration:none;border-radius:9px;padding:10px 18px;white-space:nowrap}
 a.formcta-btn:hover{filter:brightness(1.08);text-decoration:none}
 a.formcta-btn:focus-visible{outline:2px solid var(--accent2);outline-offset:2px}
+
+/* 學生 Google 登入橫幅（三套教材一致） */
+.gsi{margin:16px 0;padding:14px 18px;border-radius:12px;border:1px solid var(--line);background:var(--panel);display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.gsi.gsi-in{border-color:var(--accent)}
+.gsi .gsi-txt{display:flex;flex-direction:column;gap:3px;flex:1;min-width:220px}
+.gsi .gsi-txt b{color:var(--ink);font-size:1rem}
+.gsi .gsi-txt span{color:var(--muted);font-size:.85rem;line-height:1.6}
+.gsi .gsi-btn-host{min-width:200px}
+.gsi .gsi-id{font-size:1.05rem}
+.gsi .gsi-ok{color:var(--accent)}
+.gsi .gsi-name{color:var(--ink);font-weight:800}
+.gsi .gsi-mail{color:var(--muted);font-size:.85rem}
+.gsi .gsi-status{flex:1;min-width:180px;color:var(--muted);font-size:.9rem}
+.gsi .gsi-out{margin-left:auto;cursor:pointer;background:transparent;border:1px solid var(--line);color:var(--muted);border-radius:8px;padding:6px 12px;font-family:var(--sans)}
+.gsi .gsi-hint{color:var(--muted);font-size:.8rem;width:100%}
+.gsi .gsi-warn{color:var(--warn);font-size:.85rem}

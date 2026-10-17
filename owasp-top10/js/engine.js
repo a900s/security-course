@@ -70,11 +70,9 @@
       '</section>' +
       '<div class="studbar" id="studbar">' +
         '<b>📒 我的學習進度</b> <span id="studSum"></span>' +
-        '<div class="studrow"><input id="stuName" placeholder="姓名（例如：資二甲 12 王小明）">' +
-        '<button type="button" class="btn" id="expBtn">⬇ 匯出進度</button></div>' +
-        '<div class="hint">完成關卡後可匯出 JSON 交給老師。進度只存在本機瀏覽器。</div>' +
+        '<div class="hint">登入上方 Google 帳號後，畫面會一起顯示你的姓名與進度，請整頁截圖繳交給老師。進度只存在本機瀏覽器。</div>' +
       '</div>' +
-      '<aside class="formcta"><div class="formcta-txt"><b>📮 Google 表單回報</b><span>除了匯出 JSON，也可以把已完成的關卡填進 Google 表單回報給老師（另開新分頁）。</span></div><a class="formcta-btn" href="https://docs.google.com/forms/d/e/1FAIpQLSeb0akSXA-geWPuFf7kBFEp527PFeFVBs4j6lKjhu2gQY487g/viewform" target="_blank" rel="noopener">📝 填寫學習進度表單 ↗</a></aside>' +
+      '<aside class="formcta"><div class="formcta-txt"><b>📝 學習內容驗證（10 題）</b><span>完成關卡後，請作答這份 10 題選擇題測驗（自動計分），檢核學習成效。</span></div><a class="formcta-btn" data-quiz-form="owasp" href="#" target="_blank" rel="noopener">📝 開始學習內容驗證 ↗</a></aside>' +
       '<div class="maphead"><h2>關卡</h2><div class="hint">完成一關後自動解鎖下一關</div></div>' +
       '<div class="grid">' + cells + '</div>' + final;
     progress();
@@ -82,28 +80,10 @@
   }
 
   function bindStudentBar() {
-    var p = loadP();
-    var nameEl = document.getElementById("stuName");
-    if (!nameEl) return;
-    nameEl.value = p.name || "";
-    nameEl.oninput = function () { var x = loadP(); x.name = nameEl.value; saveP(x); };
     var n = getSolved().size;
     var sum = document.getElementById("studSum");
     if (sum) sum.textContent = "已完成 " + n + "/" + L.length;
-    document.getElementById("expBtn").onclick = function () {
-      var x = loadP();
-      if (!x.name.trim()) { alert("請先填寫姓名再匯出。"); nameEl.focus(); return; }
-      // 補齊尚未完成關卡的骨架，方便老師對照
-      L.forEach(function (lv) {
-        if (!x.challenges[lv.slug]) x.challenges[lv.slug] = { code: lv.code, slug: lv.slug, nm: lv.nm, en: lv.en, solved: getSolved().has(L.indexOf(lv)) };
-      });
-      var out = { type: "owasp-top10-progress", version: 1, name: x.name.trim(), exportedAt: new Date().toISOString(), solvedCount: getSolved().size, total: L.length, challenges: x.challenges };
-      var blob = new Blob([JSON.stringify(out, null, 2)], { type: "application/json" });
-      var a = document.createElement("a");
-      a.href = URL.createObjectURL(blob);
-      a.download = "owasp-progress-" + x.name.trim().replace(/[\\/:*?"<>|\s]+/g, "_") + ".json";
-      document.body.appendChild(a); a.click(); a.remove();
-    };
+    if (window.StudentAuth) window.StudentAuth.setStatus("OWASP Top 10 進度：已完成 " + n + "/" + L.length + " 關");
   }
 
   /* ---------- 兩階段：程式碼修復 ---------- */

@@ -12,26 +12,53 @@
 
 | 目錄 | 說明 | 開啟方式 |
 |---|---|---|
-| [`owasp-top10/`](owasp-top10/) | OWASP Top 10 **兩階段教學關卡**（重現弱點 → 讀程式碼 → 選修法 → 驗證）。含 A05 的 SQL / 指令 / XSS 三小關，共 12 關。純前端安全模擬。可匯出學習進度 JSON；`teacher.html` 教師專區（與 SQL/Kali 同一組密碼雜湊）可匯入多份檔案並查看本機即時進度。 | 開啟 `owasp-top10/index.html` |
+| [`owasp-top10/`](owasp-top10/) | OWASP Top 10 **兩階段教學關卡**（重現弱點 → 讀程式碼 → 選修法 → 驗證）。含 A05 的 SQL / 指令 / XSS 三小關，共 12 關。純前端安全模擬。學生以 Google 登入後整頁截圖佐證；`teacher.html` 教師專區（與 SQL/Kali 同一組密碼雜湊）可匯入多份檔案並查看本機即時進度。 | 開啟 `owasp-top10/index.html` |
 | [`sql-injection-lab/`](sql-injection-lab/) | SQL Injection **原理、六種攻擊型態、各語言防禦程式碼、多層防禦、互動沙盒、18 題隨堂測驗**。教師解答區以 SHA-256 雜湊驗證密碼（前端不存明碼）。 | 開啟 `sql-injection-lab/index.html` |
-| [`kali-top20/`](kali-top20/) | **Kali Linux 最重要的 20 種破解手法與防治**：每項含用途、原理、跡象、防治。附倫理與法律聲明。每章可勾選「已讀／已複習」並匯出 JSON；`teacher.html` 教師區（與 SQL Lab 同一組密碼雜湊）可匯入多份檔案看完成度總覽。 | 閱讀 `kali-top20/README.md`，或開啟 `kali-top20/index.html` |
+| [`kali-top20/`](kali-top20/) | **Kali Linux 最重要的 20 種破解手法與防治**：每項含用途、原理、跡象、防治。附倫理與法律聲明。每章可勾選「已讀／已複習」，學生以 Google 登入後整頁截圖佐證；`teacher.html` 教師區（與 SQL Lab 同一組密碼雜湊）可匯入多份檔案看完成度總覽。 | 閱讀 `kali-top20/README.md`，或開啟 `kali-top20/index.html` |
 
 根目錄的 [`index.html`](index.html) 是三套教材的導覽入口。
 
 ---
 
-## Google 表單回報
+## 學生登入、截圖佐證與學習內容驗證
 
-三套教材的學生頁面都有一張一致的「📮 Google 表單回報」卡片（另開新分頁），作為匯出 JSON 以外的另一種回報方式：
+三套學生頁面（`owasp-top10/`、`kali-top20/`、`sql-injection-lab/`）已改為：
 
-| 模組 | 卡片位置 | 表單 |
+- **移除「匯出 JSON」**與以匯入 JSON 為前提的文字；學生改以**整頁截圖**作為學習佐證。
+- **Google 登入**：每頁頂端有 Google Identity Services 登入按鈕。登入後會以
+  「`✅ 已登入：王小明 · student@…`」橫幅顯示姓名（email 以小字呈現），旁邊同時顯示
+  學習進度／測驗分數，方便一次截圖同時帶到「身分＋狀態」。純前端，不上傳任何資料。
+- **學習內容驗證（10 題）**：原本的「📮 Google 表單回報」卡片已統一替換為
+  「📝 學習內容驗證（10 題）」按鈕，連到各自的 Google 表單測驗（4 選 1、自動計分）。
+  題目內容見 [`_quizzes/`](_quizzes/)（`owasp-quiz.md` / `kali-quiz.md` / `sql-quiz.md`
+  與機器可讀的 `quizzes.json`，由 `_quizzes/build_quizzes.py` 產生）。
+
+### 共用設定檔（含待填 PLACEHOLDER）
+
+| 檔案 | 用途 | 需替換的字串 |
 |---|---|---|
-| `owasp-top10/` | 首頁「我的學習進度」面板下方 | [OWASP Top 10 學習進度](https://docs.google.com/forms/d/e/1FAIpQLSeb0akSXA-geWPuFf7kBFEp527PFeFVBs4j6lKjhu2gQY487g/viewform) |
-| `kali-top20/` | 標題下「我的學習進度」面板下方 | [Kali Top 20 學習進度](https://docs.google.com/forms/d/e/1FAIpQLScBsGy90SkZhNRVR6pcGr04NRZg2f0EVy8kI8c0JJ_cBqWZeA/viewform) |
-| `sql-injection-lab/` | 「📝 隨堂測驗」分頁下方 | [SQL Injection 測驗成績](https://docs.google.com/forms/d/e/1FAIpQLSdQ9g95fnnUkskOBre9-HFxB1OfreMbGxL0SbHUa5a8DqeW5w/viewform) |
+| [`js/google-auth-config.js`](js/google-auth-config.js) | Google 登入用戶端 ID | `REPLACE_ME.apps.googleusercontent.com` |
+| [`js/forms-config.js`](js/forms-config.js) | 三份學習內容驗證表單網址 | `OWASP_FORM_URL_REPLACE_ME`、`KALI_FORM_URL_REPLACE_ME`、`SQL_FORM_URL_REPLACE_ME` |
 
-表單回覆會匯入各自的 Google 試算表。卡片樣式為各模組 `css/style.css` 中相同的 `.formcta` 區塊；
-Kali 的卡片由 `build.py` 產生，修改連結後請重新執行 `python3 build.py`。
+三個頁面都以相對路徑載入上述根目錄設定檔與共用的
+[`js/student-auth.js`](js/student-auth.js)，並以同一組 `.gsi` / `.formcta` 樣式維持一致外觀。
+Kali 頁由 `kali-top20/build.py` 產生，改動後請重新執行 `python3 kali-top20/build.py`。
+
+### 設定 Google 登入（OAuth Web Client ID）
+
+1. 到 Google Cloud Console → 「API 和服務」→「憑證」→ 建立「OAuth 2.0 用戶端 ID」，
+   應用程式類型選 **網頁應用程式（Web）**。
+2. 在「**已授權的 JavaScript 來源**」加入：`https://a900s.github.io`
+   （本機測試可另外加入 `http://localhost:8080`）。本專案用 GIS，不需填重新導向 URI。
+3. 複製產生的用戶端 ID（形如 `xxxxxx.apps.googleusercontent.com`），
+   貼到 `js/google-auth-config.js` 的 `window.GOOGLE_CLIENT_ID`。
+
+### 填入表單網址
+
+建立三份 Google 表單測驗後，把各自的「填寫網址」分別填入 `js/forms-config.js`
+的 `OWASP_FORM_URL` / `KALI_FORM_URL` / `SQL_FORM_URL`。未填妥前，按鈕會停用並提示。
+
+> 備註：`teacher.html` 教師頁暫時維持原狀；學生端已改以截圖佐證，匯入功能可擇期再調整。
 
 ---
 
