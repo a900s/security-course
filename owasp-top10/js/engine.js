@@ -37,8 +37,23 @@
     var f = document.getElementById("pfill"); if (f) f.style.width = (t ? n / t * 100 : 0) + "%";
     // 同步頂端 Google 登入列的進度文字與地圖上的「我的學習進度」（每次進度變動都要更新）
     var sum = document.getElementById("studSum");
-    if (sum) sum.textContent = "已完成 " + n + "/" + t;
-    if (window.StudentAuth) window.StudentAuth.setStatus("OWASP Top 10 進度：已完成 " + n + "/" + t + " 關");
+    if (sum) sum.textContent = "已完成 " + n + "/" + t + " 關" + (window.ReviewCore ? " · " + window.ReviewCore.statusText() : "");
+    // 登入列：關卡進度 n/12 ＋ 隨堂複習 x/20（由共用 ReviewCore 組合，見 window.reviewStatusPrefix）
+    if (window.ReviewCore) window.ReviewCore.refresh();
+    else if (window.StudentAuth) window.StudentAuth.setStatus(statusPrefix());
+  }
+
+  function statusPrefix() { return "OWASP Top 10 進度：已完成 " + getSolved().size + "/" + L.length + " 關"; }
+  window.reviewStatusPrefix = statusPrefix;
+
+  /* 隨堂複習：每關頁末 1–2 題（題庫 js/review-data.js 的 slug 對應關卡），由共用 ../js/review-core.js 產生題卡 */
+  function reviewFor(slug) {
+    var R = window.REVIEW_DATA;
+    if (!R || !window.ReviewCore) return "";
+    var qs = R.questions.filter(function (q) { return q.slug === slug; });
+    if (!qs.length) return "";
+    return '<div class="lvreview"><div class="maphead"><h2>🧠 本關隨堂複習</h2><div class="hint">點選一次答案，立即看對錯；共 ' + R.total + ' 題分布在 12 個關卡</div></div>' +
+      qs.map(function (q) { return window.ReviewCore.slot(q.n); }).join("") + '</div>';
   }
 
   var app = document.getElementById("app");
@@ -76,10 +91,12 @@
         '<b>📒 我的學習進度</b> <span id="studSum"></span>' +
         '<div class="hint">登入上方 Google 帳號後，畫面會一起顯示你的姓名與進度，請整頁截圖繳交給老師。進度只存在本機瀏覽器。</div>' +
       '</div>' +
-      '<aside class="formcta"><div class="formcta-txt"><b>📝 學習內容驗證（10 題）</b><span>完成關卡後，請作答這份 10 題選擇題測驗（自動計分），檢核學習成效。</span></div><a class="formcta-btn" data-quiz-form="owasp" href="#" target="_blank" rel="noopener">📝 開始學習內容驗證 ↗</a></aside>' +
+      '<aside class="formcta"><div class="formcta-txt"><b>📝 學習內容驗證（20 題）</b><span>完成關卡、各關隨堂複習與下方總複習後，請作答這份 20 題選擇題測驗（自動計分），檢核學習成效。</span></div><a class="formcta-btn" data-quiz-form="owasp" href="#" target="_blank" rel="noopener">📝 開始學習內容驗證 ↗</a></aside>' +
       '<div class="maphead"><h2>關卡</h2><div class="hint">完成一關後自動解鎖下一關</div></div>' +
-      '<div class="grid">' + cells + '</div>' + final;
+      '<div class="grid">' + cells + '</div>' + final +
+      '<section class="final-review" aria-label="總複習"><div id="finalReview"></div></section>';
     progress();
+    if (window.FinalReview) window.FinalReview.mount(document.getElementById("finalReview"));
   }
 
   /* ---------- 兩階段：程式碼修復 ---------- */
@@ -171,8 +188,9 @@
       (next ? '<p style="margin-top:4px">已解鎖下一關 <b>' + esc(next.code) + ' ' + esc(next.nm) + '</b></p>' : '<p style="margin-top:4px">這是最後一關，你已完成全部！</p>') +
       '<div class="pagenav"><a class="btn sec" href="#/">← 回關卡地圖</a><span class="sp"></span>' +
       (next ? '<a class="btn" href="#/' + next.slug + '">下一關 ' + esc(next.code) + ' →</a>' : '') +
-      '</div></div>';
+      '</div></div>' + reviewFor(lv.slug);
     app.innerHTML = html;
+    if (window.ReviewCore) window.ReviewCore.mount(app);
     progress();
     buildSandbox(lv, idx);
   }

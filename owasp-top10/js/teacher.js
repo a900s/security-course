@@ -29,6 +29,7 @@
       if (h === TEACHER_PASSWORD_HASH) {
         document.getElementById("lock").hidden = true;
         document.getElementById("panel").hidden = false;
+        if (window.ReviewTeacher) window.ReviewTeacher.render("answerTable");   // 20 題標準答案（含表單題號）
         renderLive();
         render();
       } else msg.textContent = "✗ 密碼錯誤。";

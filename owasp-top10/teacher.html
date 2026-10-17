@@ -6,7 +6,8 @@
 <title>教師專區 — OWASP Top 10 學習進度</title>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&family=JetBrains+Mono:wght@400;500&display=swap">
-<link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="css/style.css?v=59f1b556">
+<link rel="stylesheet" href="../css/review.css?v=13f1a401">
 <style>
 .progpanel{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:14px 18px;margin:16px 0}
 .progpanel .row{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px;justify-content:center}
@@ -47,6 +48,7 @@ td.c0{color:var(--muted)} td.c1{color:var(--accent2)} td.c2{color:var(--ok);font
   </div>
 
   <div id="panel" hidden>
+    <div id="answerTable"></div>
     <div id="live"></div>
 
     <div class="progpanel">
@@ -71,7 +73,9 @@ td.c0{color:var(--muted)} td.c1{color:var(--accent2)} td.c2{color:var(--ok);font
   </div>
 </main>
 <footer><div class="wrap"><p>自製教學教材 · 教師專區</p></div></footer>
-<script src="js/challenges.js"></script>
-<script src="js/teacher.js"></script>
+<script src="js/challenges.js?v=25e58f72"></script>
+<script src="js/review-data.js?v=9d62e823"></script>
+<script src="../js/review-teacher.js?v=fc86e0a5"></script>
+<script src="js/teacher.js?v=5b9ed71d"></script>
 </body>
 </html>

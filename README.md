@@ -12,9 +12,9 @@
 
 | 目錄 | 說明 | 開啟方式 |
 |---|---|---|
-| [`owasp-top10/`](owasp-top10/) | OWASP Top 10 **兩階段教學關卡**（重現弱點 → 讀程式碼 → 選修法 → 驗證）。含 A05 的 SQL / 指令 / XSS 三小關，共 12 關。純前端安全模擬。學生以 Google 登入後整頁截圖佐證；`teacher.html` 教師專區（與 SQL/Kali 同一組密碼雜湊）可匯入多份檔案並查看本機即時進度。 | 開啟 `owasp-top10/index.html` |
-| [`sql-injection-lab/`](sql-injection-lab/) | SQL Injection **原理、六種攻擊型態、各語言防禦程式碼、多層防禦、互動沙盒、18 題隨堂測驗**。教師解答區以 SHA-256 雜湊驗證密碼（前端不存明碼）。 | 開啟 `sql-injection-lab/index.html` |
-| [`kali-top20/`](kali-top20/) | **Kali Linux 最重要的 20 種破解手法與防治**：每項含用途、原理、跡象、防治。附倫理與法律聲明。每章可勾選「已讀／已複習」，學生以 Google 登入後整頁截圖佐證；`teacher.html` 教師區（與 SQL Lab 同一組密碼雜湊）可匯入多份檔案看完成度總覽。 | 閱讀 `kali-top20/README.md`，或開啟 `kali-top20/index.html` |
+| [`owasp-top10/`](owasp-top10/) | OWASP Top 10 **兩階段教學關卡**（重現弱點 → 讀程式碼 → 選修法 → 驗證）。含 A05 的 SQL / 指令 / XSS 三小關，共 12 關。每關頁末附隨堂複習（共 20 題），關卡地圖下方有總複習。純前端安全模擬。學生以 Google 登入後整頁截圖佐證；`teacher.html` 教師專區（與 SQL/Kali 同一組密碼雜湊）可匯入多份檔案並查看本機即時進度。 | 開啟 `owasp-top10/index.html` |
+| [`sql-injection-lab/`](sql-injection-lab/) | SQL Injection **原理、六種攻擊型態、各語言防禦程式碼、多層防禦、互動沙盒**，每段附隨堂複習（共 20 題）＋「總複習」分頁。教師區以 SHA-256 雜湊驗證密碼（前端不存明碼），並列出 20 題標準答案與表單題號。 | 開啟 `sql-injection-lab/index.html` |
+| [`kali-top20/`](kali-top20/) | **Kali Linux 最重要的 20 種破解手法與防治**：每項含用途、原理、跡象、防治。附倫理與法律聲明。每章末附 1 題隨堂複習（共 20 題），文末有總複習；學生以 Google 登入後整頁截圖佐證；`teacher.html` 教師區（與 SQL Lab 同一組密碼雜湊）可匯入多份檔案看完成度總覽。 | 閱讀 `kali-top20/README.md`，或開啟 `kali-top20/index.html` |
 
 根目錄的 [`index.html`](index.html) 是三套教材的導覽入口。
 
@@ -28,8 +28,8 @@
 - **Google 登入**：每頁頂端有 Google Identity Services 登入按鈕。登入後會以
   「`✅ 已登入：王小明 · student@…`」橫幅顯示姓名（email 以小字呈現），旁邊同時顯示
   學習進度／測驗分數，方便一次截圖同時帶到「身分＋狀態」。純前端，不上傳任何資料。
-- **學習內容驗證（10 題）**：原本的「📮 Google 表單回報」卡片已統一替換為
-  「📝 學習內容驗證（10 題）」按鈕，連到各自的 Google 表單測驗（4 選 1、自動計分）。
+- **學習內容驗證（20 題）**：「📝 學習內容驗證（20 題）」按鈕連到各自的 Google 表單測驗
+  （4 選 1、自動計分）。表單第 1–10 題為原本題目（凍結不改），第 11–20 題為新增題。
   題目內容見 [`_quizzes/`](_quizzes/)（`owasp-quiz.md` / `kali-quiz.md` / `sql-quiz.md`
   與機器可讀的 `quizzes.json`，由 `_quizzes/build_quizzes.py` 產生）。
 
@@ -42,7 +42,18 @@
 
 三個頁面都以相對路徑載入上述根目錄設定檔與共用的
 [`js/student-auth.js`](js/student-auth.js)，並以同一組 `.gsi` / `.formcta` 樣式維持一致外觀。
-Kali 頁由 `kali-top20/build.py` 產生，改動後請重新執行 `python3 kali-top20/build.py`。
+Kali 頁由 `kali-top20/build.py` 產生。
+
+### 隨堂複習／總複習（三套共用、同一格式）
+
+- 每套教材 **20 題**，題庫是 `_quizzes/<owasp|kali|sql>-review20.json`（依頁面順序；`section`＝頁面題號、
+  `formQ`＝Google 表單題號）。表單第 1–10 題與原題逐字相同，第 11–20 題＝題庫中 `source: "new"` 的 10 題。
+- 共用程式：[`js/review-core.js`](js/review-core.js)（頁內隨堂複習卡：點一次即顯示對錯並鎖定，
+  紀錄存本機 localStorage v3＝題目指紋＋選項穩定 id）、[`js/final-review.js`](js/final-review.js)
+  （總複習：隨機 10 題／全部 20 題，每次打亂題序與選項）、[`js/review-teacher.js`](js/review-teacher.js)
+  （教師區 20 題答案表，標出表單題號）、[`css/review.css`](css/review.css)。
+- 改題目後執行 **`./build.sh`**：重建 `quizzes.json`／`*-quiz.md`、Kali 頁面，驗證（20 題、表單第 1–10 題未變、
+  正解 A–D 各 5 題）、產生各模組 `js/review-data.js`，並為 CSS/JS 加上內容雜湊 `?v=` 防止舊快取。
 
 ### 設定 Google 登入（OAuth Web Client ID）
 

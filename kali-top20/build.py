@@ -2,11 +2,7 @@
 """把 README.md 轉成 index.html（同一份內容、兩種格式）。
 需要：pip install markdown
 用法：python3 build.py"""
-import pathlib, markdown, json, html as H, re, hashlib
-
-def fp(*parts, n=10):
-    """穩定指紋：題目/選項文字改變時就會不同，用來驗證本機作答紀錄是否仍對應目前題目"""
-    return hashlib.sha256("\u241f".join(parts).encode("utf-8")).hexdigest()[:n]
+import pathlib, markdown, json, re
 
 here = pathlib.Path(__file__).parent
 md = (here / "README.md").read_text(encoding="utf-8")
@@ -14,48 +10,23 @@ md = (here / "README.md").read_text(encoding="utf-8")
 md = re.sub(r"(?m)^  (?=[-*+] |\d+\. )", "    ", md)
 body = markdown.markdown(md, extensions=["tables", "toc", "sane_lists"])
 # Google 表單測驗卡片：放在 h1 之後（本頁為閱讀教材，不再有勾選式進度）
-FORM_CTA = '''<aside class="formcta"><div class="formcta-txt"><b>📝 學習內容驗證（10 題）</b><span>讀完教材後，請作答這份 10 題選擇題測驗（自動計分），檢核學習成效。</span></div><a class="formcta-btn" data-quiz-form="kali" href="#" target="_blank" rel="noopener">📝 開始學習內容驗證 ↗</a></aside>'''
+FORM_CTA = '''<aside class="formcta"><div class="formcta-txt"><b>📝 學習內容驗證（20 題）</b><span>讀完教材、完成各章隨堂複習與文末總複習後，請作答這份 20 題選擇題測驗（自動計分），檢核學習成效。</span></div><a class="formcta-btn" data-quiz-form="kali" href="#" target="_blank" rel="noopener">📝 開始學習內容驗證 ↗</a></aside>'''
 GSI_AREA = '<div id="gsiArea" class="gsi"></div>'
 body = body.replace("</h1>", "</h1>\n" + GSI_AREA + "\n" + FORM_CTA, 1)
 
 # ── 隨堂複習：_quizzes/kali-review20.json，20 個手法章節末各 1 題 ──
-# （Google 表單 10 題測驗仍以 quizzes.json 為準；source=form 的 10 題必須與其逐字相同）
+# 這裡只在每章末放插槽 <div class="review-slot" data-q="n">；題卡由共用的 ../js/review-core.js 依 js/review-data.js 產生。
+# 題庫驗證（20 題、表單第 1–10 題凍結、第 11–20 題與 quizzes.json 一致、正解分布）與 review-data.js 產生、
+# CSS/JS 的 ?v= 雜湊，都由 ../_quizzes/build_review.py 負責（一鍵：../build.sh）。
 QDIR = here.parent / "_quizzes"
-FORMQ = next(q for q in json.loads((QDIR / "quizzes.json").read_text(encoding="utf-8"))["quizzes"] if q["id"] == "kali")
 REVIEW = json.loads((QDIR / "kali-review20.json").read_text(encoding="utf-8"))["questions"]
 N_SEC = 20
-secs = [q["section"] for q in REVIEW]
-if len(REVIEW) != N_SEC or sorted(secs) != list(range(1, N_SEC + 1)):
-    raise SystemExit(f"隨堂複習須剛好 {N_SEC} 題且每章 1 題：目前 {len(REVIEW)} 題，章節 {sorted(secs)}")
-fq = {q["number"]: q for q in FORMQ["questions"]}
-for q in REVIEW:
-    if len(q["options"]) != 4 or not 0 <= q["correctIndex"] < 4:
-        raise SystemExit(f"第 {q['section']} 章題目格式錯誤")
-    if q.get("source") == "form":
-        f = fq[q["formQ"]]
-        for k in ("question", "options", "correctIndex", "explanation", "icon"):
-            if f[k] != q[k]:
-                raise SystemExit(f"第 {q['section']} 章（表單第 {q['formQ']} 題）欄位 {k} 與 quizzes.json 不一致")
-if len(fq) != 10 or sum(q.get("source") == "form" for q in REVIEW) != 10:
-    raise SystemExit("表單 10 題未全部對應到隨堂複習")
+if sorted(q["section"] for q in REVIEW) != list(range(1, N_SEC + 1)):
+    raise SystemExit(f"隨堂複習須剛好 {N_SEC} 題且每章 1 題")
 QUIZ = {"questions": REVIEW}
 
 def review_block(q):
-    letters = list(q["options"].keys())
-    texts = [q["options"][k] for k in letters]
-    correct = texts[q["correctIndex"]]
-    order = list(range(len(texts)))   # 與 quizzes.json／Google 表單相同順序（題庫已平均分配正解位置）
-    stem = re.sub(r"^【[^】]*】", "", q["question"]).strip()
-    opts = []
-    for i, oi in enumerate(order):
-        t = texts[oi]
-        ok = "1" if t == correct else "0"
-        opts.append(f'<li><button type="button" class="rv-opt" data-ok="{ok}" data-id="{fp(t, n=8)}" data-l="{"ABCD"[i]}"><span class="rv-l">{"ABCD"[i]}</span><span class="rv-t">{H.escape(t)}</span></button></li>')
-    qv = fp(q["question"], *[texts[oi] for oi in order], correct)
-    return (f'<section class="review" data-q="{q["section"]}" data-qv="{qv}" aria-label="隨堂複習第 {q["section"]} 題">'
-            f'<div class="rv-head"><span class="rv-ico">{q["icon"]}</span><b>🧠 隨堂複習 {q["section"]}/{N_SEC}</b><span class="rv-tip">點選一次答案，立即看對錯</span></div>'
-            f'<p class="rv-q">{H.escape(stem)}</p><ol class="rv-opts">{"".join(opts)}</ol>'
-            f'<p class="rv-exp" hidden>💡 {H.escape(q["explanation"])}</p></section>')
+    return f'<div class="review-slot" data-q="{q["section"]}"></div>'
 
 blocks = {}
 for q in QUIZ["questions"]:
@@ -68,14 +39,19 @@ for part in parts:
         part = part.rstrip() + "\n" + "\n".join(blocks[int(m.group(1))]) + "\n"
     out.append(part)
 body = "".join(out)
-if body.count('class="review"') != N_SEC or sorted(n for n in blocks if n) != list(range(1, N_SEC + 1)):
+if body.count('class="review-slot"') != N_SEC or sorted(n for n in blocks if n) != list(range(1, N_SEC + 1)):
     raise SystemExit("隨堂複習題插入數量不符（有章節標題找不到？）")
 for n in range(1, N_SEC + 1):
     if not re.search(rf'<h2[^>]*>{n}\.\s', body):
         raise SystemExit(f"找不到第 {n} 章標題")
+FINAL = """<section class="final-review" id="final" aria-label="總複習">
+<h2>🧠 總複習</h2>
+<div id="finalReview"></div>
+</section>"""
+
 def asset(rel):
-    """cache-busting：資源網址加上內容雜湊 ?v=，檔案一改瀏覽器就會抓新版，避免新 HTML 配舊 JS/CSS"""
-    return f"{rel}?v={fp((here / rel).read_text(encoding='utf-8'), n=8)}"
+    """?v= 內容雜湊由 ../_quizzes/build_review.py 統一加上"""
+    return rel
 html = f"""<!doctype html>
 <html lang="zh-Hant-TW">
 <head>
@@ -86,12 +62,14 @@ html = f"""<!doctype html>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&family=JetBrains+Mono:wght@400;500&display=swap">
 <link rel="stylesheet" href="{asset('css/style.css')}">
+<link rel="stylesheet" href="{asset('../css/review.css')}">
 </head>
 <body><main class="wrap">
 {body}
+{FINAL}
 <footer>自製教學教材 · 僅供合法授權環境之防禦教育使用 · 由 build.py 自 README.md 產生 · <a href="teacher.html">👨‍🏫 教師區</a></footer>
 </main>
-<script src="https://accounts.google.com/gsi/client" async></script>\n<script src="{asset('../js/google-auth-config.js')}"></script>\n<script src="{asset('../js/forms-config.js')}"></script>\n<script src="{asset('../js/student-auth.js')}"></script>\n<script src="{asset('js/review.js')}"></script>
+<script src="https://accounts.google.com/gsi/client" async></script>\n<script src="{asset('../js/google-auth-config.js')}"></script>\n<script src="{asset('../js/forms-config.js')}"></script>\n<script src="{asset('../js/student-auth.js')}"></script>\n<script src="{asset('js/review-data.js')}"></script>\n<script src="{asset('../js/review-core.js')}"></script>\n<script src="{asset('../js/final-review.js')}"></script>
 </body></html>
 """
 (here / "index.html").write_text(html, encoding="utf-8")

@@ -162,82 +162,9 @@
     log.textContent = (hit ? "[WARN] " : "[INFO] ") + "scenario=" + key + " input=\"" + input + "\"" + (hit ? " suspected_injection=true" : "");
   };
 
-  /* ---------- 測驗 ---------- */
-  var quizState = null;
-  function shuffle(a) { for (var i = a.length - 1; i > 0; i--) { var j = Math.floor(Math.random() * (i + 1)); var t = a[i]; a[i] = a[j]; a[j] = t; } return a; }
-
-  window.startQuiz = function () {
-    var count = document.getElementById("quizCount").value;
-    var bank = window.QUIZ_BANK.slice();
-    var picked = (count === "all") ? bank : shuffle(bank).slice(0, 10);
-    quizState = { qs: picked, i: 0, correct: 0, answers: [] };
-    document.getElementById("quizSetup").style.display = "none";
-    document.getElementById("quizArea").style.display = "block";
-    document.getElementById("quizResult").style.display = "none";
-    renderQ();
-  };
-
-  function renderQ() {
-    var st = quizState, q = st.qs[st.i];
-    document.getElementById("qProgress").querySelector("div").style.width = (st.i / st.qs.length * 100) + "%";
-    var opts = q.options.map(function (o, i) {
-      return "<div class='quiz-opt' data-i='" + i + "'>" + esc(o) + "</div>";
-    }).join("");
-    document.getElementById("quizQuestion").innerHTML =
-      "<div class='note'>第 " + (st.i + 1) + " / " + st.qs.length + " 題</div>" +
-      "<h3>" + esc(q.q) + "</h3>" + opts + "<div id='qfb'></div>";
-    document.querySelectorAll("#quizQuestion .quiz-opt").forEach(function (el) {
-      el.onclick = function () { answerQ(+el.getAttribute("data-i"), el); };
-    });
-  }
-
-  function answerQ(choice, el) {
-    var st = quizState, q = st.qs[st.i];
-    if (el.parentNode.getAttribute("data-done")) return;
-    el.parentNode.setAttribute("data-done", "1");
-    var correct = choice === q.answer;
-    if (correct) st.correct++;
-    st.answers.push({ q: q.q, choice: choice, answer: q.answer, options: q.options, exp: q.exp, correct: correct });
-    document.querySelectorAll("#quizQuestion .quiz-opt").forEach(function (o) {
-      var i = +o.getAttribute("data-i");
-      if (i === q.answer) o.classList.add("correct");
-      else if (i === choice) o.classList.add("wrong");
-      o.onclick = null;
-    });
-    document.getElementById("qfb").innerHTML =
-      "<div class='result " + (correct ? "ok" : "fail") + "' style='margin-top:12px'>" +
-      (correct ? "✓ 答對了！" : "✗ 正解是：" + esc(q.options[q.answer])) + "<br><span class='note'>" + esc(q.exp) + "</span></div>" +
-      "<div class='btnrow'><button class='btn' id='nextBtn'>" + (st.i + 1 < st.qs.length ? "下一題 →" : "看結果") + "</button></div>";
-    document.getElementById("nextBtn").onclick = function () {
-      st.i++;
-      if (st.i < st.qs.length) renderQ(); else showResult();
-    };
-  }
-
-  function showResult() {
-    var st = quizState;
-    document.getElementById("quizArea").style.display = "none";
-    var box = document.getElementById("quizResult");
-    box.style.display = "block";
-    var pct = Math.round(st.correct / st.qs.length * 100);
-    if (window.StudentAuth) window.StudentAuth.setStatus("SQL 隨堂測驗：" + st.correct + "/" + st.qs.length + "（" + pct + " 分）");
-    var cls = document.getElementById("studentClass").value || "—";
-    var seat = document.getElementById("studentSeat").value || "—";
-    var name = document.getElementById("studentName").value || "—";
-    var review = st.answers.map(function (a, i) {
-      return "<div class='card'><b>" + (i + 1) + ". " + esc(a.q) + "</b>" +
-        "<div class='" + (a.correct ? "good" : "bad") + "' style='margin-top:6px'>" +
-        (a.correct ? "✓ 你答對了" : "✗ 你的作答：" + esc(a.options[a.choice])) + "</div>" +
-        (a.correct ? "" : "<div class='good'>正解：" + esc(a.options[a.answer]) + "</div>") +
-        "<div class='note' style='margin-top:4px'>" + esc(a.exp) + "</div></div>";
-    }).join("");
-    box.innerHTML = "<div class='card'><h2>🎯 測驗結果</h2>" +
-      "<p>班級 " + esc(cls) + " · 座號 " + esc(seat) + " · " + esc(name) + "</p>" +
-      "<h3>得分：" + st.correct + " / " + st.qs.length + "（" + pct + " 分）</h3>" +
-      "<div class='btnrow'><button class='btn ghost' onclick='location.reload()'>重新測驗</button></div></div>" +
-      "<h3>📋 逐題解析</h3>" + review;
-    box.scrollIntoView({ behavior: "smooth" });
-  }
+  /* ---------- 隨堂複習／總複習 ----------
+     由共用的 ../js/review-core.js 與 ../js/final-review.js 處理（題庫：js/review-data.js，
+     由 _quizzes/build_review.py 自 _quizzes/sql-review20.json 產生）。 */
 
   /* ---------- 教師解答區 ---------- */
   window.teacherLogin = function () {
@@ -247,10 +174,7 @@
       if (h === TEACHER_PASSWORD_HASH) {
         document.getElementById("teacherPanel").classList.add("show");
         msg.innerHTML = "<span class='good'>✓ 教師模式已解鎖。</span>";
-        var rows = window.QUIZ_BANK.map(function (q, i) {
-          return "<tr><td>" + (i + 1) + "</td><td>" + esc(q.options[q.answer]) + "</td><td>" + esc(q.exp) + "</td></tr>";
-        }).join("");
-        document.getElementById("answerTable").innerHTML = rows;
+        if (window.ReviewTeacher) window.ReviewTeacher.render("answerTable");
       } else {
         msg.innerHTML = "<span class='bad'>✗ 密碼錯誤。</span>";
       }

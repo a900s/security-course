@@ -20,6 +20,7 @@
       if (h === TEACHER_PASSWORD_HASH) {
         document.getElementById("lock").hidden = true;
         document.getElementById("panel").hidden = false;
+        if (window.ReviewTeacher) window.ReviewTeacher.render("answerTable");   // 20 題標準答案（含表單題號）
       } else msg.textContent = "✗ 密碼錯誤。";
     }).catch(function () { msg.textContent = "✗ 瀏覽器不支援 Web Crypto（請用 https 或 localhost 開啟）。"; });
   };

@@ -1,6 +1,6 @@
 {
- "generatedBy": "手寫（原創）；source=form 者與 quizzes.json Kali 表單題逐字相同，由 build.py 驗證",
- "description": "Kali Top 20 隨堂複習：每個手法章節末各 1 題，共 20 題（與 Google 表單 10 題測驗分開）",
+ "generatedBy": "手寫（原創）；source=form 者與 quizzes.json Kali 表單第 1–10 題逐字相同，source=new 者即表單第 11–20 題，皆由 _quizzes/build_review.py 驗證",
+ "description": "Kali Top 20 隨堂複習＋總複習題庫：每個手法章節末各 1 題，共 20 題（section＝頁面題號；formQ＝Google 表單題號）",
  "questions": [
   {
    "section": 1,
@@ -124,7 +124,7 @@
   },
   {
    "section": 9,
-   "source": "review",
+   "source": "new",
    "icon": "🕸️",
    "question": "【Web 攔截代理】Burp Suite 能攔截並竄改瀏覽器送出的請求，這提醒開發者什麼？",
    "options": {
@@ -134,11 +134,12 @@
     "D": "把參數藏在隱藏欄位裡就安全了"
    },
    "correctIndex": 0,
-   "explanation": "請求完全由使用者端掌控、可被任意修改；前端限制只是介面，驗證與授權一定要在伺服器端完成。"
+   "explanation": "請求完全由使用者端掌控、可被任意修改；前端限制只是介面，驗證與授權一定要在伺服器端完成。",
+   "formQ": 11
   },
   {
    "section": 10,
-   "source": "review",
+   "source": "new",
    "icon": "🩺",
    "question": "【Web 弱點掃描】Nikto 會比對已知的危險檔案與過時版本，降低被掃出問題的做法是？",
    "options": {
@@ -148,7 +149,8 @@
     "D": "關閉存取日誌，避免掃描被記錄"
    },
    "correctIndex": 1,
-   "explanation": "掃描器專找『已知問題』；清掉預設檔、及時修補並少洩漏版本，就沒什麼可被比對出來。"
+   "explanation": "掃描器專找『已知問題』；清掉預設檔、及時修補並少洩漏版本，就沒什麼可被比對出來。",
+   "formQ": 12
   },
   {
    "section": 11,
@@ -167,7 +169,7 @@
   },
   {
    "section": 12,
-   "source": "review",
+   "source": "new",
    "icon": "📢",
    "question": "【LLMNR/NBT-NS 毒化】Responder 冒充回應名稱解析的廣播求助來騙取認證，最直接的防治是？",
    "options": {
@@ -177,11 +179,12 @@
     "D": "關閉內網所有監控以減少誤報"
    },
    "correctIndex": 2,
-   "explanation": "沒有廣播求助就無從冒充；停用這兩種舊協定、修好 DNS，再以 SMB 簽章降低憑證被轉送（relay）的風險。"
+   "explanation": "沒有廣播求助就無從冒充；停用這兩種舊協定、修好 DNS，再以 SMB 簽章降低憑證被轉送（relay）的風險。",
+   "formQ": 13
   },
   {
    "section": 13,
-   "source": "review",
+   "source": "new",
    "icon": "🔗",
    "question": "【內網橫向移動】為什麼「每台電腦的本機管理員密碼都一樣」很危險？",
    "options": {
@@ -191,11 +194,12 @@
     "D": "只要密碼夠長，就不怕被重複使用"
    },
    "correctIndex": 1,
-   "explanation": "密碼重用讓單點失守變成全面失守；LAPS 為每台產生獨立隨機密碼，可切斷橫向擴散。"
+   "explanation": "密碼重用讓單點失守變成全面失守；LAPS 為每台產生獨立隨機密碼，可切斷橫向擴散。",
+   "formQ": 14
   },
   {
    "section": 14,
-   "source": "review",
+   "source": "new",
    "icon": "🗝️",
    "question": "【憑證擷取】Mimikatz 類工具會從記憶體抽取登入憑證，下列哪項防治最恰當？",
    "options": {
@@ -205,7 +209,8 @@
     "D": "啟用 Credential Guard／受保護的 LSASS，並限制特權帳號登入一般工作站"
    },
    "correctIndex": 3,
-   "explanation": "保護憑證所在的程序，並避免高權限憑證『落地』在一般電腦上，被抽出的東西就沒有價值。"
+   "explanation": "保護憑證所在的程序，並避免高權限憑證『落地』在一般電腦上，被抽出的東西就沒有價值。",
+   "formQ": 15
   },
   {
    "section": 15,
@@ -224,7 +229,7 @@
   },
   {
    "section": 16,
-   "source": "review",
+   "source": "new",
    "icon": "🧭",
    "question": "【DNS 欺騙】要降低 DNS 欺騙／快取毒化的影響，較好的組合是？",
    "options": {
@@ -234,11 +239,12 @@
     "D": "看到瀏覽器憑證警告時直接按「繼續」"
    },
    "correctIndex": 2,
-   "explanation": "DNSSEC 驗證回應真偽、加密解析器防竄改；即使被導錯，HTTPS/HSTS 也能讓假網站露出破綻。"
+   "explanation": "DNSSEC 驗證回應真偽、加密解析器防竄改；即使被導錯，HTTPS/HSTS 也能讓假網站露出破綻。",
+   "formQ": 16
   },
   {
    "section": 17,
-   "source": "review",
+   "source": "new",
    "icon": "💦",
    "question": "【密碼噴灑】密碼噴灑對大量帳號各只試一兩個常見密碼。因此防治上應該？",
    "options": {
@@ -248,11 +254,12 @@
     "D": "公開所有帳號清單方便使用者查詢"
    },
    "correctIndex": 1,
-   "explanation": "噴灑刻意避開單帳號鎖定門檻；MFA、弱密碼黑名單與跨帳號行為偵測才抓得到它。"
+   "explanation": "噴灑刻意避開單帳號鎖定門檻；MFA、弱密碼黑名單與跨帳號行為偵測才抓得到它。",
+   "formQ": 17
   },
   {
    "section": 18,
-   "source": "review",
+   "source": "new",
    "icon": "📡",
    "question": "【自動化無線攻擊】Wifite 常送出大量「去認證（deauth）」封包把使用者踢下線，以擷取重新連線時的交握。對應的防治是？",
    "options": {
@@ -262,11 +269,12 @@
     "D": "保留基地台的預設管理密碼"
    },
    "correctIndex": 0,
-   "explanation": "802.11w 讓去認證封包無法偽造；關閉 WPS、監控異常無線活動，可削弱自動化工具的常用招式。"
+   "explanation": "802.11w 讓去認證封包無法偽造；關閉 WPS、監控異常無線活動，可削弱自動化工具的常用招式。",
+   "formQ": 18
   },
   {
    "section": 19,
-   "source": "review",
+   "source": "new",
    "icon": "🖼️",
    "question": "【隱寫術與憑證收集】攻擊者會翻找設定檔、腳本裡殘留的帳密，也可能把資料藏進圖片外送。較好的防治是？",
    "options": {
@@ -276,11 +284,12 @@
     "D": "改用秘密管理（vault）保存金鑰，並以 DLP 與出口流量監控偵測異常外送"
    },
    "correctIndex": 3,
-   "explanation": "不讓憑證散落在檔案中，就沒什麼可收集；DLP 與出口監控則能發現『看似正常』的異常外送。"
+   "explanation": "不讓憑證散落在檔案中，就沒什麼可收集；DLP 與出口監控則能發現『看似正常』的異常外送。",
+   "formQ": 19
   },
   {
    "section": 20,
-   "source": "review",
+   "source": "new",
    "icon": "🪜",
    "question": "【權限提升】要降低「從一般使用者提權成 root/SYSTEM」的風險，最核心的原則是？",
    "options": {
@@ -290,7 +299,8 @@
     "D": "停用作業系統更新以免影響相容性"
    },
    "correctIndex": 2,
-   "explanation": "提權多半利用未修補漏洞或過寬設定；修補、基準線稽核與最小權限是三道主要防線。"
+   "explanation": "提權多半利用未修補漏洞或過寬設定；修補、基準線稽核與最小權限是三道主要防線。",
+   "formQ": 20
   }
  ]
 }

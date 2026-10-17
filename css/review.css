@@ -1,0 +1,67 @@
+/* 三套教材共用：隨堂複習卡、總複習、教師區 20 題答案表（原創）。顏色取自各模組 style.css 的 CSS 變數。 */
+/* 隨堂複習（閱讀中點選一次答案） */
+.review{margin:22px 0 8px;padding:14px 18px;border-radius:12px;border:1px dashed var(--accent2);background:var(--panel)}
+.review.rv-done-ok{border-style:solid;border-color:var(--accent)}
+.review.rv-done-ng{border-style:solid;border-color:#ff7a8a}
+.rv-head{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.rv-head b{color:var(--accent2)}
+.rv-ico{font-size:1.4rem;line-height:1}
+.rv-tip{margin-left:auto;color:var(--muted);font-size:.8rem}
+.rv-q{margin:8px 0 10px;font-weight:700;color:var(--ink)}
+.rv-opts{list-style:none;padding:0;margin:0;display:grid;gap:8px}
+.rv-opts li{margin:0}
+.rv-opt{width:100%;display:flex;gap:10px;align-items:flex-start;text-align:left;cursor:pointer;background:var(--bg);border:1px solid var(--line);color:var(--ink);border-radius:9px;padding:9px 12px;font-family:var(--sans);font-size:.95rem;line-height:1.6}
+.rv-opt:hover:not(:disabled){border-color:var(--accent2)}
+.rv-opt:focus-visible{outline:2px solid var(--accent2);outline-offset:2px}
+.rv-opt:disabled{cursor:default;opacity:.75}
+.rv-l{flex:none;width:1.6em;height:1.6em;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;background:var(--panel);border:1px solid var(--line);font-family:var(--mono);font-size:.85rem}
+.rv-opt.rv-correct{opacity:1;border-color:var(--accent);background:color-mix(in srgb,var(--accent) 16%,var(--bg))}
+.rv-opt.rv-correct .rv-l{background:var(--accent);color:#06231a;border-color:var(--accent)}
+.rv-opt.rv-wrong{opacity:1;border-color:#ff7a8a;background:color-mix(in srgb,#ff7a8a 16%,var(--bg))}
+.rv-opt.rv-wrong .rv-l{background:#ff7a8a;color:#2a0a10;border-color:#ff7a8a}
+.rv-exp{margin:10px 0 0;color:var(--muted);font-size:.9rem}
+.rv-res.ok{color:var(--accent)} .rv-res.ng{color:#ff7a8a}
+
+.rv-topic{font-size:.78rem;color:var(--accent);border:1px solid var(--line);border-radius:999px;padding:1px 10px;background:var(--bg)}
+.rv-exp .rv-res{display:inline}
+
+/* 總複習 */
+.final-review{margin:28px 0}
+.fr-card{background:var(--panel);border:1px solid var(--accent2);border-radius:14px;padding:18px 20px;margin:14px 0}
+.fr-card h2{margin:0 0 4px;padding:0;border:0;font-size:1.3rem;color:var(--ink)}
+.fr-card h3{margin:18px 0 8px;color:var(--accent2)}
+.fr-head{display:flex;gap:12px;align-items:flex-start}
+.fr-ico{font-size:1.6rem;line-height:1.2}
+.fr-sub,.fr-note,.fr-time,.fr-meta{color:var(--muted);font-size:.88rem;margin:4px 0}
+.fr-modes{display:flex;gap:10px;flex-wrap:wrap;margin:14px 0}
+.fr-modes label{display:inline-flex;align-items:center;gap:8px;cursor:pointer;background:var(--bg);border:1px solid var(--line);border-radius:9px;padding:8px 14px;color:var(--ink);font-size:.95rem;margin:0}
+.fr-modes input{width:auto;margin:0;accent-color:var(--accent)}
+.fr-btn{cursor:pointer;background:var(--accent);border:1px solid var(--accent);color:#06231a;font-weight:700;font-family:var(--sans);border-radius:9px;padding:9px 18px;font-size:.95rem;margin-top:12px}
+.fr-btn:hover{filter:brightness(1.08)}
+.fr-btn:focus-visible{outline:2px solid var(--accent2);outline-offset:2px}
+.fr-prog{height:8px;background:var(--bg);border-radius:999px;overflow:hidden;margin-bottom:8px}
+.fr-prog>div{height:100%;background:linear-gradient(90deg,var(--accent),var(--accent2));transition:width .3s}
+.fr-qh{display:flex;gap:10px;align-items:center;margin-top:6px}
+.fr-q{font-weight:700;margin:8px 0 10px;color:var(--ink)}
+.fr-who{font-size:1.05rem;margin:6px 0}
+.fr-mail{color:var(--muted);font-size:.88rem}
+.fr-warn{color:var(--warn,#ffc96b)}
+.fr-score{font-size:1.15rem;margin:6px 0}
+.fr-score b{color:var(--accent)}
+.fr-log{padding-left:0;list-style:none;display:grid;gap:8px;margin:0}
+.fr-log li{background:var(--bg);border:1px solid var(--line);border-left:4px solid var(--accent);border-radius:9px;padding:10px 12px;font-size:.92rem}
+.fr-log li.ng{border-left-color:#ff7a8a}
+.fr-exp{color:var(--muted);font-size:.86rem;margin-top:4px}
+
+/* 教師區 20 題答案表 */
+.ra-wrap{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:14px 18px;margin:16px 0}
+.ra-wrap h2{margin:0 0 6px;padding:0;border:0;font-size:1.15rem;color:var(--ink)}
+.ra-note{color:var(--muted);font-size:.86rem;margin:4px 0 10px}
+.ra-scroll{overflow:auto}
+.ra-tbl{width:100%;border-collapse:collapse;font-size:.86rem}
+.ra-tbl th,.ra-tbl td{border:1px solid var(--line);padding:6px 8px;text-align:left;vertical-align:top}
+.ra-tbl th{background:var(--bg);color:var(--muted);font-family:var(--mono);font-size:.78rem;white-space:nowrap}
+.ra-n,.ra-f{white-space:nowrap;font-family:var(--mono)}
+.ra-f{color:var(--accent2)}
+.ra-a b{color:var(--accent);font-family:var(--mono)}
+.ra-e{color:var(--muted)}

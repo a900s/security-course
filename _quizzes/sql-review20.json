@@ -1,0 +1,326 @@
+{
+ "generatedBy": "手寫（原創）；source=form 者與 quizzes.json SQL 表單第 1–10 題逐字相同，source=new 者即表單第 11–20 題，皆由 build 腳本驗證",
+ "description": "SQL Injection 隨堂複習＋總複習題庫：依頁面順序 20 題（section＝頁面題號；formQ＝Google 表單題號）",
+ "questions": [
+  {
+   "section": 1,
+   "tab": "learn",
+   "source": "form",
+   "formQ": 1,
+   "icon": "💥",
+   "question": "SQL Injection 最根本的成因是？",
+   "options": {
+    "A": "瀏覽器太舊",
+    "B": "網路延遲太高",
+    "C": "程式沒有把『使用者資料』和『SQL 指令』分開",
+    "D": "伺服器硬碟不足"
+   },
+   "correctIndex": 2,
+   "explanation": "不可信輸入被直接拼進 SQL 字串時，資料就可能被當成語法執行。"
+  },
+  {
+   "section": 2,
+   "tab": "learn",
+   "source": "new",
+   "formQ": 11,
+   "icon": "🧩",
+   "question": "【注入發生在哪一層】依注入流程「輸入 → 應用程式 → 組出 SQL → 解析器 → 資料庫」，SQL Injection 的弱點主要發生在哪裡？",
+   "options": {
+    "A": "應用程式把輸入組成 SQL、交給資料庫執行的那一步（應用程式與資料庫互動處）",
+    "B": "使用者在瀏覽器輸入資料的那一步",
+    "C": "資料庫把資料寫入硬碟的那一步",
+    "D": "網路傳送封包的那一步"
+   },
+   "correctIndex": 0,
+   "explanation": "問題出在應用程式和資料庫互動時把輸入拼進語法；所以要在應用程式端用參數化修補，加密傳輸或更換資料庫都無法解決。"
+  },
+  {
+   "section": 3,
+   "tab": "learn",
+   "source": "new",
+   "formQ": 12,
+   "icon": "🎯",
+   "question": "【核心原則】本實驗室所有防禦技巧，共同要實現的原則是？",
+   "options": {
+    "A": "只要把輸入長度限制得夠短，就不會被注入",
+    "B": "把所有輸入先轉成大寫再組 SQL",
+    "C": "只要網站使用 HTTPS，資料庫就安全",
+    "D": "不可信的輸入一律當「資料」，絕不讓它變成 SQL 語法"
+   },
+   "correctIndex": 3,
+   "explanation": "資料歸資料、指令歸指令；長度限制、大小寫轉換、HTTPS 都無法阻止輸入改變 SQL 語意。"
+  },
+  {
+   "section": 4,
+   "tab": "types",
+   "source": "new",
+   "formQ": 13,
+   "icon": "🚪",
+   "question": "【登入繞過】在登入帳號欄輸入 admin' -- 可能繞過驗證，其中 -- 的作用是？",
+   "options": {
+    "A": "把密碼欄位自動加密",
+    "B": "讓資料庫延遲回應數秒",
+    "C": "把查詢後段（包含密碼比對）變成註解而不執行",
+    "D": "把兩個查詢的結果合併在一起"
+   },
+   "correctIndex": 2,
+   "explanation": "單引號先閉合帳號字串，-- 讓後面的 AND password = … 變成註解；改用參數化查詢後，這串輸入只會被當成一個奇怪的帳號名稱。"
+  },
+  {
+   "section": 5,
+   "tab": "types",
+   "source": "form",
+   "formQ": 3,
+   "icon": "➕",
+   "question": "輸入 1' OR '1'='1 為何危險？因為它讓 WHERE 條件變成？",
+   "options": {
+    "A": "永遠為假",
+    "B": "永遠為真",
+    "C": "語法錯誤",
+    "D": "只比對第一筆"
+   },
+   "correctIndex": 1,
+   "explanation": "'1'='1' 恆真，OR 之後整個條件恆成立，等於取消了過濾。"
+  },
+  {
+   "section": 6,
+   "tab": "types",
+   "source": "form",
+   "formQ": 4,
+   "icon": "🔗",
+   "question": "UNION-based 注入主要利用哪個關鍵字把額外資料併進結果？",
+   "options": {
+    "A": "UNION",
+    "B": "JOIN",
+    "C": "GROUP BY",
+    "D": "HAVING"
+   },
+   "correctIndex": 0,
+   "explanation": "UNION 可將另一個 SELECT 的結果合併回來，前提是欄位數與型別相容。"
+  },
+  {
+   "section": 7,
+   "tab": "types",
+   "source": "new",
+   "formQ": 14,
+   "icon": "🔦",
+   "question": "【布林盲注】頁面不會顯示查詢資料，但「條件成立」與「不成立」時的回應內容不同，攻擊者據此逐位推測資料。這種手法稱為？",
+   "options": {
+    "A": "UNION-based 注入",
+    "B": "時間盲注（Time-based Blind）",
+    "C": "布林盲注（Boolean-based Blind）",
+    "D": "錯誤訊息型注入（Error-based）"
+   },
+   "correctIndex": 2,
+   "explanation": "布林盲注靠真／假造成的回應差異推測資料，時間盲注則看延遲；兩者的根本防禦都是參數化查詢。"
+  },
+  {
+   "section": 8,
+   "tab": "types",
+   "source": "form",
+   "formQ": 5,
+   "icon": "⏱️",
+   "question": "Time-based Blind Injection 用來判斷條件是否成立的訊號是？",
+   "options": {
+    "A": "回應的顏色",
+    "B": "回應的字數",
+    "C": "回應的編碼",
+    "D": "回應所花的時間（延遲）"
+   },
+   "correctIndex": 3,
+   "explanation": "讓資料庫在條件成立時延遲回應，用時間差當作 0/1 訊號。"
+  },
+  {
+   "section": 9,
+   "tab": "types",
+   "source": "new",
+   "formQ": 15,
+   "icon": "🚧",
+   "question": "【WAF 的角色】沙盒的 WAF 情境中，變形後的輸入仍能通過過濾，這說明了什麼？",
+   "options": {
+    "A": "WAF 以樣式比對攔截，可被大小寫、編碼、註解拆字等變形繞過，只能當輔助防線",
+    "B": "只要 WAF 規則寫得夠多，就能完全取代參數化查詢",
+    "C": "裝了 WAF 之後，就不需要記錄與告警",
+    "D": "WAF 被繞過，代表參數化查詢也一定失效"
+   },
+   "correctIndex": 0,
+   "explanation": "WAF 能擋掉部分已知樣式，但比對規則總有漏網之魚；真正的防線仍是安全的程式寫法，WAF 是額外的一層。"
+  },
+  {
+   "section": 10,
+   "tab": "types",
+   "source": "new",
+   "formQ": 16,
+   "icon": "🔢",
+   "question": "【ID 參數／型別檢查】網址 ?id=15 會被帶入 WHERE id = … 的查詢，最適當的防禦組合是？",
+   "options": {
+    "A": "只在前端用 JavaScript 檢查是不是數字",
+    "B": "伺服器端驗證 id 必須是整數，並以參數化查詢帶入",
+    "C": "把 id 用 Base64 編碼後再傳送",
+    "D": "把 id 用單引號包起來後再拼進 SQL"
+   },
+   "correctIndex": 1,
+   "explanation": "前端檢查可被略過、編碼不是防護、加引號仍是拼接；伺服器端型別驗證擋掉不合理的輸入，參數化確保它不會改變語意。"
+  },
+  {
+   "section": 11,
+   "tab": "sandbox",
+   "source": "new",
+   "formQ": 17,
+   "icon": "🧪",
+   "question": "【沙盒：安全模式】把沙盒切到「安全（參數化查詢）」後，再輸入 ' OR '1'='1，結果會是？",
+   "options": {
+    "A": "仍會登入成功，因為條件恆真",
+    "B": "資料庫回傳語法錯誤，並列出資料表名稱",
+    "C": "整串輸入被當成一個參數值比對，查無符合",
+    "D": "輸入中的單引號會先被自動刪除，再照常執行"
+   },
+   "correctIndex": 2,
+   "explanation": "參數化查詢下 SQL 結構已固定，payload 只是一段普通字串；它不是靠刪除或跳脫字元，而是根本不讓輸入進入語法。"
+  },
+  {
+   "section": 12,
+   "tab": "defense",
+   "source": "new",
+   "formQ": 18,
+   "icon": "🧵",
+   "question": "【字串拼接的後果】程式寫成 \"... WHERE name = '\" + username + \"'\"，若輸入含有單引號與 SQL 關鍵字，最可能發生什麼事？",
+   "options": {
+    "A": "輸入會閉合原本的字串，改變查詢的語意與條件",
+    "B": "資料庫會自動辨識並忽略惡意的部分",
+    "C": "只會讓這次查詢變慢，結果不受影響",
+    "D": "只影響畫面顯示，不會影響資料庫"
+   },
+   "correctIndex": 0,
+   "explanation": "拼接後資料庫分不清哪段是值、哪段是語法，輸入就能改寫 WHERE 條件；這正是參數化查詢要解決的問題。"
+  },
+  {
+   "section": 13,
+   "tab": "defense",
+   "source": "form",
+   "formQ": 2,
+   "icon": "🛡️",
+   "question": "防禦 SQL Injection 最主要、最根本的做法是？",
+   "options": {
+    "A": "改用深色主題",
+    "B": "增加前端動畫",
+    "C": "壓縮圖片",
+    "D": "參數化查詢（Prepared Statement）"
+   },
+   "correctIndex": 3,
+   "explanation": "參數化查詢讓資料庫先編譯語句結構，輸入只當參數帶入，無法改變語意。"
+  },
+  {
+   "section": 14,
+   "tab": "defense",
+   "source": "new",
+   "formQ": 19,
+   "icon": "🧷",
+   "question": "【佔位符】Python sqlite3 的 ?、psycopg 的 %s、PHP PDO 的 :u，這些佔位符的共同作用是？",
+   "options": {
+    "A": "送出前先把輸入加密",
+    "B": "先固定 SQL 結構，輸入再以參數值綁定，不會被當成語法",
+    "C": "自動把輸入裡的單引號刪掉",
+    "D": "讓字串拼接 SQL 的速度更快"
+   },
+   "correctIndex": 1,
+   "explanation": "佔位符的值交給驅動程式綁定；注意 psycopg 的 %s 要當成 execute 的第二個參數傳入，自己用 Python 的 % 格式化字串仍是拼接，不安全。"
+  },
+  {
+   "section": 15,
+   "tab": "defense",
+   "source": "form",
+   "formQ": 6,
+   "icon": "📋",
+   "question": "為什麼 ORDER BY 後的『欄位名稱』不能只靠參數化查詢防護？",
+   "options": {
+    "A": "ORDER BY 不支援參數",
+    "B": "欄位名稱一定安全",
+    "C": "欄位名稱是 SQL 結構的一部分，不是可綁定的資料值",
+    "D": "資料庫會自動過濾"
+   },
+   "correctIndex": 2,
+   "explanation": "參數綁定只處理『值』；識別字（欄位、表名、排序方向）屬結構，需用白名單。"
+  },
+  {
+   "section": 16,
+   "tab": "defense",
+   "source": "form",
+   "formQ": 7,
+   "icon": "✅",
+   "question": "處理 ORDER BY 欄位時，建議採用哪種作法？",
+   "options": {
+    "A": "直接相信使用者輸入",
+    "B": "用固定的允許清單（whitelist）比對",
+    "C": "把輸入轉成大寫",
+    "D": "加上單引號包起來"
+   },
+   "correctIndex": 1,
+   "explanation": "只接受預先定義好的合法欄位名，其餘一律拒絕。"
+  },
+  {
+   "section": 17,
+   "tab": "layers",
+   "source": "form",
+   "formQ": 8,
+   "icon": "🔑",
+   "question": "資料庫帳號應遵循哪一項原則，以降低漏洞被利用後的衝擊？",
+   "options": {
+    "A": "最小權限（Least Privilege）",
+    "B": "最大權限",
+    "C": "所有應用共用 root",
+    "D": "完全不設密碼"
+   },
+   "correctIndex": 0,
+   "explanation": "應用帳號只給必要權限，就算被注入，可破壞的範圍也有限。"
+  },
+  {
+   "section": 18,
+   "tab": "layers",
+   "source": "form",
+   "formQ": 10,
+   "icon": "📝",
+   "question": "把資料庫的完整錯誤訊息直接回傳給使用者，主要風險是？",
+   "options": {
+    "A": "會變慢",
+    "B": "會佔用頻寬",
+    "C": "沒有任何風險",
+    "D": "可能洩漏資料表結構、SQL 片段等資訊，協助攻擊者"
+   },
+   "correctIndex": 3,
+   "explanation": "詳細錯誤等於替攻擊者畫地圖；應回傳一般化訊息，細節只進日誌。"
+  },
+  {
+   "section": 19,
+   "tab": "layers",
+   "source": "new",
+   "formQ": 20,
+   "icon": "📜",
+   "question": "【記錄與告警】縱深防禦中的「記錄與告警」，對 SQL Injection 最主要的貢獻是？",
+   "options": {
+    "A": "讓程式自動修補注入漏洞",
+    "B": "取代參數化查詢，成為第一道防線",
+    "C": "讓攻擊者看不到錯誤訊息",
+    "D": "及早發現可疑的注入嘗試，並在事後追查影響範圍"
+   },
+   "correctIndex": 3,
+   "explanation": "日誌和告警不會擋下攻擊，但能讓異常被看見、被追查；隱藏錯誤訊息屬於「錯誤處理」那一層。"
+  },
+  {
+   "section": 20,
+   "tab": "layers",
+   "source": "form",
+   "formQ": 9,
+   "icon": "🧱",
+   "question": "WAF（Web 應用防火牆）在防禦 SQL Injection 時的正確定位是？",
+   "options": {
+    "A": "可以完全取代安全程式設計",
+    "B": "額外的防護層，不能取代參數化查詢",
+    "C": "只在白天有效",
+    "D": "會讓程式自動安全"
+   },
+   "correctIndex": 1,
+   "explanation": "WAF 能擋掉部分已知樣式，但容易被繞過，不能當唯一防線。"
+  }
+ ]
+}

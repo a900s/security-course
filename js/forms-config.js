@@ -1,5 +1,5 @@
 /* 學習內容驗證（Google 表單測驗）連結設定（共用）。
-   三套教材的「📝 學習內容驗證（10 題）」按鈕都讀取這裡的網址。 */
+   三套教材的「📝 學習內容驗證（20 題）」按鈕都讀取這裡的網址。 */
 window.OWASP_FORM_URL = "https://docs.google.com/forms/d/e/1FAIpQLSeYJxWyyHsc2PQSUW7gZrn1GXCwDkYl6XrO44NiM8t0-G6xuA/viewform";
 window.KALI_FORM_URL  = "https://docs.google.com/forms/d/e/1FAIpQLSfhZOqGQ09dhOrgMP-8wNz1-3WXi2ii-lPRDI63lx5EqHbubw/viewform";
 window.SQL_FORM_URL   = "https://docs.google.com/forms/d/e/1FAIpQLSeGC7T4YPnqbn_NPfJydzHlNSQ6NdQbqZFt6V8kV1h0fqCZBQ/viewform";

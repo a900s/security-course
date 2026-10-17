@@ -4,15 +4,16 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>SQL Injection 資安教學與防禦實驗室</title>
-<meta name="description" content="SQL Injection 原理、攻擊型態、各語言防禦程式碼、多層防禦、互動沙盒與隨堂測驗。純前端安全模擬，自製教材。">
+<meta name="description" content="SQL Injection 原理、攻擊型態、各語言防禦程式碼、多層防禦、互動沙盒、20 題隨堂複習與總複習。純前端安全模擬，自製教材。">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&family=JetBrains+Mono:wght@400;500;700&display=swap">
-<link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="css/style.css?v=5bc60b5e">
+<link rel="stylesheet" href="../css/review.css?v=13f1a401">
 </head>
 <body>
 <div class="top"><div class="wrap">
   <h1>🛡️ SQL Injection 資安教學與防禦實驗室</h1>
-  <p>原理解說 · 攻擊型態 · 防禦程式碼 · 多層防禦 · 互動沙盒 · 隨堂測驗</p>
+  <p>原理解說 · 攻擊型態 · 防禦程式碼 · 多層防禦 · 互動沙盒 · 隨堂複習 · 總複習</p>
   <p class="note">自製教學教材 · 全程純瀏覽器模擬，不連線任何真實資料庫</p>
 </div></div>
 
@@ -21,7 +22,7 @@
   <button onclick="showSection('types', this)">🧠 攻擊型態</button>
   <button onclick="showSection('sandbox', this)">🧪 互動沙盒</button>
   <button onclick="showSection('defense', this)">🔐 防禦程式碼</button>
-  <button onclick="showSection('quiz', this)">📝 隨堂測驗</button>
+  <button onclick="showSection('quiz', this)">🧠 總複習</button>
   <button onclick="showSection('teacher', this)">👨‍🏫 教師區</button>
 </div></nav>
 
@@ -36,6 +37,7 @@
     <p>SQL Injection（SQL 注入）是最常見的 Web 應用程式弱點之一。當程式把使用者輸入<b>直接拼接</b>進 SQL 查詢字串時，攻擊者可以透過特製的輸入，改變這段 SQL 原本的語意，進而讀取、竄改甚至刪除資料。</p>
     <div class="warnbox">核心問題：程式沒有把「<b>資料</b>」和「<b>SQL 指令</b>」分開。對資料庫而言，它分不出哪些是你要查的值、哪些是你偷塞的語法。</div>
   </div>
+  <div class="review-slot" data-q="1"></div>
   <div class="card">
     <h2>🔄 一次注入的基本流程</h2>
     <div class="flow">
@@ -43,10 +45,12 @@
     </div>
     <p class="note" style="margin-top:12px">弱點就發生在「組出 SQL」這一步：如果輸入被當成語法拼進去，後面解析器就會忠實執行被改寫過的指令。</p>
   </div>
+  <div class="review-slot" data-q="2"></div>
   <div class="card">
     <h3 class="good">✅ 一句話記住</h3>
     <p>把所有不可信的輸入都當成「<b>資料</b>」，永遠不要讓它變成「<b>SQL 語法</b>」。本實驗室所有防禦技巧，都是在實現這一個原則。</p>
   </div>
+  <div class="review-slot" data-q="3"></div>
 </section>
 
 <!-- 攻擊型態 -->
@@ -56,16 +60,22 @@
   <div class="card type"><span class="tag">1</span><h3>登入繞過 Login Bypass</h3>
     <p>在帳號/密碼欄位塞入會讓 WHERE 條件恆真，或用註解砍掉密碼比對的輸入，藉此略過驗證。</p>
     <p class="note">例：<code>admin' --</code> 會讓查詢變成「找 admin，後面都註解掉」。</p></div>
+  <div class="review-slot" data-q="4"></div>
+  <div class="review-slot" data-q="5"></div>
   <div class="card type"><span class="tag">2</span><h3>UNION-based</h3>
     <p>利用 <code>UNION SELECT</code> 把其他資料表的欄位併進原本的查詢結果，用來撈出額外資料。前提是欄位數量與型別要對得上。</p></div>
+  <div class="review-slot" data-q="6"></div>
   <div class="card type"><span class="tag">3</span><h3>布林盲注 Boolean Blind</h3>
     <p>當頁面不直接顯示資料，但在「條件成立 / 不成立」時回應不同，就能一位一位推測出內容。</p></div>
+  <div class="review-slot" data-q="7"></div>
   <div class="card type"><span class="tag">4</span><h3>時間盲注 Time-based Blind</h3>
     <p>連回應差異都看不到時，用讓資料庫延遲（如 SLEEP）當作訊號：有延遲代表條件成立。</p></div>
+  <div class="review-slot" data-q="8"></div>
   <div class="card type"><span class="tag">5</span><h3>ORDER BY 排序注入</h3>
     <p>排序欄位是 SQL 的「結構（識別字）」而非「值」，不能用參數綁定處理，必須改用白名單，否則容易成為注入點。</p></div>
   <div class="card type"><span class="tag">6</span><h3>WAF 繞過</h3>
     <p>WAF 能攔截部分已知樣式，但攻擊者常以大小寫、編碼、註解拆字等方式變形繞過，所以它只能是輔助防線。</p></div>
+  <div class="review-slot" data-q="9"></div>
 
   <div class="card"><h2>🧱 攻擊面與對應防禦</h2>
   <table>
@@ -78,6 +88,7 @@
       <tr><td>錯誤訊息</td><td>資訊洩漏</td><td>一般化錯誤處理</td></tr>
     </tbody>
   </table></div>
+  <div class="review-slot" data-q="10"></div>
 </section>
 
 <!-- 互動沙盒 -->
@@ -113,6 +124,7 @@
   <div class="card"><h3>🔍 Token 視覺化</h3><div id="tokens"><span class="note">尚未分析。</span></div></div>
   <div class="card"><h3>📋 伺服器 Log（示意）</h3><pre id="serverLog" class="log">尚未產生 Log。</pre></div>
   <div class="card"><h3>👨‍🏫 教學分析</h3><div id="analysis"><div class="note">請先選情境並執行一次。</div></div></div>
+  <div class="review-slot" data-q="11"></div>
 </section>
 
 <!-- 防禦程式碼 -->
@@ -126,6 +138,8 @@
 <pre>sql = "SELECT * FROM users WHERE name = ?"
 cursor.execute(sql, (username,))</pre>
     <p class="note">重點：參數化把「語句結構」和「輸入資料」分開，輸入不會被當語法執行。</p></div>
+  <div class="review-slot" data-q="12"></div>
+  <div class="review-slot" data-q="13"></div>
 
   <div class="grid2">
     <div class="card"><h3>🐍 Python（sqlite3）</h3>
@@ -176,7 +190,10 @@ try (PreparedStatement ps =
     ResultSet rs = ps.executeQuery();
 }</pre></div>
 
-    <div class="card"><h3>⚠️ ORDER BY 為什麼要用白名單</h3>
+  </div>
+  <div class="review-slot" data-q="14"></div>
+
+  <div class="card"><h3>⚠️ ORDER BY 為什麼要用白名單</h3>
 <pre>// 欄位名是「結構」，不能用參數綁定
 const ALLOWED = ["name", "email", "created_at"];
 if (!ALLOWED.includes(sortBy)) {
@@ -185,7 +202,8 @@ if (!ALLOWED.includes(sortBy)) {
 const sql =
   `SELECT * FROM users ORDER BY ${sortBy}`;</pre>
       <p class="note">值用參數化、識別字用白名單，兩者分工。</p></div>
-  </div>
+  <div class="review-slot" data-q="15"></div>
+  <div class="review-slot" data-q="16"></div>
 
   <div class="card"><h2>🛡️ 多層防禦（縱深防禦）</h2>
     <div class="flow">
@@ -200,26 +218,16 @@ const sql =
       <div class="pill"><b>⑥ WAF</b><br>額外防線，不能取代上述。</div>
     </div>
   </div>
+  <div class="review-slot" data-q="17"></div>
+  <div class="review-slot" data-q="18"></div>
+  <div class="review-slot" data-q="19"></div>
+  <div class="review-slot" data-q="20"></div>
 </section>
 
-<!-- 測驗 -->
+<!-- 總複習 -->
 <section id="quiz" class="section">
-  <div id="quizSetup" class="card">
-    <h2>📝 SQL Injection 隨堂測驗</h2>
-    <p class="note">題庫共 18 題，可選「隨機 10 題」或「全部 18 題」。</p>
-    <label>班級</label><input id="studentClass" placeholder="例如：資二甲">
-    <label>座號</label><input id="studentSeat" placeholder="例如：12">
-    <label>姓名</label><input id="studentName" placeholder="請輸入姓名">
-    <label>題數</label>
-    <select id="quizCount"><option value="10">隨機 10 題</option><option value="all">全部 18 題</option></select>
-    <div class="btnrow"><button class="btn" onclick="startQuiz()">開始測驗</button></div>
-  </div>
-  <div id="quizArea" style="display:none">
-    <div class="progress" id="qProgress"><div></div></div>
-    <div class="card" id="quizQuestion"></div>
-  </div>
-  <div id="quizResult" style="display:none"></div>
-  <aside class="formcta"><div class="formcta-txt"><b>📝 學習內容驗證（10 題）</b><span>除了頁內隨堂測驗，也請作答這份 10 題選擇題測驗（自動計分），檢核學習成效。</span></div><a class="formcta-btn" data-quiz-form="sql" href="#" target="_blank" rel="noopener">📝 開始學習內容驗證 ↗</a></aside>
+  <div id="finalReview" class="final-review"></div>
+  <aside class="formcta"><div class="formcta-txt"><b>📝 學習內容驗證（20 題）</b><span>讀完各段並完成隨堂複習與總複習後，請作答這份 20 題選擇題測驗（自動計分），檢核學習成效。</span></div><a class="formcta-btn" data-quiz-form="sql" href="#" target="_blank" rel="noopener">📝 開始學習內容驗證 ↗</a></aside>
 </section>
 
 <!-- 教師區 -->
@@ -239,9 +247,7 @@ const sql =
       <code>echo -n "你的密碼" | sha256sum</code>。
       <b>提醒：</b>雜湊仍可能被離線暴力嘗試；正式課堂若需真正保密，應改由後端驗證。
     </div>
-    <div class="card"><h2>📝 標準答案與解析</h2>
-      <table><thead><tr><th>題號</th><th>正解</th><th>解析</th></tr></thead>
-        <tbody id="answerTable"></tbody></table></div>
+    <div id="answerTable"></div>
     <div class="card"><h2>👨‍🏫 教學重點</h2>
       <p><b>攻擊面：</b>使用者輸入若直接進入 SQL 字串，就可能改變語意。</p>
       <p><b>核心防禦：</b>參數化查詢 / Prepared Statement。</p>
@@ -257,10 +263,13 @@ const sql =
 </div></footer>
 
 <script src="https://accounts.google.com/gsi/client" async></script>
-<script src="../js/google-auth-config.js"></script>
-<script src="../js/forms-config.js"></script>
-<script src="../js/student-auth.js"></script>
-<script src="js/quiz.js"></script>
-<script src="js/app.js"></script>
+<script src="../js/google-auth-config.js?v=472ebfcb"></script>
+<script src="../js/forms-config.js?v=ffba8e9c"></script>
+<script src="../js/student-auth.js?v=ab6b4c99"></script>
+<script src="js/review-data.js?v=8b6d35a3"></script>
+<script src="../js/review-core.js?v=68166a5b"></script>
+<script src="../js/final-review.js?v=53b809f2"></script>
+<script src="../js/review-teacher.js?v=fc86e0a5"></script>
+<script src="js/app.js?v=06e1df63"></script>
 </body>
 </html>

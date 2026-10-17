@@ -5,8 +5,8 @@
     {
       "id": "owasp",
       "title": "OWASP Top 10 學習內容驗證",
-      "description": "共 10 題，每題 4 選 1、1 分，滿分 10 分。驗證對 OWASP Top 10 各類別概念與防禦的理解。",
-      "totalPoints": 10,
+      "description": "共 20 題，每題 4 選 1、1 分，滿分 20 分。驗證對 OWASP Top 10 各類別概念與防禦的理解。",
+      "totalPoints": 20,
       "questions": [
         {
           "number": 1,
@@ -157,14 +157,164 @@
           "correctLetter": "A",
           "points": 1,
           "explanation": "應限制伺服器可存取的目的地（白名單）、隔離內網並封鎖對中繼資料端點的存取。"
+        },
+        {
+          "number": 11,
+          "icon": "⚙️",
+          "question": "【A02 安全設定錯誤】關卡中，攻擊者直接讀到 /.env 裡的資料庫密碼。上線前最根本的處理是？",
+          "options": {
+            "A": "把 .env 改成不容易猜到的檔名",
+            "B": "關閉除錯模式，把設定檔移出網站根目錄，並以伺服器規則禁止存取",
+            "C": "保留除錯頁，但在前面加一組簡單密碼",
+            "D": "把資料庫密碼改長一點就好"
+          },
+          "correctIndex": 1,
+          "correctLetter": "B",
+          "points": 1,
+          "explanation": "改檔名只是藏起來；要關掉除錯、讓設定檔根本不在可瀏覽的目錄裡，並由伺服器規則擋住敏感路徑。"
+        },
+        {
+          "number": 12,
+          "icon": "🧬",
+          "question": "【A03 軟體供應鏈】要避免裝到 lodahs 這類名稱相似的仿冒套件，最有效的做法是？",
+          "options": {
+            "A": "一律安裝 latest 最新版，確保拿到最新修補",
+            "B": "安裝完成後再用防毒軟體掃一次就好",
+            "C": "直接安裝搜尋結果中第一個名稱相近的套件",
+            "D": "核對正確套件名稱、鎖定版本，並以 lockfile 與完整性雜湊驗證來源"
+          },
+          "correctIndex": 3,
+          "correctLetter": "D",
+          "points": 1,
+          "explanation": "仿冒套件（typosquatting）靠打錯字得逞；核對名稱、鎖版本、用 lockfile 與雜湊驗證，才能確保裝到的是預期的那一份。"
+        },
+        {
+          "number": 13,
+          "icon": "🧂",
+          "question": "【A04 加密機制失效】下列哪一種密碼儲存方式仍然「不安全」？",
+          "options": {
+            "A": "用 Argon2id 加上隨機鹽雜湊",
+            "B": "用 bcrypt 加上隨機鹽雜湊",
+            "C": "用 SHA-256 雜湊一次、不加鹽",
+            "D": "用 scrypt 加上隨機鹽雜湊"
+          },
+          "correctIndex": 2,
+          "correctLetter": "C",
+          "points": 1,
+          "explanation": "SHA-256 計算很快又沒有鹽，相同密碼雜湊相同，可用彩虹表或 GPU 大量猜測；密碼要用加鹽、刻意放慢的專用雜湊。"
+        },
+        {
+          "number": 14,
+          "icon": "🧱",
+          "question": "【A05 SQL 注入】關卡修法中，為什麼用 addslashes() 跳脫引號不是正確答案？",
+          "options": {
+            "A": "因為 addslashes() 會讓查詢變得太慢",
+            "B": "跳脫只是補丁，遇到字元編碼差異或數字欄位時仍可能被繞過；參數化查詢才讓輸入無法改變語法",
+            "C": "因為 addslashes() 只能用在 HTML 輸出",
+            "D": "其實 addslashes() 和參數化查詢一樣安全"
+          },
+          "correctIndex": 1,
+          "correctLetter": "B",
+          "points": 1,
+          "explanation": "黑名單式的跳脫總有漏網之魚；參數化查詢從結構上把資料與指令分開，是根本解法。"
+        },
+        {
+          "number": 15,
+          "icon": "🖥️",
+          "question": "【A05 指令注入】連線測試工具要用使用者輸入的主機名稱執行 ping，最安全的寫法是？",
+          "options": {
+            "A": "以白名單驗證主機名稱字元，並用參數陣列直接執行程式（如 execFile），不經過 shell",
+            "B": "把輸入中的分號移除後，再交給 shell 執行",
+            "C": "幫輸入加上雙引號後，再組成指令字串",
+            "D": "只在前端限制輸入長度"
+          },
+          "correctIndex": 0,
+          "correctLetter": "A",
+          "points": 1,
+          "explanation": "移除分號、加引號都擋不住 &&、$() 等其他寫法；不經 shell、以參數陣列傳入，再加上字元白名單，輸入就無法變成新指令。"
+        },
+        {
+          "number": 16,
+          "icon": "🪟",
+          "question": "【A05 XSS】搜尋頁要顯示「您搜尋了：…」，下列哪種做法能防止反射型 XSS？",
+          "options": {
+            "A": "把輸入裡的 <script> 字樣濾掉，再用 innerHTML 顯示",
+            "B": "先去掉輸入前後的空白，再用 innerHTML 顯示",
+            "C": "只允許輸入 20 個字以內",
+            "D": "用 textContent 顯示，或輸出前做 HTML 編碼，讓內容只被當成文字"
+          },
+          "correctIndex": 3,
+          "correctLetter": "D",
+          "points": 1,
+          "explanation": "濾掉 <script> 擋不住 <img onerror>；輸出編碼（或 textContent）讓瀏覽器把內容當文字而不是程式碼。"
+        },
+        {
+          "number": 17,
+          "icon": "🧭",
+          "question": "【A06 不安全設計】「忘記密碼」只要答對「你的生日」就能重設，較好的重新設計是？",
+          "options": {
+            "A": "再多加一題「寵物的名字」安全問題",
+            "B": "檢查生日的格式與長度是否正確",
+            "C": "寄送一次性、會過期的重設連結到已驗證信箱，並限制請求頻率",
+            "D": "把安全問題改成用英文作答"
+          },
+          "correctIndex": 2,
+          "correctLetter": "C",
+          "points": 1,
+          "explanation": "生日、寵物名字都可能公開查得到；問題出在流程設計，應改用寄到已驗證管道的一次性連結並限流。"
+        },
+        {
+          "number": 18,
+          "icon": "🔒",
+          "question": "【A07 認證失效】關卡中登入頁可以無限次猜密碼，哪一組修補最完整？",
+          "options": {
+            "A": "把錯誤訊息改得更客氣一點",
+            "B": "記錄失敗次數並暫時鎖定或限流，再搭配強密碼政策與 MFA",
+            "C": "每次失敗固定延遲 100 毫秒就好",
+            "D": "把登入頁網址改成不容易猜到的路徑"
+          },
+          "correctIndex": 1,
+          "correctLetter": "B",
+          "points": 1,
+          "explanation": "固定小延遲或隱藏網址都擋不住自動化猜測；鎖定／限流降低嘗試次數，強密碼與 MFA 讓猜中也難以登入。"
+        },
+        {
+          "number": 19,
+          "icon": "🧯",
+          "question": "【A10 例外處理不當】轉帳金額欄位收到 \"abc\" 讓程式崩潰，並把完整錯誤堆疊回傳到畫面。正確的處理是？",
+          "options": {
+            "A": "把錯誤堆疊的字體改小一點",
+            "B": "先用 trim() 去掉空白，再直接轉成整數",
+            "C": "例外發生時讓程式自動重新啟動",
+            "D": "先驗證輸入格式，再攔截例外：細節寫進日誌，只回傳一般化的錯誤訊息"
+          },
+          "correctIndex": 3,
+          "correctLetter": "D",
+          "points": 1,
+          "explanation": "輸入驗證擋掉壞資料，攔截例外避免崩潰；錯誤細節只留在伺服器日誌，使用者只看到一般訊息。"
+        },
+        {
+          "number": 20,
+          "icon": "🛑",
+          "question": "【A10 例外處理不當】系統遇到錯誤或例外狀態時，哪一種預設行為比較安全？",
+          "options": {
+            "A": "失敗即關閉（fail closed）：出錯時拒絕存取，回到安全狀態",
+            "B": "失敗即開放（fail open）：出錯時先讓請求通過，以免影響使用者",
+            "C": "忽略例外，繼續執行後續程式",
+            "D": "出錯時自動改用管理員權限重試"
+          },
+          "correctIndex": 0,
+          "correctLetter": "A",
+          "points": 1,
+          "explanation": "權限檢查或驗證過程出錯時若放行，攻擊者就能故意製造錯誤來繞過；預設應拒絕並回到安全狀態。"
         }
       ]
     },
     {
       "id": "kali",
       "title": "Kali 20 種手法與防治 學習內容驗證",
-      "description": "共 10 題，每題 4 選 1、1 分，滿分 10 分。以概念、跡象與防治為主，非逐步攻擊教學。",
-      "totalPoints": 10,
+      "description": "共 20 題，每題 4 選 1、1 分，滿分 20 分。以概念、跡象與防治為主，非逐步攻擊教學。",
+      "totalPoints": 20,
       "questions": [
         {
           "number": 1,
@@ -315,14 +465,164 @@
           "correctLetter": "A",
           "points": 1,
           "explanation": "釣魚利用『人』，需教育、郵件防護、MFA 與寄件網域驗證多管齊下。"
+        },
+        {
+          "number": 11,
+          "icon": "🕸️",
+          "question": "【Web 攔截代理】Burp Suite 能攔截並竄改瀏覽器送出的請求，這提醒開發者什麼？",
+          "options": {
+            "A": "伺服器端必須重新驗證所有輸入與授權，不能信任前端送來的值",
+            "B": "在前端把按鈕停用，就能防止參數被竄改",
+            "C": "網站改用 HTTPS 後，使用者就無法修改自己的請求",
+            "D": "把參數藏在隱藏欄位裡就安全了"
+          },
+          "correctIndex": 0,
+          "correctLetter": "A",
+          "points": 1,
+          "explanation": "請求完全由使用者端掌控、可被任意修改；前端限制只是介面，驗證與授權一定要在伺服器端完成。"
+        },
+        {
+          "number": 12,
+          "icon": "🩺",
+          "question": "【Web 弱點掃描】Nikto 會比對已知的危險檔案與過時版本，降低被掃出問題的做法是？",
+          "options": {
+            "A": "保留安裝時附的範例頁，方便日後測試",
+            "B": "移除預設檔與範例、持續修補，並隱藏版本資訊",
+            "C": "在每個頁面底部顯示伺服器版本號",
+            "D": "關閉存取日誌，避免掃描被記錄"
+          },
+          "correctIndex": 1,
+          "correctLetter": "B",
+          "points": 1,
+          "explanation": "掃描器專找『已知問題』；清掉預設檔、及時修補並少洩漏版本，就沒什麼可被比對出來。"
+        },
+        {
+          "number": 13,
+          "icon": "📢",
+          "question": "【LLMNR/NBT-NS 毒化】Responder 冒充回應名稱解析的廣播求助來騙取認證，最直接的防治是？",
+          "options": {
+            "A": "讓所有主機都開啟 LLMNR 以加快解析",
+            "B": "用網域管理員帳號做日常登入",
+            "C": "停用 LLMNR 與 NBT-NS、改用正確的 DNS，並啟用 SMB 簽章",
+            "D": "關閉內網所有監控以減少誤報"
+          },
+          "correctIndex": 2,
+          "correctLetter": "C",
+          "points": 1,
+          "explanation": "沒有廣播求助就無從冒充；停用這兩種舊協定、修好 DNS，再以 SMB 簽章降低憑證被轉送（relay）的風險。"
+        },
+        {
+          "number": 14,
+          "icon": "🔗",
+          "question": "【內網橫向移動】為什麼「每台電腦的本機管理員密碼都一樣」很危險？",
+          "options": {
+            "A": "會讓電腦開機變慢",
+            "B": "一台被攻破，同一組密碼就能登入其他主機；應以 LAPS 讓每台密碼不同",
+            "C": "密碼相同比較好管理，沒有風險",
+            "D": "只要密碼夠長，就不怕被重複使用"
+          },
+          "correctIndex": 1,
+          "correctLetter": "B",
+          "points": 1,
+          "explanation": "密碼重用讓單點失守變成全面失守；LAPS 為每台產生獨立隨機密碼，可切斷橫向擴散。"
+        },
+        {
+          "number": 15,
+          "icon": "🗝️",
+          "question": "【憑證擷取】Mimikatz 類工具會從記憶體抽取登入憑證，下列哪項防治最恰當？",
+          "options": {
+            "A": "讓網域管理員直接登入每台學生電腦排除問題",
+            "B": "停用 EDR 以提升效能",
+            "C": "延長 Kerberos 票證效期，減少重新登入",
+            "D": "啟用 Credential Guard／受保護的 LSASS，並限制特權帳號登入一般工作站"
+          },
+          "correctIndex": 3,
+          "correctLetter": "D",
+          "points": 1,
+          "explanation": "保護憑證所在的程序，並避免高權限憑證『落地』在一般電腦上，被抽出的東西就沒有價值。"
+        },
+        {
+          "number": 16,
+          "icon": "🧭",
+          "question": "【DNS 欺騙】要降低 DNS 欺騙／快取毒化的影響，較好的組合是？",
+          "options": {
+            "A": "使用來路不明的公共 DNS 伺服器",
+            "B": "允許任何使用者修改電腦的 DNS 設定",
+            "C": "部署 DNSSEC、使用可信的加密解析器（DoH/DoT），並搭配 HTTPS/HSTS",
+            "D": "看到瀏覽器憑證警告時直接按「繼續」"
+          },
+          "correctIndex": 2,
+          "correctLetter": "C",
+          "points": 1,
+          "explanation": "DNSSEC 驗證回應真偽、加密解析器防竄改；即使被導錯，HTTPS/HSTS 也能讓假網站露出破綻。"
+        },
+        {
+          "number": 17,
+          "icon": "💦",
+          "question": "【密碼噴灑】密碼噴灑對大量帳號各只試一兩個常見密碼。因此防治上應該？",
+          "options": {
+            "A": "只靠「單一帳號失敗 5 次就鎖定」就足以擋下",
+            "B": "導入 MFA、封鎖常見弱密碼，並監看「跨多帳號」的失敗樣式",
+            "C": "把帳號名稱改成大寫即可",
+            "D": "公開所有帳號清單方便使用者查詢"
+          },
+          "correctIndex": 1,
+          "correctLetter": "B",
+          "points": 1,
+          "explanation": "噴灑刻意避開單帳號鎖定門檻；MFA、弱密碼黑名單與跨帳號行為偵測才抓得到它。"
+        },
+        {
+          "number": 18,
+          "icon": "📡",
+          "question": "【自動化無線攻擊】Wifite 常送出大量「去認證（deauth）」封包把使用者踢下線，以擷取重新連線時的交握。對應的防治是？",
+          "options": {
+            "A": "啟用管理框架保護（802.11w）、關閉 WPS，並監控大量 deauth 與流氓 AP",
+            "B": "把基地台搬到窗邊讓訊號更強",
+            "C": "改回使用 WEP 加密",
+            "D": "保留基地台的預設管理密碼"
+          },
+          "correctIndex": 0,
+          "correctLetter": "A",
+          "points": 1,
+          "explanation": "802.11w 讓去認證封包無法偽造；關閉 WPS、監控異常無線活動，可削弱自動化工具的常用招式。"
+        },
+        {
+          "number": 19,
+          "icon": "🖼️",
+          "question": "【隱寫術與憑證收集】攻擊者會翻找設定檔、腳本裡殘留的帳密，也可能把資料藏進圖片外送。較好的防治是？",
+          "options": {
+            "A": "把資料庫密碼直接寫在程式碼裡比較方便",
+            "B": "只要外送的是圖片檔就不必檢查",
+            "C": "把金鑰備份放在網站的公開目錄",
+            "D": "改用秘密管理（vault）保存金鑰，並以 DLP 與出口流量監控偵測異常外送"
+          },
+          "correctIndex": 3,
+          "correctLetter": "D",
+          "points": 1,
+          "explanation": "不讓憑證散落在檔案中，就沒什麼可收集；DLP 與出口監控則能發現『看似正常』的異常外送。"
+        },
+        {
+          "number": 20,
+          "icon": "🪜",
+          "question": "【權限提升】要降低「從一般使用者提權成 root/SYSTEM」的風險，最核心的原則是？",
+          "options": {
+            "A": "讓所有使用者都加入管理員群組",
+            "B": "把 sudo 設成任何人免密碼執行任何指令",
+            "C": "及時修補、依 CIS 基準線稽核設定，並嚴守最小權限",
+            "D": "停用作業系統更新以免影響相容性"
+          },
+          "correctIndex": 2,
+          "correctLetter": "C",
+          "points": 1,
+          "explanation": "提權多半利用未修補漏洞或過寬設定；修補、基準線稽核與最小權限是三道主要防線。"
         }
       ]
     },
     {
       "id": "sql",
       "title": "SQL Injection 學習內容驗證",
-      "description": "共 10 題，每題 4 選 1、1 分，滿分 10 分。涵蓋注入型態、參數化查詢、白名單與最小權限等防禦。",
-      "totalPoints": 10,
+      "description": "共 20 題，每題 4 選 1、1 分，滿分 20 分。涵蓋注入型態、參數化查詢、佔位符、白名單、最小權限與記錄告警等防禦。",
+      "totalPoints": 20,
       "questions": [
         {
           "number": 1,
@@ -473,6 +773,156 @@
           "correctLetter": "D",
           "points": 1,
           "explanation": "詳細錯誤等於替攻擊者畫地圖；應回傳一般化訊息，細節只進日誌。"
+        },
+        {
+          "number": 11,
+          "icon": "🧩",
+          "question": "【注入發生在哪一層】依注入流程「輸入 → 應用程式 → 組出 SQL → 解析器 → 資料庫」，SQL Injection 的弱點主要發生在哪裡？",
+          "options": {
+            "A": "應用程式把輸入組成 SQL、交給資料庫執行的那一步（應用程式與資料庫互動處）",
+            "B": "使用者在瀏覽器輸入資料的那一步",
+            "C": "資料庫把資料寫入硬碟的那一步",
+            "D": "網路傳送封包的那一步"
+          },
+          "correctIndex": 0,
+          "correctLetter": "A",
+          "points": 1,
+          "explanation": "問題出在應用程式和資料庫互動時把輸入拼進語法；所以要在應用程式端用參數化修補，加密傳輸或更換資料庫都無法解決。"
+        },
+        {
+          "number": 12,
+          "icon": "🎯",
+          "question": "【核心原則】本實驗室所有防禦技巧，共同要實現的原則是？",
+          "options": {
+            "A": "只要把輸入長度限制得夠短，就不會被注入",
+            "B": "把所有輸入先轉成大寫再組 SQL",
+            "C": "只要網站使用 HTTPS，資料庫就安全",
+            "D": "不可信的輸入一律當「資料」，絕不讓它變成 SQL 語法"
+          },
+          "correctIndex": 3,
+          "correctLetter": "D",
+          "points": 1,
+          "explanation": "資料歸資料、指令歸指令；長度限制、大小寫轉換、HTTPS 都無法阻止輸入改變 SQL 語意。"
+        },
+        {
+          "number": 13,
+          "icon": "🚪",
+          "question": "【登入繞過】在登入帳號欄輸入 admin' -- 可能繞過驗證，其中 -- 的作用是？",
+          "options": {
+            "A": "把密碼欄位自動加密",
+            "B": "讓資料庫延遲回應數秒",
+            "C": "把查詢後段（包含密碼比對）變成註解而不執行",
+            "D": "把兩個查詢的結果合併在一起"
+          },
+          "correctIndex": 2,
+          "correctLetter": "C",
+          "points": 1,
+          "explanation": "單引號先閉合帳號字串，-- 讓後面的 AND password = … 變成註解；改用參數化查詢後，這串輸入只會被當成一個奇怪的帳號名稱。"
+        },
+        {
+          "number": 14,
+          "icon": "🔦",
+          "question": "【布林盲注】頁面不會顯示查詢資料，但「條件成立」與「不成立」時的回應內容不同，攻擊者據此逐位推測資料。這種手法稱為？",
+          "options": {
+            "A": "UNION-based 注入",
+            "B": "時間盲注（Time-based Blind）",
+            "C": "布林盲注（Boolean-based Blind）",
+            "D": "錯誤訊息型注入（Error-based）"
+          },
+          "correctIndex": 2,
+          "correctLetter": "C",
+          "points": 1,
+          "explanation": "布林盲注靠真／假造成的回應差異推測資料，時間盲注則看延遲；兩者的根本防禦都是參數化查詢。"
+        },
+        {
+          "number": 15,
+          "icon": "🚧",
+          "question": "【WAF 的角色】沙盒的 WAF 情境中，變形後的輸入仍能通過過濾，這說明了什麼？",
+          "options": {
+            "A": "WAF 以樣式比對攔截，可被大小寫、編碼、註解拆字等變形繞過，只能當輔助防線",
+            "B": "只要 WAF 規則寫得夠多，就能完全取代參數化查詢",
+            "C": "裝了 WAF 之後，就不需要記錄與告警",
+            "D": "WAF 被繞過，代表參數化查詢也一定失效"
+          },
+          "correctIndex": 0,
+          "correctLetter": "A",
+          "points": 1,
+          "explanation": "WAF 能擋掉部分已知樣式，但比對規則總有漏網之魚；真正的防線仍是安全的程式寫法，WAF 是額外的一層。"
+        },
+        {
+          "number": 16,
+          "icon": "🔢",
+          "question": "【ID 參數／型別檢查】網址 ?id=15 會被帶入 WHERE id = … 的查詢，最適當的防禦組合是？",
+          "options": {
+            "A": "只在前端用 JavaScript 檢查是不是數字",
+            "B": "伺服器端驗證 id 必須是整數，並以參數化查詢帶入",
+            "C": "把 id 用 Base64 編碼後再傳送",
+            "D": "把 id 用單引號包起來後再拼進 SQL"
+          },
+          "correctIndex": 1,
+          "correctLetter": "B",
+          "points": 1,
+          "explanation": "前端檢查可被略過、編碼不是防護、加引號仍是拼接；伺服器端型別驗證擋掉不合理的輸入，參數化確保它不會改變語意。"
+        },
+        {
+          "number": 17,
+          "icon": "🧪",
+          "question": "【沙盒：安全模式】把沙盒切到「安全（參數化查詢）」後，再輸入 ' OR '1'='1，結果會是？",
+          "options": {
+            "A": "仍會登入成功，因為條件恆真",
+            "B": "資料庫回傳語法錯誤，並列出資料表名稱",
+            "C": "整串輸入被當成一個參數值比對，查無符合",
+            "D": "輸入中的單引號會先被自動刪除，再照常執行"
+          },
+          "correctIndex": 2,
+          "correctLetter": "C",
+          "points": 1,
+          "explanation": "參數化查詢下 SQL 結構已固定，payload 只是一段普通字串；它不是靠刪除或跳脫字元，而是根本不讓輸入進入語法。"
+        },
+        {
+          "number": 18,
+          "icon": "🧵",
+          "question": "【字串拼接的後果】程式寫成 \"... WHERE name = '\" + username + \"'\"，若輸入含有單引號與 SQL 關鍵字，最可能發生什麼事？",
+          "options": {
+            "A": "輸入會閉合原本的字串，改變查詢的語意與條件",
+            "B": "資料庫會自動辨識並忽略惡意的部分",
+            "C": "只會讓這次查詢變慢，結果不受影響",
+            "D": "只影響畫面顯示，不會影響資料庫"
+          },
+          "correctIndex": 0,
+          "correctLetter": "A",
+          "points": 1,
+          "explanation": "拼接後資料庫分不清哪段是值、哪段是語法，輸入就能改寫 WHERE 條件；這正是參數化查詢要解決的問題。"
+        },
+        {
+          "number": 19,
+          "icon": "🧷",
+          "question": "【佔位符】Python sqlite3 的 ?、psycopg 的 %s、PHP PDO 的 :u，這些佔位符的共同作用是？",
+          "options": {
+            "A": "送出前先把輸入加密",
+            "B": "先固定 SQL 結構，輸入再以參數值綁定，不會被當成語法",
+            "C": "自動把輸入裡的單引號刪掉",
+            "D": "讓字串拼接 SQL 的速度更快"
+          },
+          "correctIndex": 1,
+          "correctLetter": "B",
+          "points": 1,
+          "explanation": "佔位符的值交給驅動程式綁定；注意 psycopg 的 %s 要當成 execute 的第二個參數傳入，自己用 Python 的 % 格式化字串仍是拼接，不安全。"
+        },
+        {
+          "number": 20,
+          "icon": "📜",
+          "question": "【記錄與告警】縱深防禦中的「記錄與告警」，對 SQL Injection 最主要的貢獻是？",
+          "options": {
+            "A": "讓程式自動修補注入漏洞",
+            "B": "取代參數化查詢，成為第一道防線",
+            "C": "讓攻擊者看不到錯誤訊息",
+            "D": "及早發現可疑的注入嘗試，並在事後追查影響範圍"
+          },
+          "correctIndex": 3,
+          "correctLetter": "D",
+          "points": 1,
+          "explanation": "日誌和告警不會擋下攻擊，但能讓異常被看見、被追查；隱藏錯誤訊息屬於「錯誤處理」那一層。"
         }
       ]
     }

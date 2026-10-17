@@ -2,8 +2,8 @@
 """學習內容驗證題庫（原創）— 單一資料來源，產生 *.md 與 quizzes.json。
 用法：python3 build_quizzes.py
 每題欄位：icon 圖示、q 題目、options 四選項(A-D)、answer 正解索引(0起)、exp 解析。
-每題 1 分，共 10 題。內容為自行撰寫，概念/防禦導向，非逐步攻擊教學。"""
-import json, pathlib
+每題 1 分，每份 20 題（第 1–10 題凍結於此檔；第 11–20 題取自 <id>-review20.json 的 source=new 題）。內容為自行撰寫，概念/防禦導向，非逐步攻擊教學。"""
+import json, pathlib, hashlib
 
 HERE = pathlib.Path(__file__).parent
 
@@ -11,7 +11,7 @@ QUIZZES = {
  "owasp": {
   "id": "owasp",
   "title": "OWASP Top 10 學習內容驗證",
-  "desc": "共 10 題，每題 4 選 1、1 分，滿分 10 分。驗證對 OWASP Top 10 各類別概念與防禦的理解。",
+  "desc": "共 20 題，每題 4 選 1、1 分，滿分 20 分。驗證對 OWASP Top 10 各類別概念與防禦的理解。",
   "file": "owasp-quiz.md",
   "questions": [
    ("🔓", "【A01 存取控制失效】學生把網址的 ?id=1001 改成 ?id=1002 就看到別人的成績。最根本的修正是？",
@@ -49,7 +49,7 @@ QUIZZES = {
  "kali": {
   "id": "kali",
   "title": "Kali 20 種手法與防治 學習內容驗證",
-  "desc": "共 10 題，每題 4 選 1、1 分，滿分 10 分。以概念、跡象與防治為主，非逐步攻擊教學。",
+  "desc": "共 20 題，每題 4 選 1、1 分，滿分 20 分。以概念、跡象與防治為主，非逐步攻擊教學。",
   "file": "kali-quiz.md",
   "questions": [
    ("🔍", "【偵察】Nmap 這類連接埠掃描工具，在防禦上我方最該做的是？",
@@ -87,7 +87,7 @@ QUIZZES = {
  "sql": {
   "id": "sql",
   "title": "SQL Injection 學習內容驗證",
-  "desc": "共 10 題，每題 4 選 1、1 分，滿分 10 分。涵蓋注入型態、參數化查詢、白名單與最小權限等防禦。",
+  "desc": "共 20 題，每題 4 選 1、1 分，滿分 20 分。涵蓋注入型態、參數化查詢、佔位符、白名單、最小權限與記錄告警等防禦。",
   "file": "sql-quiz.md",
   "questions": [
    ("💥", "SQL Injection 最根本的成因是？",
@@ -149,7 +149,8 @@ def build_md(qz):
         lines.append("")
     lines.append("---")
     lines.append("")
-    lines.append(f"**配分**：共 10 題，每題 1 分，滿分 10 分。")
+    n = len(qz["questions"])
+    lines.append(f"**配分**：共 {n} 題，每題 1 分，滿分 {n} 分。")
     return "\n".join(lines) + "\n"
 
 def build_json():
@@ -167,10 +168,33 @@ def build_json():
         out["quizzes"].append(qobj)
     return out
 
+# 三份表單第 1–10 題都已上線，不可更動：以指紋凍結（第 11–20 題取自 <id>-review20.json 的 source=new 題）
+FROZEN = {
+ "owasp": ("ffe23cc3068c39a53db28160345756a75782dc8fd90b5f16a198913e12c45a66", "CADBACDBCA"),
+ "kali":  ("71cb3084efe13e99c8eaf34a874a08907c100be1acb49ae1e92dfe6ea40e28ee", "BDACADBCDA"),
+ "sql":   ("71c90141f64a2f024d025905d6d99cd5d06d65baa3f11eecd8c682be528116cf", "CDBADCBABD"),
+}
+
+def extend(key):
+    """表單第 11–20 題：取自 <key>-review20.json 中 source=new 的題目（依 formQ 排序）"""
+    qs = QUIZZES[key]["questions"]
+    fp, ans = FROZEN[key]
+    got = hashlib.sha256(json.dumps(qs[:10], ensure_ascii=False).encode()).hexdigest()
+    if len(qs) != 10 or got != fp or "".join(LETTERS[q[3]] for q in qs) != ans:
+        raise SystemExit(f"{key} 表單第 1–10 題被改動了（與已上線表單不一致），請還原")
+    rv = json.loads((HERE / f"{key}-review20.json").read_text(encoding="utf-8"))["questions"]
+    new = sorted((q for q in rv if q["source"] == "new"), key=lambda q: q["formQ"])
+    if [q["formQ"] for q in new] != list(range(11, 21)):
+        raise SystemExit(f"{key}-review20.json 的新題 formQ 必須剛好是 11–20")
+    for q in new:
+        qs.append((q["icon"], q["question"], [q["options"][k] for k in LETTERS], q["correctIndex"], q["explanation"]))
+
 def main():
+    for k in QUIZZES: extend(k)
     for key, qz in QUIZZES.items():
         n = len(qz["questions"])
-        assert n == 10, f"{key} 題數 {n} != 10"
+        want = 20
+        assert n == want, f"{key} 題數 {n} != {want}"
         (HERE / qz["file"]).write_text(build_md(qz), encoding="utf-8")
         print("寫出", qz["file"])
     (HERE / "quizzes.json").write_text(
