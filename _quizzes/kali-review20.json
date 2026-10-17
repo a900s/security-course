@@ -1,0 +1,296 @@
+{
+ "generatedBy": "手寫（原創）；source=form 者與 quizzes.json Kali 表單題逐字相同，由 build.py 驗證",
+ "description": "Kali Top 20 隨堂複習：每個手法章節末各 1 題，共 20 題（與 Google 表單 10 題測驗分開）",
+ "questions": [
+  {
+   "section": 1,
+   "source": "form",
+   "formQ": 1,
+   "icon": "🔍",
+   "question": "【偵察】Nmap 這類連接埠掃描工具，在防禦上我方最該做的是？",
+   "options": {
+    "A": "把所有連接埠都對外開放",
+    "B": "只開放必要服務並以防火牆、IDS 監看異常掃描",
+    "C": "關閉所有日誌",
+    "D": "相信內網一定安全"
+   },
+   "correctIndex": 1,
+   "explanation": "縮小攻擊面（最小化開放埠）並監看掃描跡象，是面對偵察的基本防禦。"
+  },
+  {
+   "section": 2,
+   "source": "form",
+   "formQ": 2,
+   "icon": "🔑",
+   "question": "【線上暴力破解】對 SSH / RDP 等服務的帳密暴力破解，有效的防治是？",
+   "options": {
+    "A": "停用帳號鎖定",
+    "B": "把密碼縮短方便記憶",
+    "C": "把服務改用非加密連線",
+    "D": "強密碼＋MFA＋限制嘗試次數／來源 IP"
+   },
+   "correctIndex": 3,
+   "explanation": "強認證、MFA、速率限制與鎖定可大幅削弱線上猜測攻擊。"
+  },
+  {
+   "section": 3,
+   "source": "form",
+   "formQ": 3,
+   "icon": "🧮",
+   "question": "【離線密碼破解】John/Hashcat 針對外洩的雜湊做離線破解，最有效的防治是？",
+   "options": {
+    "A": "使用加鹽、計算成本高的雜湊（bcrypt/Argon2）並防止雜湊外洩",
+    "B": "用快速且無鹽的雜湊",
+    "C": "把密碼存成明碼",
+    "D": "縮短密碼長度"
+   },
+   "correctIndex": 0,
+   "explanation": "加鹽、慢雜湊讓離線破解成本大增；同時要避免雜湊被竊。"
+  },
+  {
+   "section": 4,
+   "source": "form",
+   "formQ": 4,
+   "icon": "📶",
+   "question": "【Wi‑Fi 破解】針對家用／校園無線網路，較安全的設定是？",
+   "options": {
+    "A": "使用 WEP 加密",
+    "B": "完全不設密碼",
+    "C": "採用 WPA2/WPA3＋夠長的隨機金鑰，並停用 WPS",
+    "D": "把 SSID 設成常見字串"
+   },
+   "correctIndex": 2,
+   "explanation": "WEP 已不安全；WPA2/WPA3＋強金鑰、關閉 WPS 才能抵擋常見無線破解。"
+  },
+  {
+   "section": 5,
+   "source": "form",
+   "formQ": 5,
+   "icon": "🕵️",
+   "question": "【封包嗅探】在共享網路上用 Wireshark 竊聽流量，最根本的防治是？",
+   "options": {
+    "A": "全程使用 TLS/HTTPS 等加密傳輸",
+    "B": "一律使用明碼協定",
+    "C": "把網速調慢",
+    "D": "停用交換器"
+   },
+   "correctIndex": 0,
+   "explanation": "端到端加密讓即使被攔截也讀不到內容，是對抗嗅探的核心。"
+  },
+  {
+   "section": 6,
+   "source": "form",
+   "formQ": 6,
+   "icon": "🔀",
+   "question": "【中間人 / ARP 欺騙】偵測與防治 ARP 欺騙式中間人攻擊，較有效的是？",
+   "options": {
+    "A": "讓所有裝置共用同一 VLAN 無隔離",
+    "B": "關閉交換器日誌",
+    "C": "改用 HTTP",
+    "D": "使用動態 ARP 檢測、連接埠安全與加密連線"
+   },
+   "correctIndex": 3,
+   "explanation": "交換器的 DAI／Port Security 搭配加密傳輸，可偵測並降低 ARP 欺騙影響。"
+  },
+  {
+   "section": 7,
+   "source": "form",
+   "formQ": 7,
+   "icon": "🧰",
+   "question": "【漏洞利用框架】面對 Metasploit 這類利用框架，組織最根本的防治是？",
+   "options": {
+    "A": "永不更新系統",
+    "B": "落實修補管理、關閉未用服務並強化縱深防禦",
+    "C": "停用防毒",
+    "D": "共用管理員帳號"
+   },
+   "correctIndex": 1,
+   "explanation": "多數利用針對已知漏洞，及時修補＋最小化服務＋EDR 是關鍵防線。"
+  },
+  {
+   "section": 8,
+   "source": "form",
+   "formQ": 8,
+   "icon": "💉",
+   "question": "【自動化注入】SQLmap 能自動化利用 SQL 注入，對應的防治核心是？",
+   "options": {
+    "A": "在前端做輸入長度限制即可",
+    "B": "只靠 WAF",
+    "C": "後端採參數化查詢並最小權限資料庫帳號",
+    "D": "把錯誤訊息完整回傳"
+   },
+   "correctIndex": 2,
+   "explanation": "自動化工具一樣擋不住參數化查詢；最小權限可降低被利用後的衝擊。"
+  },
+  {
+   "section": 9,
+   "source": "review",
+   "icon": "🕸️",
+   "question": "【Web 攔截代理】Burp Suite 能攔截並竄改瀏覽器送出的請求，這提醒開發者什麼？",
+   "options": {
+    "A": "伺服器端必須重新驗證所有輸入與授權，不能信任前端送來的值",
+    "B": "在前端把按鈕停用，就能防止參數被竄改",
+    "C": "網站改用 HTTPS 後，使用者就無法修改自己的請求",
+    "D": "把參數藏在隱藏欄位裡就安全了"
+   },
+   "correctIndex": 0,
+   "explanation": "請求完全由使用者端掌控、可被任意修改；前端限制只是介面，驗證與授權一定要在伺服器端完成。"
+  },
+  {
+   "section": 10,
+   "source": "review",
+   "icon": "🩺",
+   "question": "【Web 弱點掃描】Nikto 會比對已知的危險檔案與過時版本，降低被掃出問題的做法是？",
+   "options": {
+    "A": "保留安裝時附的範例頁，方便日後測試",
+    "B": "移除預設檔與範例、持續修補，並隱藏版本資訊",
+    "C": "在每個頁面底部顯示伺服器版本號",
+    "D": "關閉存取日誌，避免掃描被記錄"
+   },
+   "correctIndex": 1,
+   "explanation": "掃描器專找『已知問題』；清掉預設檔、及時修補並少洩漏版本，就沒什麼可被比對出來。"
+  },
+  {
+   "section": 11,
+   "source": "form",
+   "formQ": 9,
+   "icon": "📁",
+   "question": "【目錄列舉】Gobuster 等工具列舉隱藏目錄／檔案，防治上應？",
+   "options": {
+    "A": "把備份檔與管理頁放在可猜到的路徑",
+    "B": "開放目錄瀏覽",
+    "C": "停用存取日誌",
+    "D": "移除敏感檔、正確設定權限並監看大量 404"
+   },
+   "correctIndex": 3,
+   "explanation": "別依賴『路徑保密』；要移除敏感檔、設定存取控制並監看列舉跡象。"
+  },
+  {
+   "section": 12,
+   "source": "review",
+   "icon": "📢",
+   "question": "【LLMNR/NBT-NS 毒化】Responder 冒充回應名稱解析的廣播求助來騙取認證，最直接的防治是？",
+   "options": {
+    "A": "讓所有主機都開啟 LLMNR 以加快解析",
+    "B": "用網域管理員帳號做日常登入",
+    "C": "停用 LLMNR 與 NBT-NS、改用正確的 DNS，並啟用 SMB 簽章",
+    "D": "關閉內網所有監控以減少誤報"
+   },
+   "correctIndex": 2,
+   "explanation": "沒有廣播求助就無從冒充；停用這兩種舊協定、修好 DNS，再以 SMB 簽章降低憑證被轉送（relay）的風險。"
+  },
+  {
+   "section": 13,
+   "source": "review",
+   "icon": "🔗",
+   "question": "【內網橫向移動】為什麼「每台電腦的本機管理員密碼都一樣」很危險？",
+   "options": {
+    "A": "會讓電腦開機變慢",
+    "B": "一台被攻破，同一組密碼就能登入其他主機；應以 LAPS 讓每台密碼不同",
+    "C": "密碼相同比較好管理，沒有風險",
+    "D": "只要密碼夠長，就不怕被重複使用"
+   },
+   "correctIndex": 1,
+   "explanation": "密碼重用讓單點失守變成全面失守；LAPS 為每台產生獨立隨機密碼，可切斷橫向擴散。"
+  },
+  {
+   "section": 14,
+   "source": "review",
+   "icon": "🗝️",
+   "question": "【憑證擷取】Mimikatz 類工具會從記憶體抽取登入憑證，下列哪項防治最恰當？",
+   "options": {
+    "A": "讓網域管理員直接登入每台學生電腦排除問題",
+    "B": "停用 EDR 以提升效能",
+    "C": "延長 Kerberos 票證效期，減少重新登入",
+    "D": "啟用 Credential Guard／受保護的 LSASS，並限制特權帳號登入一般工作站"
+   },
+   "correctIndex": 3,
+   "explanation": "保護憑證所在的程序，並避免高權限憑證『落地』在一般電腦上，被抽出的東西就沒有價值。"
+  },
+  {
+   "section": 15,
+   "source": "form",
+   "formQ": 10,
+   "icon": "🎣",
+   "question": "【社交工程 / 釣魚】對抗釣魚攻擊，最關鍵的防治組合是？",
+   "options": {
+    "A": "使用者教育＋郵件過濾＋MFA 與網域驗證（SPF/DKIM/DMARC）",
+    "B": "完全依賴技術、不做教育",
+    "C": "把所有附件自動開啟",
+    "D": "停用垃圾郵件過濾"
+   },
+   "correctIndex": 0,
+   "explanation": "釣魚利用『人』，需教育、郵件防護、MFA 與寄件網域驗證多管齊下。"
+  },
+  {
+   "section": 16,
+   "source": "review",
+   "icon": "🧭",
+   "question": "【DNS 欺騙】要降低 DNS 欺騙／快取毒化的影響，較好的組合是？",
+   "options": {
+    "A": "使用來路不明的公共 DNS 伺服器",
+    "B": "允許任何使用者修改電腦的 DNS 設定",
+    "C": "部署 DNSSEC、使用可信的加密解析器（DoH/DoT），並搭配 HTTPS/HSTS",
+    "D": "看到瀏覽器憑證警告時直接按「繼續」"
+   },
+   "correctIndex": 2,
+   "explanation": "DNSSEC 驗證回應真偽、加密解析器防竄改；即使被導錯，HTTPS/HSTS 也能讓假網站露出破綻。"
+  },
+  {
+   "section": 17,
+   "source": "review",
+   "icon": "💦",
+   "question": "【密碼噴灑】密碼噴灑對大量帳號各只試一兩個常見密碼。因此防治上應該？",
+   "options": {
+    "A": "只靠「單一帳號失敗 5 次就鎖定」就足以擋下",
+    "B": "導入 MFA、封鎖常見弱密碼，並監看「跨多帳號」的失敗樣式",
+    "C": "把帳號名稱改成大寫即可",
+    "D": "公開所有帳號清單方便使用者查詢"
+   },
+   "correctIndex": 1,
+   "explanation": "噴灑刻意避開單帳號鎖定門檻；MFA、弱密碼黑名單與跨帳號行為偵測才抓得到它。"
+  },
+  {
+   "section": 18,
+   "source": "review",
+   "icon": "📡",
+   "question": "【自動化無線攻擊】Wifite 常送出大量「去認證（deauth）」封包把使用者踢下線，以擷取重新連線時的交握。對應的防治是？",
+   "options": {
+    "A": "啟用管理框架保護（802.11w）、關閉 WPS，並監控大量 deauth 與流氓 AP",
+    "B": "把基地台搬到窗邊讓訊號更強",
+    "C": "改回使用 WEP 加密",
+    "D": "保留基地台的預設管理密碼"
+   },
+   "correctIndex": 0,
+   "explanation": "802.11w 讓去認證封包無法偽造；關閉 WPS、監控異常無線活動，可削弱自動化工具的常用招式。"
+  },
+  {
+   "section": 19,
+   "source": "review",
+   "icon": "🖼️",
+   "question": "【隱寫術與憑證收集】攻擊者會翻找設定檔、腳本裡殘留的帳密，也可能把資料藏進圖片外送。較好的防治是？",
+   "options": {
+    "A": "把資料庫密碼直接寫在程式碼裡比較方便",
+    "B": "只要外送的是圖片檔就不必檢查",
+    "C": "把金鑰備份放在網站的公開目錄",
+    "D": "改用秘密管理（vault）保存金鑰，並以 DLP 與出口流量監控偵測異常外送"
+   },
+   "correctIndex": 3,
+   "explanation": "不讓憑證散落在檔案中，就沒什麼可收集；DLP 與出口監控則能發現『看似正常』的異常外送。"
+  },
+  {
+   "section": 20,
+   "source": "review",
+   "icon": "🪜",
+   "question": "【權限提升】要降低「從一般使用者提權成 root/SYSTEM」的風險，最核心的原則是？",
+   "options": {
+    "A": "讓所有使用者都加入管理員群組",
+    "B": "把 sudo 設成任何人免密碼執行任何指令",
+    "C": "及時修補、依 CIS 基準線稽核設定，並嚴守最小權限",
+    "D": "停用作業系統更新以免影響相容性"
+   },
+   "correctIndex": 2,
+   "explanation": "提權多半利用未修補漏洞或過寬設定；修補、基準線稽核與最小權限是三道主要防線。"
+  }
+ ]
+}
