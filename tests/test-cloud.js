@@ -187,6 +187,12 @@ const AK = 'progress/ming.wang@lgm.kh.edu.tw';
         const slug = await pg.evaluate(() => CHALLENGES[0].slug);
         await pg.evaluate(s => { location.hash = '#/' + s; }, slug); await sleep(200);
         check('level shows its practice', await pg.evaluate(() => document.querySelectorAll('section.review').length > 0));
+        await pg.evaluate(() => {
+          localStorage.setItem(StudentAuth.key('owasp_course_solved_v1'), JSON.stringify(CHALLENGES.map((_, i) => i)));
+          location.hash = '#/';
+        });
+        await sleep(200);
+        check('final review appears after all levels', await pg.evaluate(() => !!document.querySelector('#finalReview [data-act="start"]')));
       } else {
         check('final review works', await pg.evaluate(() => { const b = document.querySelector('#finalReview [data-act="start"]'); if (!b) return false; b.click(); const o = document.querySelector('#finalReview .rv-opt'); o.click(); return /答對|正確答案/.test(document.getElementById('finalReview').textContent); }));
       }
