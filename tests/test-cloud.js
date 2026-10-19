@@ -165,7 +165,7 @@ const AK = 'progress/ming.wang@lgm.kh.edu.tw';
       const info = await pg.evaluate(() => ({ teacher: /教師區|教師專區/.test(document.body.innerText), home: !!document.querySelector('a[href="../"]'), form: !!document.querySelector('[data-quiz-form]') }));
       check(mod + ' no teacher area', !info.teacher);
       check(mod + ' links home', info.home);
-      check(mod + ' has google form', info.form);
+      check(mod + ' has google form', mod === 'owasp-top10' ? !info.form : info.form);
     }
     check('no errors', !pg.__errors.length, pg.__errors.join('|')); await pg.__ctx.close(); }
 
@@ -187,12 +187,14 @@ const AK = 'progress/ming.wang@lgm.kh.edu.tw';
         const slug = await pg.evaluate(() => CHALLENGES[0].slug);
         await pg.evaluate(s => { location.hash = '#/' + s; }, slug); await sleep(200);
         check('level shows its practice', await pg.evaluate(() => document.querySelectorAll('section.review').length > 0));
+        check('level hides the form', await pg.evaluate(() => !document.querySelector('[data-quiz-form]')));
         await pg.evaluate(() => {
           localStorage.setItem(StudentAuth.key('owasp_course_solved_v1'), JSON.stringify(CHALLENGES.map((_, i) => i)));
           location.hash = '#/';
         });
         await sleep(200);
         check('final review appears after all levels', await pg.evaluate(() => !!document.querySelector('#finalReview [data-act="start"]')));
+        check('form appears on map after all levels', await pg.evaluate(() => !!document.querySelector('[data-quiz-form="owasp"]')));
       } else {
         check('final review works', await pg.evaluate(() => { const b = document.querySelector('#finalReview [data-act="start"]'); if (!b) return false; b.click(); const o = document.querySelector('#finalReview .rv-opt'); o.click(); return /答對|正確答案/.test(document.getElementById('finalReview').textContent); }));
       }

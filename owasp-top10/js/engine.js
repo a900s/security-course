@@ -93,9 +93,9 @@
       '<p>每一關都是兩階段：先在安全模擬中<b>重現弱點</b>，再閱讀示意用的<b>脆弱程式碼</b>、點出問題行、挑出正確修法，並用<b>同一招</b>驗證攻擊已失效。A05 注入分為 SQL、指令、XSS 三小關。</p>' +
       '<div class="warn">⚠ 全部為教學用<b>安全模擬</b>：使用假資料、不連線任何真實系統、不執行任何真實指令或腳本。僅限在你自己或已獲授權的環境中學習，請勿對未授權的系統進行測試。</div>' +
       '</section>' +
-      '<div class="maphead"><h2>關卡</h2><div class="hint">完成一關後自動解鎖下一關。點進關卡後才作該關練習。全部通過後，地圖下方會出現總複習。</div></div>' +
+      '<div class="maphead"><h2>關卡</h2><div class="hint">完成一關後自動解鎖下一關。點進關卡後才作該關練習。全部通過後，地圖下方才出現總複習與學習內容驗證。</div></div>' +
       '<div class="grid">' + cells + '</div>' + final +
-      formCta();
+      (allDone ? formCta() : "");
     progress();
     wireForms();
     if (allDone && window.FinalReview) window.FinalReview.mount(document.getElementById("finalReview"));
@@ -190,7 +190,7 @@
       (next ? '<p style="margin-top:4px">已解鎖下一關 <b>' + esc(next.code) + ' ' + esc(next.nm) + '</b></p>' : '<p style="margin-top:4px">這是最後一關，你已完成全部！</p>') +
       '<div class="pagenav"><a class="btn sec" href="#/">← 回關卡地圖</a><span class="sp"></span>' +
       (next ? '<a class="btn" href="#/' + next.slug + '">下一關 ' + esc(next.code) + ' →</a>' : '') +
-      '</div></div>' + reviewFor(lv.slug) + formCta();
+      '</div></div>' + reviewFor(lv.slug);
     app.innerHTML = html;
     if (window.ReviewCore) window.ReviewCore.mount(app);
     progress();
