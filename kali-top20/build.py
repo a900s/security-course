@@ -44,11 +44,6 @@ if body.count('class="review-slot"') != N_SEC or sorted(n for n in blocks if n) 
 for n in range(1, N_SEC + 1):
     if not re.search(rf'<h2[^>]*>{n}\.\s', body):
         raise SystemExit(f"找不到第 {n} 章標題")
-FINAL = """<section class="final-review" id="final" aria-label="總複習">
-<h2>🧠 總複習</h2>
-<div id="finalReview"></div>
-</section>"""
-
 def asset(rel):
     """?v= 內容雜湊由 ../_quizzes/build_review.py 統一加上"""
     return rel
@@ -67,11 +62,10 @@ html = f"""<!doctype html>
 <body><main class="wrap">
 <p class="backhome"><a href="../">← 回總頁</a></p>
 {body}
-{FINAL}
 {FORM_CTA}
 <footer>自製教學教材 · 僅供合法授權環境之防禦教育使用 · 由 build.py 自 README.md 產生 · <a href="../">← 回總頁</a></footer>
 </main>
-<script src="https://accounts.google.com/gsi/client" async></script>\n<script src="{asset('../js/google-auth-config.js')}"></script>\n<script src="{asset('../js/forms-config.js')}"></script>\n<script src="{asset('../js/student-auth.js')}"></script>\n<script src="{asset('../js/firebase-config.js')}"></script>\n<script src="{asset('../js/cloud-sync.js')}"></script>\n<script src="{asset('js/review-data.js')}"></script>\n<script src="{asset('../js/review-core.js')}"></script>\n<script src="{asset('../js/final-review.js')}"></script>
+<script src="https://accounts.google.com/gsi/client" async></script>\n<script src="{asset('../js/google-auth-config.js')}"></script>\n<script src="{asset('../js/forms-config.js')}"></script>\n<script src="{asset('../js/student-auth.js')}"></script>\n<script src="{asset('../js/firebase-config.js')}"></script>\n<script src="{asset('../js/cloud-sync.js')}"></script>\n<script src="{asset('js/review-data.js')}"></script>\n<script src="{asset('../js/review-core.js')}"></script>
 </body></html>
 """
 (here / "index.html").write_text(html, encoding="utf-8")

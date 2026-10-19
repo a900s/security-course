@@ -193,10 +193,11 @@ const AK = 'progress/ming.wang@lgm.kh.edu.tw';
           location.hash = '#/';
         });
         await sleep(200);
-        check('final review appears after all levels', await pg.evaluate(() => !!document.querySelector('#finalReview [data-act="start"]')));
         check('form appears on map after all levels', await pg.evaluate(() => !!document.querySelector('[data-quiz-form="owasp"]')));
+        check('no final review', await pg.evaluate(() => !document.getElementById('finalReview')));
       } else {
-        check('final review works', await pg.evaluate(() => { const b = document.querySelector('#finalReview [data-act="start"]'); if (!b) return false; b.click(); const o = document.querySelector('#finalReview .rv-opt'); o.click(); return /答對|正確答案/.test(document.getElementById('finalReview').textContent); }));
+        check('unit practice remains', await pg.evaluate(() => document.querySelectorAll('.review-slot').length > 0));
+        check('no final review', await pg.evaluate(() => !document.getElementById('finalReview')));
       }
       check('no reset button', await pg.evaluate(() => !document.getElementById('gsiReset')));
       await pg.evaluate(() => StudentAuth.resetProgress(true)); await sleep(200); check('resetProgress clears this account', (await done(pg)) === 0);

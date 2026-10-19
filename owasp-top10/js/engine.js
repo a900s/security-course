@@ -83,8 +83,7 @@
     }).join("");
     var allDone = solved.size >= L.length;
     var final = allDone
-      ? '<div class="final"><h2>★ 十大類別全數完成</h2><p>你已親手重現並修復 OWASP Top 10 的每一種弱點。更完整的原理與程式碼修法，請回到課堂教材。</p></div>' +
-        '<section class="final-review" aria-label="總複習"><div id="finalReview"></div></section>'
+      ? '<div class="final"><h2>★ 十大類別全數完成</h2><p>你已親手重現並修復 OWASP Top 10 的每一種弱點。請作下方的學習內容驗證。</p></div>'
       : "";
     app.innerHTML =
       '<section class="hero">' +
@@ -93,12 +92,11 @@
       '<p>每一關都是兩階段：先在安全模擬中<b>重現弱點</b>，再閱讀示意用的<b>脆弱程式碼</b>、點出問題行、挑出正確修法，並用<b>同一招</b>驗證攻擊已失效。A05 注入分為 SQL、指令、XSS 三小關。</p>' +
       '<div class="warn">⚠ 全部為教學用<b>安全模擬</b>：使用假資料、不連線任何真實系統、不執行任何真實指令或腳本。僅限在你自己或已獲授權的環境中學習，請勿對未授權的系統進行測試。</div>' +
       '</section>' +
-      '<div class="maphead"><h2>關卡</h2><div class="hint">完成一關後自動解鎖下一關。點進關卡後才作該關練習。全部通過後，地圖下方才出現總複習與學習內容驗證。</div></div>' +
+      '<div class="maphead"><h2>關卡</h2><div class="hint">完成一關後自動解鎖下一關。點進關卡後才作該關練習。全部通過後，地圖下方才出現學習內容驗證。</div></div>' +
       '<div class="grid">' + cells + '</div>' + final +
       (allDone ? formCta() : "");
     progress();
     wireForms();
-    if (allDone && window.FinalReview) window.FinalReview.mount(document.getElementById("finalReview"));
   }
 
   /* ---------- 兩階段：程式碼修復 ---------- */

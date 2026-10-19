@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>SQL Injection 資安教學與防禦實驗室</title>
-<meta name="description" content="SQL Injection 原理、攻擊型態、各語言防禦程式碼、多層防禦、互動沙盒、20 題隨堂複習與總複習。純前端安全模擬，自製教材。">
+<meta name="description" content="SQL Injection 原理、攻擊型態、各語言防禦程式碼、多層防禦、互動沙盒、各段隨堂練習。純前端安全模擬，自製教材。">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&family=JetBrains+Mono:wght@400;500;700&display=swap">
 <link rel="stylesheet" href="css/style.css?v=07e2aeb0">
@@ -14,7 +14,7 @@
 <div class="top"><div class="wrap">
   <p class="backhome"><a href="../">← 回總頁</a></p>
   <h1>🛡️ SQL Injection 資安教學與防禦實驗室</h1>
-  <p>原理解說 · 攻擊型態 · 防禦程式碼 · 多層防禦 · 互動沙盒 · 隨堂複習 · 總複習</p>
+  <p>原理解說 · 攻擊型態 · 防禦程式碼 · 多層防禦 · 互動沙盒 · 隨堂練習</p>
   <p class="note">自製教學教材 · 全程純瀏覽器模擬，不連線任何真實資料庫</p>
 </div></div>
 
@@ -23,7 +23,6 @@
   <button onclick="showSection('types', this)">🧠 攻擊型態</button>
   <button onclick="showSection('sandbox', this)">🧪 互動沙盒</button>
   <button onclick="showSection('defense', this)">🔐 防禦程式碼</button>
-  <button onclick="showSection('quiz', this)">🧠 總複習</button>
 </div></nav>
 
 <main class="wrap">
@@ -224,11 +223,6 @@ const sql =
   <div class="review-slot" data-q="20"></div>
 </section>
 
-<!-- 總複習 -->
-<section id="quiz" class="section">
-  <div id="finalReview" class="final-review"></div>
-</section>
-
 <aside class="formcta"><div class="formcta-txt"><b>📝 學習內容驗證（20 題）</b><span>本單元的測驗與進度以此 Google 表單為準（20 題，自動計分）。</span></div><a class="formcta-btn" data-quiz-form="sql" href="#" target="_blank" rel="noopener">📝 開始學習內容驗證 ↗</a></aside>
 
 </main>
@@ -245,7 +239,6 @@ const sql =
 <script src="../js/cloud-sync.js?v=456c4341"></script>
 <script src="js/review-data.js?v=bc7e6205"></script>
 <script src="../js/review-core.js?v=e069b3b6"></script>
-<script src="../js/final-review.js?v=6a8b0247"></script>
 <script src="js/app.js?v=362a4e16"></script>
 </body>
 </html>
