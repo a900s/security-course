@@ -24,6 +24,7 @@
 
 <div id="panel" hidden>
   <div id="answerTable"></div>
+  <div id="cloudTeacher"></div>
   <div class="progpanel">
     <b>📥 匯入學生進度</b>
     <div class="row"><input id="files" type="file" accept=".json,application/json" multiple>
@@ -39,7 +40,13 @@
 </div>
 <footer>自製教學教材 · 教師區</footer>
 </main>
+<script src="https://accounts.google.com/gsi/client" async></script>
+<script src="../js/google-auth-config.js?v=472ebfcb"></script>
+<script src="../js/student-auth.js?v=7f232515"></script>
+<script src="../js/firebase-config.js?v=46aec85a"></script>
+<script src="../js/cloud-sync.js?v=456c4341"></script>
 <script src="js/review-data.js?v=07d466eb"></script>
 <script src="../js/review-teacher.js?v=fc86e0a5"></script>
 <script src="js/teacher.js?v=84a061c8"></script>
+<script src="../js/cloud-teacher.js?v=388bd8c0"></script>
 </body></html>

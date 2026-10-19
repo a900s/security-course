@@ -23,7 +23,7 @@
     } catch (e) { return null; }
   }
 
-  var statusHtml = "";
+  var statusHtml = "", cloudHtml = "", idToken = ""; // idToken 只放記憶體，供選用的雲端同步（js/cloud-sync.js）登入 Firebase
   var BASES = {}; // 各模組透過 key() 登記過的基底鍵，供「重置我的進度」一次清除
 
   function normEmail(e) { return String(e == null ? "" : e).trim().toLowerCase(); }
@@ -38,6 +38,7 @@
     h2 = Math.imul(h2 ^ (h2 >>> 16), 2246822507) ^ Math.imul(h1 ^ (h1 >>> 13), 3266489909);
     return (4294967296 * (2097151 & h2) + (h1 >>> 0)).toString(16);
   }
+  function modTitle() { return window.REVIEW_DATA && window.REVIEW_DATA.title ? "「" + window.REVIEW_DATA.title + "」" : ""; }
   function emit(reason) {
     var ev;
     try { ev = new CustomEvent("studentauth:change", { detail: { user: window.StudentAuth._user, reason: reason } }); }
@@ -57,7 +58,8 @@
         (u.email ? ' <span class="gsi-mail">· ' + esc(u.email) + '</span>' : '') +
         '</div>' +
         '<div class="gsi-status" id="gsiStatus">' + statusHtml + '</div>' +
-        '<button type="button" class="gsi-reset" id="gsiReset" title="只清除這個帳號在本機的進度">重置我的進度</button>' +
+        '<span class="gsi-cloud" id="gsiCloud" style="font-size:.82rem;color:var(--muted)">' + cloudHtml + '</span>' +
+        '<button type="button" class="gsi-reset" id="gsiReset" title="只清除這個帳號的本教材進度">重置我的進度</button>' +
         '<button type="button" class="gsi-out" id="gsiOut">登出</button>';
       var out = document.getElementById("gsiOut");
       if (out) out.onclick = function () { window.StudentAuth.signOut(); };
@@ -81,8 +83,8 @@
     if (b) b.onclick = function () { window.StudentAuth.resetProgress(); };
   }
 
-  function mountButton() {
-    var host = document.getElementById("gsiBtn");
+  function mountButton(hostEl) {
+    var host = hostEl || document.getElementById("gsiBtn");
     if (!host) return;
     var cid = window.GOOGLE_CLIENT_ID || "";
     if (!cid || /REPLACE_ME/.test(cid)) {
@@ -90,7 +92,7 @@
       return;
     }
     if (!(window.google && window.google.accounts && window.google.accounts.id)) {
-      setTimeout(mountButton, 400); // 等 GIS 腳本載入
+      setTimeout(function () { mountButton(hostEl); }, 400); // 等 GIS 腳本載入
       return;
     }
     window.google.accounts.id.initialize({ client_id: cid, callback: onCredential });
@@ -103,6 +105,7 @@
     var p = decodeJwt(resp.credential);
     if (!p || !normEmail(p.email)) return; // 進度以 email 分帳號，沒有 email 就不登入
     var prev = window.StudentAuth.accountId();
+    idToken = resp.credential;
     window.StudentAuth._user = { name: p.name, email: normEmail(p.email), picture: p.picture };
     try { sessionStorage.setItem("gsi_user", JSON.stringify(window.StudentAuth._user)); } catch (e) {}
     render();
@@ -119,11 +122,22 @@
     /* 重置「目前帳號」在本機的所有進度（各模組登記過的鍵），會先確認 */
     resetProgress: function (skipConfirm) {
       var who = this._user ? (this._user.email || this._user.name) : "未登入（匿名）";
-      if (!skipConfirm && !window.confirm("確定要重置「" + who + "」在這台電腦上的學習進度嗎？\n（關卡、隨堂複習作答紀錄都會清除，無法復原；其他帳號的進度不受影響）")) return false;
+      var cloud = window.CloudSync && window.CloudSync.configured && window.CloudSync.configured() && this._user;
+      if (!skipConfirm && !window.confirm("確定要重置「" + who + "」的本教材" + modTitle() + "學習進度嗎？\n（關卡、隨堂複習作答紀錄都會清除" + (cloud ? "，雲端備份也會一併清除" : "") + "，無法復原；其他帳號與其他教材的進度不受影響）")) return false;
       var self = this;
       Object.keys(BASES).forEach(function (b) { try { localStorage.removeItem(self.key(b)); } catch (e) {} });
       emit("reset");
       return true;
+    },
+    getIdToken: function () { return idToken; },
+    /* 在任意容器放 Google 登入鈕（教師頁用）；登入後同樣會發出 studentauth:change */
+    mountButton: function (host) { mountButton(host); },
+    /* 讓其他模組（如雲端同步）在改寫本機紀錄後通知各模組重畫；reason 例如 "cloud" */
+    notify: function (reason) { emit(reason || "cloud"); },
+    setCloud: function (html) {
+      cloudHtml = html || "";
+      var c = document.getElementById("gsiCloud");
+      if (c) c.innerHTML = cloudHtml;
     },
     setStatus: function (html) {
       statusHtml = html || "";
@@ -131,7 +145,7 @@
       if (s) s.innerHTML = statusHtml;
     },
     signOut: function () {
-      this._user = null;
+      this._user = null; idToken = ""; cloudHtml = "";
       try { sessionStorage.removeItem("gsi_user"); } catch (e) {}
       if (window.google && window.google.accounts && window.google.accounts.id)
         window.google.accounts.id.disableAutoSelect();

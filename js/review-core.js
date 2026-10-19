@@ -24,7 +24,8 @@
     if (typeof st !== "object" || st === null || Array.isArray(st)) st = {};
     prune();
   }
-  function save() { try { localStorage.setItem(KEY, JSON.stringify(st)); } catch (e) {} }
+  function save() { try { localStorage.setItem(KEY, JSON.stringify(st)); } catch (e) {} saved(); }
+  function saved() { try { window.dispatchEvent(new Event("progress:saved")); } catch (e) {} } // 通知選用的雲端同步
 
   // 先清掉已改版／格式不符的紀錄（不必等插槽出現在畫面上）
   function prune() {

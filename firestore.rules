@@ -1,0 +1,57 @@
+rules_version = '2';
+// 資安課程：學生學習進度（選用的雲端同步，見 js/cloud-sync.js）
+// progress/{email小寫}：只有「本人」（Google 登入、email 已驗證、文件 id = 自己 email 小寫）可讀寫；
+// teachers/{email小寫}：教師名單（由管理者在主控台手動新增，前端不可寫）；名單內的教師可讀取全部 progress。
+// 其餘一律拒絕。
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function signedIn() {
+      return request.auth != null
+        && request.auth.token.email is string
+        && request.auth.token.email_verified == true;
+    }
+    function me() { return request.auth.token.email.lower(); }
+    function isTeacher() {
+      return signedIn() && exists(/databases/$(database)/documents/teachers/$(me()));
+    }
+
+    // 粗略的型別／大小檢查（防止塞爆或亂寫欄位）
+    function okReview(m) { return m is map && m.size() <= 40; }
+    function okOwasp(o) {
+      return o is map && o.keys().hasOnly(['review', 'solved', 'levelProgress'])
+        && (!('review' in o) || okReview(o.review))
+        && (!('solved' in o) || (o.solved is list && o.solved.size() <= 20))
+        && (!('levelProgress' in o) || (o.levelProgress is map
+              && o.levelProgress.keys().hasOnly(['name', 'challenges'])
+              && (!('challenges' in o.levelProgress) || (o.levelProgress.challenges is map && o.levelProgress.challenges.size() <= 20))));
+    }
+    function okSimple(o) {
+      return o is map && o.keys().hasOnly(['review']) && (!('review' in o) || okReview(o.review));
+    }
+    function validProgress(d) {
+      return d.keys().hasOnly(['owasp', 'kali', 'sql', 'name', 'email', 'updatedAt'])
+        && d.email == me()
+        && d.name is string && d.name.size() <= 200
+        && d.updatedAt == request.time
+        && (!('owasp' in d) || okOwasp(d.owasp))
+        && (!('kali' in d) || okSimple(d.kali))
+        && (!('sql' in d) || okSimple(d.sql));
+    }
+
+    match /progress/{email} {
+      allow read: if signedIn() && (email == me() || isTeacher());
+      allow create, update: if signedIn() && email == me() && validProgress(request.resource.data);
+      allow delete: if signedIn() && email == me();
+    }
+
+    match /teachers/{email} {
+      // 只能查自己是否在名單內；名單只能由主控台（管理者）維護
+      allow get: if signedIn() && email == me();
+    }
+
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

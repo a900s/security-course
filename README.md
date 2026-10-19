@@ -169,3 +169,14 @@ security-course/
     ├── build.py
     └── css/style.css
 ```
+
+## 學習進度與（選用）雲端同步
+
+- 進度依 Google 登入的 **email（trim＋小寫）** 分開存在瀏覽器 localStorage；未登入為匿名空間。登入列有「重置我的進度」（只清目前帳號、本教材）。
+- 選用雲端同步（Firebase Auth＋Firestore）：`js/firebase-config.js` 留空＝不啟用、不載入 SDK；填入後進度存 `progress/{email}`，跨裝置接續。
+  - 沿用 GIS 的 ID token 登入 Firebase（`signInWithCredential`），學生不必登入兩次。
+  - SDK 非同步載入；SDK／登入／首次讀取各 5 秒逾時，失敗一律退回本機並顯示「⚠️ 未同步」，稍後自動重試。
+  - 規則：`firestore.rules`（本人讀寫自己的文件；`teachers/{email}` 名單可讀全部）。
+  - 教師頁解鎖後有「☁️ 雲端學生進度」總表與 CSV 匯出（`js/cloud-teacher.js`）。
+  - 建立 Firebase 專案的步驟：`docs/HERMES_任務_Firebase進度資料庫.md`。
+- 測試：見 `tests/README.md`。

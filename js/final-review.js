@@ -98,7 +98,7 @@
     }
     setup();
     // 換帳號／登出／重置：結果卡上的姓名會過時，回到開始畫面重新作答
-    window.addEventListener("studentauth:change", function () { if (document.body.contains(host)) setup(); });
+    window.addEventListener("studentauth:change", function (ev) { if (ev.detail && ev.detail.reason === "cloud") return; if (document.body.contains(host)) setup(); });
   }
 
   window.FinalReview = { mount: mount };

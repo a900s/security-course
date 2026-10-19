@@ -1,0 +1,92 @@
+const puppeteer = require('puppeteer-core');
+const http = require('http'), fs = require('fs'), path = require('path');
+const ROOT = '/workspace/security-course';
+const srv = http.createServer((q, r) => {
+  let u = decodeURIComponent(q.url.split('?')[0]).replace(/^\/security-course/, '');
+  let f = path.join(ROOT, u); if (fs.existsSync(f) && fs.statSync(f).isDirectory()) f = path.join(f, 'index.html');
+  if (!fs.existsSync(f)) { r.writeHead(404); return r.end(); }
+  const t = {'.js':'text/javascript','.css':'text/css','.html':'text/html'}[path.extname(f)] || 'application/octet-stream';
+  r.writeHead(200, {'content-type': t + '; charset=utf-8'}); fs.createReadStream(f).pipe(r);
+}).listen(8765);
+const GSI = `window.google={accounts:{id:{initialize:function(o){window.__gsiCb=o.callback},renderButton:function(h){h.innerHTML='<button id="fakeGsi">fake</button>'},disableAutoSelect:function(){}}}};`;
+function jwt(p){const b=s=>Buffer.from(JSON.stringify(s)).toString('base64').replace(/=+$/,'').replace(/\+/g,'-').replace(/\//g,'_');return b({alg:'none'})+'.'+b(p)+'.sig';}
+const A = jwt({sub:'111',name:'王小明',email:'  Ming.Wang@lgm.kh.edu.tw '}), B = jwt({sub:'222',name:'李小華',email:'hua@lgm.kh.edu.tw'});
+let fails = 0;
+function check(mod, name, cond, info) { console.log((cond ? '  ✓ ' : '  ✗ ') + name + (info ? '  [' + info + ']' : '')); if (!cond) fails++; }
+(async () => {
+  const br = await puppeteer.launch({executablePath: '/usr/bin/google-chrome', headless: 'new', args: ['--no-sandbox']});
+  for (const mod of ['owasp-top10', 'kali-top20', 'sql-injection-lab']) {
+    console.log('== ' + mod);
+    const ctx = await br.createBrowserContext(); const pg = await ctx.newPage();
+    let confirmAnswer = true; pg.on('dialog', d => confirmAnswer ? d.accept() : d.dismiss());
+    pg.on('pageerror', e => { console.log('  PAGEERROR', e.message); fails++; });
+    await pg.setRequestInterception(true);
+    pg.on('request', q => q.url().includes('accounts.google.com/gsi/client') ? q.respond({status:200, contentType:'text/javascript', body:GSI}) : (q.url().startsWith('http://localhost:8765') ? q.continue() : q.abort()));
+    const base = 'http://localhost:8765/security-course/' + mod + '/';
+    await pg.goto(base, {waitUntil: 'load'});
+    const isO = mod === 'owasp-top10';
+    const slugs = isO ? await pg.evaluate(() => CHALLENGES.map(c => c.slug)) : null;
+    const sleep = ms => new Promise(r => setTimeout(r, ms));
+    async function go(hash) { if (!isO) return; await pg.evaluate(h => { location.hash = h; }, hash); await sleep(150); }
+    async function signIn(t) { await pg.waitForFunction(() => window.__gsiCb); await pg.evaluate(t => window.__gsiCb({credential: t}), t); await sleep(150); }
+    async function signOut() { await pg.click('#gsiOut'); await sleep(150); }
+    // answer n cards (correct option) on current view; OWASP: on level 1 page
+    async function answer(n, right = true) {
+      if (isO) await go('#/' + slugs[0]);
+      const done = await pg.evaluate((n, right) => { let c = 0; for (const s of document.querySelectorAll('section.review')) { if (c >= n) break; if (s.querySelector('.rv-opt').disabled) continue; const b = s.querySelector('.rv-opt[data-ok="' + (right ? 1 : 0) + '"]'); b.click(); c++; } return c; }, n, right);
+      if (isO) await go('#/');
+      return done;
+    }
+    async function state() {
+      if (isO) await go('#/' + slugs[0]);
+      const cards = await pg.evaluate(() => document.querySelectorAll('section.review.rv-done-ok,section.review.rv-done-ng').length);
+      if (isO) await go('#/');
+      return pg.evaluate((cards) => ({ status: (document.getElementById('gsiStatus') || {}).textContent || '', who: (document.querySelector('.gsi-name') || {}).textContent || '(anon)', cards,
+        solvedCells: document.querySelectorAll('.cell.solved').length, studSum: (document.getElementById('studSum') || {}).textContent || '' }), cards);
+    }
+    async function seedSolved(arr) { await pg.evaluate(a => localStorage.setItem(StudentAuth.key('owasp_course_solved_v1'), JSON.stringify(a)), arr); await go('#/x'); await go('#/'); }
+    const dn = s => +((s.status.match(/已作答 (\d+)/) || [])[1]);
+    // anon: 1 answer (simulates legacy un-namespaced data)
+    await answer(1, false);
+    let s = await state(); check(mod, 'anon 1 answered', dn(s) === 1 && s.who === '(anon)', s.status);
+    const anonRaw = await pg.evaluate(() => localStorage.getItem(REVIEW_DATA.storageKey));
+    check(mod, 'anon uses legacy base key', !!anonRaw);
+    // A
+    await signIn(A); s = await state();
+    check(mod, 'A starts at 0 (legacy anon data not migrated)', dn(s) === 0 && s.cards === 0 && s.who === '王小明', s.status);
+    await answer(2); if (isO) await seedSolved([0, 1, 2]); s = await state();
+    check(mod, 'A answered 2', dn(s) === 2 && /答對 2\//.test(s.status) && (isO ? s.solvedCells === 3 && /3\/12/.test(s.status) && /已完成 3\/12/.test(s.studSum) : s.cards === 2), s.status + ' | ' + s.studSum);
+    const keyA = await pg.evaluate(() => StudentAuth.key(REVIEW_DATA.storageKey));
+    check(mod, 'key namespaced by email hash, email not in key', /::u:[0-9a-f]+$/.test(keyA) && !/ming/i.test(keyA), keyA);
+    // sign out -> anon
+    await signOut(); s = await state();
+    check(mod, 'sign-out shows anonymous state', dn(s) === 1 && s.who === '(anon)' && (isO ? s.solvedCells === 0 : s.cards === 1), s.status);
+    // B
+    await signIn(B); s = await state();
+    check(mod, 'B starts at 0', dn(s) === 0 && s.cards === 0 && (!isO || s.solvedCells === 0) && s.who === '李小華', s.status);
+    await answer(1); s = await state(); check(mod, 'B answered 1', dn(s) === 1, s.status);
+    // back to A (email in different case/space -> same account)
+    await signOut(); await signIn(jwt({sub:'999', name:'王小明', email:'ming.wang@LGM.kh.edu.tw'})); s = await state();
+    check(mod, 'back to A restores A (email normalized)', dn(s) === 2 && s.cards === 2 && (!isO || s.solvedCells === 3), s.status);
+    // reload keeps A
+    await pg.reload({waitUntil: 'load'}); await sleep(300); s = await state();
+    check(mod, 'reload while signed in as A keeps A', dn(s) === 2 && s.who === '王小明', s.status);
+    // reset cancel
+    confirmAnswer = false; await pg.click('#gsiReset'); await sleep(150); s = await state();
+    check(mod, 'reset cancelled keeps progress', dn(s) === 2, s.status);
+    // reset confirm
+    confirmAnswer = true; await pg.click('#gsiReset'); await sleep(300); s = await state();
+    check(mod, 'reset clears A', dn(s) === 0 && s.cards === 0 && (!isO || (s.solvedCells === 0 && /0\/12/.test(s.status))), s.status);
+    // B and anon untouched
+    await signOut(); s = await state(); check(mod, 'anon untouched by A reset', dn(s) === 1, s.status);
+    await signIn(B); s = await state(); check(mod, 'B untouched by A reset', dn(s) === 1, s.status);
+    if (isO) { // footer reset button on a level page
+      await go('#/' + slugs[0]); await pg.click('#resetBtn'); await sleep(300);
+      const h = await pg.evaluate(() => location.hash); s = await state();
+      check(mod, 'footer 重設進度 resets B and returns to map', dn(s) === 0 && (h === '#/' ), h + ' ' + s.status);
+    }
+    await ctx.close();
+  }
+  await br.close(); srv.close();
+  console.log(fails ? 'FAILS: ' + fails : 'ALL PASS'); process.exit(fails ? 1 : 0);
+})().catch(e => { console.error(e); process.exit(2); });

@@ -18,10 +18,10 @@
     try { var c = localStorage.getItem(k(KEY_BASE)); return new Set(c ? JSON.parse(c) : []); }
     catch (e) { return new Set(); }
   }
-  function addSolved(i) { var s = getSolved(); s.add(i); try { localStorage.setItem(k(KEY_BASE), JSON.stringify(Array.from(s))); } catch (e) {} }
+  function addSolved(i) { var s = getSolved(); s.add(i); try { localStorage.setItem(k(KEY_BASE), JSON.stringify(Array.from(s))); } catch (e) {} saved(); }
   /* 詳細學習紀錄（供教師區）：各階段時間、payload、選的修法、再驗證狀態 */
   function loadP() { try { return JSON.parse(localStorage.getItem(k(DKEY_BASE))) || { name: "", challenges: {} }; } catch (e) { return { name: "", challenges: {} }; } }
-  function saveP(p) { try { localStorage.setItem(k(DKEY_BASE), JSON.stringify(p)); } catch (e) {} }
+  function saveP(p) { try { localStorage.setItem(k(DKEY_BASE), JSON.stringify(p)); } catch (e) {} saved(); }
   var CUR = null;
   function rec(fn) {
     if (!CUR) return;
@@ -29,6 +29,7 @@
     fn(c); c.updatedAt = new Date().toISOString();
     p.challenges[CUR.slug] = c; saveP(p);
   }
+  function saved() { try { window.dispatchEvent(new Event("progress:saved")); } catch (e) {} } // 通知選用的雲端同步
   k(KEY_BASE); k(DKEY_BASE); // 先登記基底鍵，讓「重置我的進度」也會清到關卡紀錄
   function isUnlocked(i) { return i <= 0 ? true : getSolved().has(i - 1); }
 

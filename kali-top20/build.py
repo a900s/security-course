@@ -69,7 +69,7 @@ html = f"""<!doctype html>
 {FINAL}
 <footer>自製教學教材 · 僅供合法授權環境之防禦教育使用 · 由 build.py 自 README.md 產生 · <a href="teacher.html">👨‍🏫 教師區</a></footer>
 </main>
-<script src="https://accounts.google.com/gsi/client" async></script>\n<script src="{asset('../js/google-auth-config.js')}"></script>\n<script src="{asset('../js/forms-config.js')}"></script>\n<script src="{asset('../js/student-auth.js')}"></script>\n<script src="{asset('js/review-data.js')}"></script>\n<script src="{asset('../js/review-core.js')}"></script>\n<script src="{asset('../js/final-review.js')}"></script>
+<script src="https://accounts.google.com/gsi/client" async></script>\n<script src="{asset('../js/google-auth-config.js')}"></script>\n<script src="{asset('../js/forms-config.js')}"></script>\n<script src="{asset('../js/student-auth.js')}"></script>\n<script src="{asset('../js/firebase-config.js')}"></script>\n<script src="{asset('../js/cloud-sync.js')}"></script>\n<script src="{asset('js/review-data.js')}"></script>\n<script src="{asset('../js/review-core.js')}"></script>\n<script src="{asset('../js/final-review.js')}"></script>
 </body></html>
 """
 (here / "index.html").write_text(html, encoding="utf-8")
