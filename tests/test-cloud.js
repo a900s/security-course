@@ -158,45 +158,44 @@ const AK = 'progress/ming.wang@lgm.kh.edu.tw';
     check('kali field untouched by OWASP page', DB[AK].kali && Array.isArray(Object.keys(DB[AK].kali.review)));
     check('no errors', !pg.__errors.length, pg.__errors.join('|')); await pg.__ctx.close(); }
 
+  const LEVEL = { 'owasp-top10': ['owasp_course_solved_v1', 12, 'owasp'], 'sql-injection-lab': ['sql_course_solved_v1', 10, 'sql'], 'kali-top20': ['kali_course_solved_v1', 20, 'kali'], 'ctf': ['ctf_course_solved_v1', 8, ''] };
   console.log('== 7. 教師區已從課程頁移除');
   { const pg = await page({gstatic: 'mock'});
-    for (const mod of ['owasp-top10', 'kali-top20', 'sql-injection-lab']) {
+    for (const mod of Object.keys(LEVEL)) {
       await pg.goto(url(mod), {waitUntil: 'load'});
       const info = await pg.evaluate(() => ({ teacher: /教師區|教師專區/.test(document.body.innerText), home: !!document.querySelector('a[href="../"]'), form: !!document.querySelector('[data-quiz-form]') }));
       check(mod + ' no teacher area', !info.teacher);
       check(mod + ' links home', info.home);
-      check(mod + ' has google form', mod === 'owasp-top10' ? !info.form : info.form);
+      check(mod + ' has google form', !info.form);
     }
     check('no errors', !pg.__errors.length, pg.__errors.join('|')); await pg.__ctx.close(); }
 
   for (const [label, gs, mode] of [['gstatic 被封鎖', 'block', 'ok'], ['gstatic 無回應（逾時）', 'hang', 'ok'], ['Firestore 無回應（逾時）', 'mock', 'hang']]) {
-    for (const mod of ['owasp-top10', 'kali-top20', 'sql-injection-lab']) {
+    for (const mod of Object.keys(LEVEL)) {
       console.log('== 8. ' + label + '：' + mod + ' 頁面完整可用');
       MODE = mode; const pg = await page({gstatic: gs}); const t0 = Date.now();
       await pg.goto(url(mod), {waitUntil: 'load', timeout: 15000}); const tl = Date.now() - t0;
       check('page load not blocked (<3s)', tl < 3000, tl + 'ms');
       await signIn(pg, B); await sleep(200);
-      if (mod === 'owasp-top10') { const slug = await pg.evaluate(() => CHALLENGES[0].slug); await pg.evaluate(s => location.hash = '#/' + s, slug); await sleep(200); }
+      if (LEVEL[mod]) { const slug = await pg.evaluate(() => CHALLENGES[0].slug); await pg.evaluate(s => location.hash = '#/' + s, slug); await sleep(200); }
       check('answer works immediately', (await answer(pg, 1)) === 1);
-      if (mod === 'owasp-top10') { await pg.evaluate(() => location.hash = '#/'); await sleep(200); }
+      if (LEVEL[mod]) { await pg.evaluate(() => location.hash = '#/'); await sleep(200); }
       check('answer stored', (await done(pg)) === 1, await done(pg));
       c = await waitCloud(pg, /未同步/, 12000); check('shows 未同步 after timeout/failure', /⚠️ 未同步/.test(c), c);
-      if (mod === 'owasp-top10') {
+      {
+        const spec = LEVEL[mod];
         check('map hides unit practice', await pg.evaluate(() => !document.getElementById('finalReview') && !document.querySelector('section.review')));
-        check('login shows level progress', await pg.evaluate(() => /已完成 \d+\/12/.test((document.getElementById('gsiStatus') || {}).textContent || '')));
+        check('login shows level progress', await pg.evaluate(t => { const m = ((document.getElementById('gsiStatus') || {}).textContent || '').match(/已完成 (\d+)\/(\d+)/); return !!(m && Number(m[2]) === t); }, spec[1]));
         const slug = await pg.evaluate(() => CHALLENGES[0].slug);
         await pg.evaluate(s => { location.hash = '#/' + s; }, slug); await sleep(200);
         check('level shows its practice', await pg.evaluate(() => document.querySelectorAll('section.review').length > 0));
         check('level hides the form', await pg.evaluate(() => !document.querySelector('[data-quiz-form]')));
-        await pg.evaluate(() => {
-          localStorage.setItem(StudentAuth.key('owasp_course_solved_v1'), JSON.stringify(CHALLENGES.map((_, i) => i)));
-          location.hash = '#/';
-        });
+        await pg.evaluate((k) => {
+          localStorage.setItem(StudentAuth.key(k), JSON.stringify(CHALLENGES.map((_, i) => i)));
+          location.hash = '#/done'; location.hash = '#/';
+        }, spec[0]);
         await sleep(200);
-        check('form appears on map after all levels', await pg.evaluate(() => !!document.querySelector('[data-quiz-form="owasp"]')));
-        check('no final review', await pg.evaluate(() => !document.getElementById('finalReview')));
-      } else {
-        check('unit practice remains', await pg.evaluate(() => document.querySelectorAll('.review-slot').length > 0));
+        check('form after all levels', await pg.evaluate(id => id ? !!document.querySelector('[data-quiz-form="' + id + '"]') : !document.querySelector('[data-quiz-form]'), spec[2]));
         check('no final review', await pg.evaluate(() => !document.getElementById('finalReview')));
       }
       check('no reset button', await pg.evaluate(() => !document.getElementById('gsiReset')));

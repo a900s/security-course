@@ -81,4 +81,6 @@ if __name__ == "__main__":
         for name in ("index.html", "teacher.html"):
             p = ROOT / cfg["dir"] / name
             if p.exists(): bust(p)
+    extra = ROOT / "ctf" / "index.html"
+    if extra.exists(): bust(extra)
     print("✓ cache-busting ?v= 已更新")

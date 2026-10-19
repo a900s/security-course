@@ -16,7 +16,8 @@
     "D": "前端沒有用 JavaScript 檢查輸入格式"
    },
    "correctIndex": 2,
-   "explanation": "不可信輸入被直接拼進 SQL 字串時，資料就可能被當成語法執行。"
+   "explanation": "不可信輸入被直接拼進 SQL 字串時，資料就可能被當成語法執行。",
+   "slug": "cause"
   },
   {
    "section": 2,
@@ -32,7 +33,8 @@
     "D": "網路傳送封包的那一步"
    },
    "correctIndex": 0,
-   "explanation": "問題出在應用程式和資料庫互動時把輸入拼進語法；所以要在應用程式端用參數化修補，加密傳輸或更換資料庫都無法解決。"
+   "explanation": "問題出在應用程式和資料庫互動時把輸入拼進語法；所以要在應用程式端用參數化修補，加密傳輸或更換資料庫都無法解決。",
+   "slug": "cause"
   },
   {
    "section": 3,
@@ -48,7 +50,8 @@
     "D": "不可信的輸入一律當「資料」，絕不讓它變成 SQL 語法"
    },
    "correctIndex": 3,
-   "explanation": "資料歸資料、指令歸指令；長度限制、大小寫轉換、HTTPS 都無法阻止輸入改變 SQL 語意。"
+   "explanation": "資料歸資料、指令歸指令；長度限制、大小寫轉換、HTTPS 都無法阻止輸入改變 SQL 語意。",
+   "slug": "cause"
   },
   {
    "section": 4,
@@ -64,7 +67,8 @@
     "D": "把兩個查詢的結果合併在一起"
    },
    "correctIndex": 2,
-   "explanation": "單引號先閉合帳號字串，-- 讓後面的 AND password = … 變成註解；改用參數化查詢後，這串輸入只會被當成一個奇怪的帳號名稱。"
+   "explanation": "單引號先閉合帳號字串，-- 讓後面的 AND password = … 變成註解；改用參數化查詢後，這串輸入只會被當成一個奇怪的帳號名稱。",
+   "slug": "login"
   },
   {
    "section": 5,
@@ -80,7 +84,8 @@
     "D": "只比對第一筆"
    },
    "correctIndex": 1,
-   "explanation": "'1'='1' 恆真，OR 之後整個條件恆成立，等於取消了過濾。"
+   "explanation": "'1'='1' 恆真，OR 之後整個條件恆成立，等於取消了過濾。",
+   "slug": "login"
   },
   {
    "section": 6,
@@ -96,7 +101,8 @@
     "D": "HAVING"
    },
    "correctIndex": 0,
-   "explanation": "UNION 可將另一個 SELECT 的結果合併回來，前提是欄位數與型別相容。"
+   "explanation": "UNION 可將另一個 SELECT 的結果合併回來，前提是欄位數與型別相容。",
+   "slug": "union"
   },
   {
    "section": 7,
@@ -112,7 +118,8 @@
     "D": "錯誤訊息型注入（Error-based）"
    },
    "correctIndex": 2,
-   "explanation": "布林盲注靠真／假造成的回應差異推測資料，時間盲注則看延遲；兩者的根本防禦都是參數化查詢。"
+   "explanation": "布林盲注靠真／假造成的回應差異推測資料，時間盲注則看延遲；兩者的根本防禦都是參數化查詢。",
+   "slug": "blind"
   },
   {
    "section": 8,
@@ -128,7 +135,8 @@
     "D": "回應所花的時間（延遲）"
    },
    "correctIndex": 3,
-   "explanation": "讓資料庫在條件成立時延遲回應，用時間差當作 0/1 訊號。"
+   "explanation": "讓資料庫在條件成立時延遲回應，用時間差當作 0/1 訊號。",
+   "slug": "time"
   },
   {
    "section": 9,
@@ -144,7 +152,8 @@
     "D": "WAF 被繞過，代表參數化查詢也一定失效"
    },
    "correctIndex": 0,
-   "explanation": "WAF 能擋掉部分已知樣式，但比對規則總有漏網之魚；真正的防線仍是安全的程式寫法，WAF 是額外的一層。"
+   "explanation": "WAF 能擋掉部分已知樣式，但比對規則總有漏網之魚；真正的防線仍是安全的程式寫法，WAF 是額外的一層。",
+   "slug": "waf"
   },
   {
    "section": 10,
@@ -160,7 +169,8 @@
     "D": "把 id 用單引號包起來後再拼進 SQL"
    },
    "correctIndex": 1,
-   "explanation": "前端檢查可被略過、編碼不是防護、加引號仍是拼接；伺服器端型別驗證擋掉不合理的輸入，參數化確保它不會改變語意。"
+   "explanation": "前端檢查可被略過、編碼不是防護、加引號仍是拼接；伺服器端型別驗證擋掉不合理的輸入，參數化確保它不會改變語意。",
+   "slug": "id"
   },
   {
    "section": 11,
@@ -176,7 +186,8 @@
     "D": "輸入中的單引號會先被自動刪除，再照常執行"
    },
    "correctIndex": 2,
-   "explanation": "參數化查詢下 SQL 結構已固定，payload 只是一段普通字串；它不是靠刪除或跳脫字元，而是根本不讓輸入進入語法。"
+   "explanation": "參數化查詢下 SQL 結構已固定，payload 只是一段普通字串；它不是靠刪除或跳脫字元，而是根本不讓輸入進入語法。",
+   "slug": "param"
   },
   {
    "section": 12,
@@ -192,7 +203,8 @@
     "D": "只影響畫面顯示，不會影響資料庫"
    },
    "correctIndex": 0,
-   "explanation": "拼接後資料庫分不清哪段是值、哪段是語法，輸入就能改寫 WHERE 條件；這正是參數化查詢要解決的問題。"
+   "explanation": "拼接後資料庫分不清哪段是值、哪段是語法，輸入就能改寫 WHERE 條件；這正是參數化查詢要解決的問題。",
+   "slug": "param"
   },
   {
    "section": 13,
@@ -208,7 +220,8 @@
     "D": "參數化查詢（Prepared Statement）"
    },
    "correctIndex": 3,
-   "explanation": "參數化查詢讓資料庫先編譯語句結構，輸入只當參數帶入，無法改變語意。"
+   "explanation": "參數化查詢讓資料庫先編譯語句結構，輸入只當參數帶入，無法改變語意。",
+   "slug": "param"
   },
   {
    "section": 14,
@@ -224,7 +237,8 @@
     "D": "讓字串拼接 SQL 的速度更快"
    },
    "correctIndex": 1,
-   "explanation": "佔位符的值交給驅動程式綁定；注意 psycopg 的 %s 要當成 execute 的第二個參數傳入，自己用 Python 的 % 格式化字串仍是拼接，不安全。"
+   "explanation": "佔位符的值交給驅動程式綁定；注意 psycopg 的 %s 要當成 execute 的第二個參數傳入，自己用 Python 的 % 格式化字串仍是拼接，不安全。",
+   "slug": "param"
   },
   {
    "section": 15,
@@ -240,7 +254,8 @@
     "D": "綁定的欄位名稱會被資料庫自動跳脫成安全值"
    },
    "correctIndex": 2,
-   "explanation": "參數綁定只處理『值』；識別字（欄位、表名、排序方向）屬結構，需用白名單。"
+   "explanation": "參數綁定只處理『值』；識別字（欄位、表名、排序方向）屬結構，需用白名單。",
+   "slug": "orderby"
   },
   {
    "section": 16,
@@ -256,7 +271,8 @@
     "D": "把欄位名稱當作參數綁定進查詢"
    },
    "correctIndex": 1,
-   "explanation": "只接受預先定義好的合法欄位名，其餘一律拒絕。"
+   "explanation": "只接受預先定義好的合法欄位名，其餘一律拒絕。",
+   "slug": "orderby"
   },
   {
    "section": 17,
@@ -272,7 +288,8 @@
     "D": "共用帳號（Shared Account）"
    },
    "correctIndex": 0,
-   "explanation": "應用帳號只給必要權限，就算被注入，可破壞的範圍也有限。"
+   "explanation": "應用帳號只給必要權限，就算被注入，可破壞的範圍也有限。",
+   "slug": "layers"
   },
   {
    "section": 18,
@@ -288,7 +305,8 @@
     "D": "可能洩漏資料表結構、SQL 片段等資訊，協助攻擊者"
    },
    "correctIndex": 3,
-   "explanation": "詳細錯誤等於替攻擊者畫地圖；應回傳一般化訊息，細節只進日誌。"
+   "explanation": "詳細錯誤等於替攻擊者畫地圖；應回傳一般化訊息，細節只進日誌。",
+   "slug": "layers"
   },
   {
    "section": 19,
@@ -304,7 +322,8 @@
     "D": "及早發現可疑的注入嘗試，並在事後追查影響範圍"
    },
    "correctIndex": 3,
-   "explanation": "日誌和告警不會擋下攻擊，但能讓異常被看見、被追查；隱藏錯誤訊息屬於「錯誤處理」那一層。"
+   "explanation": "日誌和告警不會擋下攻擊，但能讓異常被看見、被追查；隱藏錯誤訊息屬於「錯誤處理」那一層。",
+   "slug": "layers"
   },
   {
    "section": 20,
@@ -320,7 +339,8 @@
     "D": "能自動修正程式中有漏洞的 SQL 語句"
    },
    "correctIndex": 1,
-   "explanation": "WAF 能擋掉部分已知樣式，但容易被繞過，不能當唯一防線。"
+   "explanation": "WAF 能擋掉部分已知樣式，但容易被繞過，不能當唯一防線。",
+   "slug": "waf"
   }
  ]
 }

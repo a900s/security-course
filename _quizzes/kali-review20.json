@@ -15,7 +15,8 @@
     "D": "只在邊界防火牆擋外部掃描，內網不必管"
    },
    "correctIndex": 1,
-   "explanation": "縮小攻擊面（最小化開放埠）並監看掃描跡象，是面對偵察的基本防禦。"
+   "explanation": "縮小攻擊面（最小化開放埠）並監看掃描跡象，是面對偵察的基本防禦。",
+   "slug": "k01"
   },
   {
    "section": 2,
@@ -30,7 +31,8 @@
     "D": "強密碼＋MFA＋限制嘗試次數／來源 IP"
    },
    "correctIndex": 3,
-   "explanation": "強認證、MFA、速率限制與鎖定可大幅削弱線上猜測攻擊。"
+   "explanation": "強認證、MFA、速率限制與鎖定可大幅削弱線上猜測攻擊。",
+   "slug": "k02"
   },
   {
    "section": 3,
@@ -45,7 +47,8 @@
     "D": "把雜湊值再用 Base64 編碼後儲存"
    },
    "correctIndex": 0,
-   "explanation": "加鹽、慢雜湊讓離線破解成本大增；同時要避免雜湊被竊。"
+   "explanation": "加鹽、慢雜湊讓離線破解成本大增；同時要避免雜湊被竊。",
+   "slug": "k03"
   },
   {
    "section": 4,
@@ -60,7 +63,8 @@
     "D": "使用 WPA2 但沿用預設密碼並保留 WPS"
    },
    "correctIndex": 2,
-   "explanation": "WEP 已不安全；WPA2/WPA3＋強金鑰、關閉 WPS 才能抵擋常見無線破解。"
+   "explanation": "WEP 已不安全；WPA2/WPA3＋強金鑰、關閉 WPS 才能抵擋常見無線破解。",
+   "slug": "k04"
   },
   {
    "section": 5,
@@ -75,7 +79,8 @@
     "D": "每台電腦安裝防毒軟體，防止流量被攔截"
    },
    "correctIndex": 0,
-   "explanation": "端到端加密讓即使被攔截也讀不到內容，是對抗嗅探的核心。"
+   "explanation": "端到端加密讓即使被攔截也讀不到內容，是對抗嗅探的核心。",
+   "slug": "k05"
   },
   {
    "section": 6,
@@ -90,7 +95,8 @@
     "D": "使用動態 ARP 檢測、連接埠安全與加密連線"
    },
    "correctIndex": 3,
-   "explanation": "交換器的 DAI／Port Security 搭配加密傳輸，可偵測並降低 ARP 欺騙影響。"
+   "explanation": "交換器的 DAI／Port Security 搭配加密傳輸，可偵測並降低 ARP 欺騙影響。",
+   "slug": "k06"
   },
   {
    "section": 7,
@@ -105,7 +111,8 @@
     "D": "把伺服器放在 NAT 後面，外部就打不到"
    },
    "correctIndex": 1,
-   "explanation": "多數利用針對已知漏洞，及時修補＋最小化服務＋EDR 是關鍵防線。"
+   "explanation": "多數利用針對已知漏洞，及時修補＋最小化服務＋EDR 是關鍵防線。",
+   "slug": "k07"
   },
   {
    "section": 8,
@@ -120,7 +127,8 @@
     "D": "隱藏錯誤訊息，讓 SQLmap 無法判斷"
    },
    "correctIndex": 2,
-   "explanation": "自動化工具一樣擋不住參數化查詢；最小權限可降低被利用後的衝擊。"
+   "explanation": "自動化工具一樣擋不住參數化查詢；最小權限可降低被利用後的衝擊。",
+   "slug": "k08"
   },
   {
    "section": 9,
@@ -135,7 +143,8 @@
    },
    "correctIndex": 0,
    "explanation": "請求完全由使用者端掌控、可被任意修改；前端限制只是介面，驗證與授權一定要在伺服器端完成。",
-   "formQ": 11
+   "formQ": 11,
+   "slug": "k09"
   },
   {
    "section": 10,
@@ -150,7 +159,8 @@
    },
    "correctIndex": 1,
    "explanation": "掃描器專找『已知問題』；清掉預設檔、及時修補並少洩漏版本，就沒什麼可被比對出來。",
-   "formQ": 12
+   "formQ": 12,
+   "slug": "k10"
   },
   {
    "section": 11,
@@ -165,7 +175,8 @@
     "D": "移除敏感檔、正確設定權限並監看大量 404"
    },
    "correctIndex": 3,
-   "explanation": "別依賴『路徑保密』；要移除敏感檔、設定存取控制並監看列舉跡象。"
+   "explanation": "別依賴『路徑保密』；要移除敏感檔、設定存取控制並監看列舉跡象。",
+   "slug": "k11"
   },
   {
    "section": 12,
@@ -180,7 +191,8 @@
    },
    "correctIndex": 2,
    "explanation": "沒有廣播求助就無從冒充；停用這兩種舊協定、修好 DNS，再以 SMB 簽章降低憑證被轉送（relay）的風險。",
-   "formQ": 13
+   "formQ": 13,
+   "slug": "k12"
   },
   {
    "section": 13,
@@ -195,7 +207,8 @@
    },
    "correctIndex": 1,
    "explanation": "密碼重用讓單點失守變成全面失守；LAPS 為每台產生獨立隨機密碼，可切斷橫向擴散。",
-   "formQ": 14
+   "formQ": 14,
+   "slug": "k13"
   },
   {
    "section": 14,
@@ -210,7 +223,8 @@
    },
    "correctIndex": 3,
    "explanation": "保護憑證所在的程序，並避免高權限憑證『落地』在一般電腦上，被抽出的東西就沒有價值。",
-   "formQ": 15
+   "formQ": 15,
+   "slug": "k14"
   },
   {
    "section": 15,
@@ -225,7 +239,8 @@
     "D": "全面封鎖外部附件，其餘流程照舊"
    },
    "correctIndex": 0,
-   "explanation": "釣魚利用『人』，需教育、郵件防護、MFA 與寄件網域驗證多管齊下。"
+   "explanation": "釣魚利用『人』，需教育、郵件防護、MFA 與寄件網域驗證多管齊下。",
+   "slug": "k15"
   },
   {
    "section": 16,
@@ -240,7 +255,8 @@
    },
    "correctIndex": 2,
    "explanation": "DNSSEC 驗證回應真偽、加密解析器防竄改；即使被導錯，HTTPS/HSTS 也能讓假網站露出破綻。",
-   "formQ": 16
+   "formQ": 16,
+   "slug": "k16"
   },
   {
    "section": 17,
@@ -255,7 +271,8 @@
    },
    "correctIndex": 1,
    "explanation": "噴灑刻意避開單帳號鎖定門檻；MFA、弱密碼黑名單與跨帳號行為偵測才抓得到它。",
-   "formQ": 17
+   "formQ": 17,
+   "slug": "k17"
   },
   {
    "section": 18,
@@ -270,7 +287,8 @@
    },
    "correctIndex": 0,
    "explanation": "802.11w 讓去認證封包無法偽造；關閉 WPS、監控異常無線活動，可削弱自動化工具的常用招式。",
-   "formQ": 18
+   "formQ": 18,
+   "slug": "k18"
   },
   {
    "section": 19,
@@ -285,7 +303,8 @@
    },
    "correctIndex": 3,
    "explanation": "不讓憑證散落在檔案中，就沒什麼可收集；DLP 與出口監控則能發現『看似正常』的異常外送。",
-   "formQ": 19
+   "formQ": 19,
+   "slug": "k19"
   },
   {
    "section": 20,
@@ -300,7 +319,8 @@
    },
    "correctIndex": 2,
    "explanation": "提權多半利用未修補漏洞或過寬設定；修補、基準線稽核與最小權限是三道主要防線。",
-   "formQ": 20
+   "formQ": 20,
+   "slug": "k20"
   }
  ]
 }

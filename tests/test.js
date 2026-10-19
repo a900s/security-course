@@ -15,8 +15,9 @@ let fails = 0;
 function check(mod, name, cond, info) { console.log((cond ? '  ✓ ' : '  ✗ ') + name + (info ? '  [' + info + ']' : '')); if (!cond) fails++; }
 (async () => {
   const br = await puppeteer.launch({executablePath: '/usr/bin/google-chrome', headless: 'new', args: ['--no-sandbox']});
-  for (const mod of ['owasp-top10', 'kali-top20', 'sql-injection-lab']) {
+  for (const mod of ['owasp-top10', 'kali-top20', 'sql-injection-lab', 'ctf']) {
     console.log('== ' + mod);
+    const solvedKey = { 'owasp-top10': 'owasp_course_solved_v1', 'sql-injection-lab': 'sql_course_solved_v1', 'kali-top20': 'kali_course_solved_v1', 'ctf': 'ctf_course_solved_v1' }[mod];
     const ctx = await br.createBrowserContext(); const pg = await ctx.newPage();
     let confirmAnswer = true; pg.on('dialog', d => confirmAnswer ? d.accept() : d.dismiss());
     pg.on('pageerror', e => { console.log('  PAGEERROR', e.message); fails++; });
@@ -24,18 +25,26 @@ function check(mod, name, cond, info) { console.log((cond ? '  ✓ ' : '  ✗ ')
     pg.on('request', q => q.url().includes('accounts.google.com/gsi/client') ? q.respond({status:200, contentType:'text/javascript', body:GSI}) : (q.url().startsWith('http://localhost:8765') ? q.continue() : q.abort()));
     const base = 'http://localhost:8765/security-course/' + mod + '/';
     await pg.goto(base, {waitUntil: 'load'});
-    const isO = mod === 'owasp-top10';
-    const slugs = isO ? await pg.evaluate(() => CHALLENGES.map(c => c.slug)) : null;
+    const isO = true;
+    const slugs = await pg.evaluate(() => CHALLENGES.map(c => c.slug));
     const sleep = ms => new Promise(r => setTimeout(r, ms));
-    async function go(hash) { if (!isO) return; await pg.evaluate(h => { location.hash = h; }, hash); await sleep(150); }
+    async function go(hash) { await pg.evaluate(h => { location.hash = h; }, hash); await sleep(150); }
     async function signIn(t) { await pg.waitForFunction(() => window.__gsiCb); await pg.evaluate(t => window.__gsiCb({credential: t}), t); await sleep(150); }
     async function signOut() { await pg.click('#gsiOut'); await sleep(150); }
-    // answer n cards (correct option) on current view; OWASP: on level 1 page
     async function answer(n, right = true) {
-      if (isO) await go('#/' + slugs[0]);
-      const done = await pg.evaluate((n, right) => { let c = 0; for (const s of document.querySelectorAll('section.review')) { if (c >= n) break; if (s.querySelector('.rv-opt').disabled) continue; const b = s.querySelector('.rv-opt[data-ok="' + (right ? 1 : 0) + '"]'); b.click(); c++; } return c; }, n, right);
-      if (isO) await go('#/');
-      return done;
+      const prev = await pg.evaluate(k => localStorage.getItem(StudentAuth.key(k)), solvedKey);
+      let left = n, i = 0, total = 0;
+      while (left > 0 && i < slugs.length) {
+        await pg.evaluate((k, a) => localStorage.setItem(StudentAuth.key(k), JSON.stringify(a)), solvedKey, Array.from({ length: i }, (_, x) => x));
+        await go('#/' + slugs[i]);
+        const got = await pg.evaluate((n, right) => { let c = 0; for (const s of document.querySelectorAll('section.review')) { if (c >= n) break; const opt = s.querySelector('.rv-opt'); if (!opt || opt.disabled) continue; s.querySelector('.rv-opt[data-ok="' + (right ? 1 : 0) + '"]').click(); c++; } return c; }, left, right);
+        total += got; left -= got; i++;
+        if (!got) break;
+      }
+      if (prev == null) await pg.evaluate(k => localStorage.removeItem(StudentAuth.key(k)), solvedKey);
+      else await pg.evaluate((k, v) => localStorage.setItem(StudentAuth.key(k), v), solvedKey, prev);
+      await go('#/');
+      return total;
     }
     async function state() {
       if (isO) await go('#/' + slugs[0]);
@@ -48,7 +57,7 @@ function check(mod, name, cond, info) { console.log((cond ? '  ✓ ' : '  ✗ ')
           solvedCells: document.querySelectorAll('.cell.solved').length };
       }, cards);
     }
-    async function seedSolved(arr) { await pg.evaluate(a => localStorage.setItem(StudentAuth.key('owasp_course_solved_v1'), JSON.stringify(a)), arr); await go('#/x'); await go('#/'); }
+    async function seedSolved(arr) { await pg.evaluate((k, a) => localStorage.setItem(StudentAuth.key(k), JSON.stringify(a)), solvedKey, arr); await go('#/x'); await go('#/'); }
     const dn = s => s.answered;
     check(mod, 'no reset or teacher controls', await pg.evaluate(() => !document.getElementById('gsiReset') && !document.getElementById('resetBtn') && !/教師區|教師專區/.test(document.body.innerText) && !!document.querySelector('a[href="../"]')));
     // anon: 1 answer (simulates legacy un-namespaced data)
@@ -72,7 +81,7 @@ function check(mod, name, cond, info) { console.log((cond ? '  ✓ ' : '  ✗ ')
     await answer(1); s = await state(); check(mod, 'B answered 1', dn(s) === 1, String(dn(s)));
     // back to A (email in different case/space -> same account)
     await signOut(); await signIn(jwt({sub:'999', name:'王小明', email:'ming.wang@LGM.kh.edu.tw'})); s = await state();
-    check(mod, 'back to A restores A (email normalized)', dn(s) === 2 && s.cards === 2 && (!isO || s.solvedCells === 3), String(dn(s)));
+    check(mod, 'back to A restores A (email normalized)', dn(s) === 2 && s.solvedCells === 3, String(dn(s)) + ' cells ' + s.solvedCells);
     // reload keeps A
     await pg.reload({waitUntil: 'load'}); await sleep(300); s = await state();
     check(mod, 'reload while signed in as A keeps A', dn(s) === 2 && s.who === '王小明', String(dn(s)));

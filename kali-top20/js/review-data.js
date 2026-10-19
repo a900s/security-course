@@ -41,7 +41,8 @@ window.REVIEW_DATA = {
 ],
 "correct": 1,
 "exp": "縮小攻擊面（最小化開放埠）並監看掃描跡象，是面對偵察的基本防禦。",
-"qv": "01d2280994"
+"qv": "01d2280994",
+"slug": "k01"
 },
 {
 "n": 2,
@@ -75,7 +76,8 @@ window.REVIEW_DATA = {
 ],
 "correct": 3,
 "exp": "強認證、MFA、速率限制與鎖定可大幅削弱線上猜測攻擊。",
-"qv": "9f2bcc2a33"
+"qv": "9f2bcc2a33",
+"slug": "k02"
 },
 {
 "n": 3,
@@ -109,7 +111,8 @@ window.REVIEW_DATA = {
 ],
 "correct": 0,
 "exp": "加鹽、慢雜湊讓離線破解成本大增；同時要避免雜湊被竊。",
-"qv": "7b3ebcf5ab"
+"qv": "7b3ebcf5ab",
+"slug": "k03"
 },
 {
 "n": 4,
@@ -143,7 +146,8 @@ window.REVIEW_DATA = {
 ],
 "correct": 2,
 "exp": "WEP 已不安全；WPA2/WPA3＋強金鑰、關閉 WPS 才能抵擋常見無線破解。",
-"qv": "fc788d12ea"
+"qv": "fc788d12ea",
+"slug": "k04"
 },
 {
 "n": 5,
@@ -177,7 +181,8 @@ window.REVIEW_DATA = {
 ],
 "correct": 0,
 "exp": "端到端加密讓即使被攔截也讀不到內容，是對抗嗅探的核心。",
-"qv": "edae3ef1ab"
+"qv": "edae3ef1ab",
+"slug": "k05"
 },
 {
 "n": 6,
@@ -211,7 +216,8 @@ window.REVIEW_DATA = {
 ],
 "correct": 3,
 "exp": "交換器的 DAI／Port Security 搭配加密傳輸，可偵測並降低 ARP 欺騙影響。",
-"qv": "ac1a98389f"
+"qv": "ac1a98389f",
+"slug": "k06"
 },
 {
 "n": 7,
@@ -245,7 +251,8 @@ window.REVIEW_DATA = {
 ],
 "correct": 1,
 "exp": "多數利用針對已知漏洞，及時修補＋最小化服務＋EDR 是關鍵防線。",
-"qv": "005afc6e4b"
+"qv": "005afc6e4b",
+"slug": "k07"
 },
 {
 "n": 8,
@@ -279,7 +286,8 @@ window.REVIEW_DATA = {
 ],
 "correct": 2,
 "exp": "自動化工具一樣擋不住參數化查詢；最小權限可降低被利用後的衝擊。",
-"qv": "6f6aa8a618"
+"qv": "6f6aa8a618",
+"slug": "k08"
 },
 {
 "n": 9,
@@ -313,7 +321,8 @@ window.REVIEW_DATA = {
 ],
 "correct": 0,
 "exp": "請求完全由使用者端掌控、可被任意修改；前端限制只是介面，驗證與授權一定要在伺服器端完成。",
-"qv": "6c8ed3fd7d"
+"qv": "6c8ed3fd7d",
+"slug": "k09"
 },
 {
 "n": 10,
@@ -347,7 +356,8 @@ window.REVIEW_DATA = {
 ],
 "correct": 1,
 "exp": "掃描器專找『已知問題』；清掉預設檔、及時修補並少洩漏版本，就沒什麼可被比對出來。",
-"qv": "314abb5325"
+"qv": "314abb5325",
+"slug": "k10"
 },
 {
 "n": 11,
@@ -381,7 +391,8 @@ window.REVIEW_DATA = {
 ],
 "correct": 3,
 "exp": "別依賴『路徑保密』；要移除敏感檔、設定存取控制並監看列舉跡象。",
-"qv": "c2da26f05c"
+"qv": "c2da26f05c",
+"slug": "k11"
 },
 {
 "n": 12,
@@ -415,7 +426,8 @@ window.REVIEW_DATA = {
 ],
 "correct": 2,
 "exp": "沒有廣播求助就無從冒充；停用這兩種舊協定、修好 DNS，再以 SMB 簽章降低憑證被轉送（relay）的風險。",
-"qv": "95a0a38f93"
+"qv": "95a0a38f93",
+"slug": "k12"
 },
 {
 "n": 13,
@@ -449,7 +461,8 @@ window.REVIEW_DATA = {
 ],
 "correct": 1,
 "exp": "密碼重用讓單點失守變成全面失守；LAPS 為每台產生獨立隨機密碼，可切斷橫向擴散。",
-"qv": "2647c6041e"
+"qv": "2647c6041e",
+"slug": "k13"
 },
 {
 "n": 14,
@@ -483,7 +496,8 @@ window.REVIEW_DATA = {
 ],
 "correct": 3,
 "exp": "保護憑證所在的程序，並避免高權限憑證『落地』在一般電腦上，被抽出的東西就沒有價值。",
-"qv": "98a7b941cf"
+"qv": "98a7b941cf",
+"slug": "k14"
 },
 {
 "n": 15,
@@ -517,7 +531,8 @@ window.REVIEW_DATA = {
 ],
 "correct": 0,
 "exp": "釣魚利用『人』，需教育、郵件防護、MFA 與寄件網域驗證多管齊下。",
-"qv": "6db70157cd"
+"qv": "6db70157cd",
+"slug": "k15"
 },
 {
 "n": 16,
@@ -551,7 +566,8 @@ window.REVIEW_DATA = {
 ],
 "correct": 2,
 "exp": "DNSSEC 驗證回應真偽、加密解析器防竄改；即使被導錯，HTTPS/HSTS 也能讓假網站露出破綻。",
-"qv": "635a0a164e"
+"qv": "635a0a164e",
+"slug": "k16"
 },
 {
 "n": 17,
@@ -585,7 +601,8 @@ window.REVIEW_DATA = {
 ],
 "correct": 1,
 "exp": "噴灑刻意避開單帳號鎖定門檻；MFA、弱密碼黑名單與跨帳號行為偵測才抓得到它。",
-"qv": "1be231b027"
+"qv": "1be231b027",
+"slug": "k17"
 },
 {
 "n": 18,
@@ -619,7 +636,8 @@ window.REVIEW_DATA = {
 ],
 "correct": 0,
 "exp": "802.11w 讓去認證封包無法偽造；關閉 WPS、監控異常無線活動，可削弱自動化工具的常用招式。",
-"qv": "ddf007684f"
+"qv": "ddf007684f",
+"slug": "k18"
 },
 {
 "n": 19,
@@ -653,7 +671,8 @@ window.REVIEW_DATA = {
 ],
 "correct": 3,
 "exp": "不讓憑證散落在檔案中，就沒什麼可收集；DLP 與出口監控則能發現『看似正常』的異常外送。",
-"qv": "3b7052d08f"
+"qv": "3b7052d08f",
+"slug": "k19"
 },
 {
 "n": 20,
@@ -687,7 +706,8 @@ window.REVIEW_DATA = {
 ],
 "correct": 2,
 "exp": "提權多半利用未修補漏洞或過寬設定；修補、基準線稽核與最小權限是三道主要防線。",
-"qv": "b25fbcbe6c"
+"qv": "b25fbcbe6c",
+"slug": "k20"
 }
 ]
 };

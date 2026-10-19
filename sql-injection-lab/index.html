@@ -2,243 +2,39 @@
 <html lang="zh-Hant-TW">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>SQL Injection 資安教學與防禦實驗室</title>
-<meta name="description" content="SQL Injection 原理、攻擊型態、各語言防禦程式碼、多層防禦、互動沙盒、各段隨堂練習。純前端安全模擬，自製教材。">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>SQL Injection 教學關卡 — 資安課程教材</title>
+<meta name="description" content="SQL Injection 兩階段教學關卡：在安全模擬中重現情境、讀程式碼、動手修。純前端，不連線真實資料庫。">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&family=JetBrains+Mono:wght@400;500;700&display=swap">
-<link rel="stylesheet" href="css/style.css?v=07e2aeb0">
+<link rel="stylesheet" href="../owasp-top10/css/style.css?v=68e1f40d">
 <link rel="stylesheet" href="../css/review.css?v=a46ef01b">
 </head>
 <body>
-<div class="top"><div class="wrap">
-  <p class="backhome"><a href="../">← 回總頁</a></p>
-  <h1>🛡️ SQL Injection 資安教學與防禦實驗室</h1>
-  <p>原理解說 · 攻擊型態 · 防禦程式碼 · 多層防禦 · 互動沙盒 · 隨堂練習</p>
-  <p class="note">自製教學教材 · 全程純瀏覽器模擬，不連線任何真實資料庫</p>
-</div></div>
-
-<nav><div class="wrap">
-  <button class="active" onclick="showSection('learn', this)">📚 原理</button>
-  <button onclick="showSection('types', this)">🧠 攻擊型態</button>
-  <button onclick="showSection('sandbox', this)">🧪 互動沙盒</button>
-  <button onclick="showSection('defense', this)">🔐 防禦程式碼</button>
-</div></nav>
-
-<main class="wrap">
-
-<div id="gsiArea" class="gsi"></div>
-
-<!-- 原理 -->
-<section id="learn" class="section active">
-  <div class="card">
-    <h2>📚 什麼是 SQL Injection？</h2>
-    <p>SQL Injection（SQL 注入）是最常見的 Web 應用程式弱點之一。當程式把使用者輸入<b>直接拼接</b>進 SQL 查詢字串時，攻擊者可以透過特製的輸入，改變這段 SQL 原本的語意，進而讀取、竄改甚至刪除資料。</p>
-    <div class="warnbox">核心問題：程式沒有把「<b>資料</b>」和「<b>SQL 指令</b>」分開。對資料庫而言，它分不出哪些是你要查的值、哪些是你偷塞的語法。</div>
-  </div>
-  <div class="review-slot" data-q="1"></div>
-  <div class="card">
-    <h2>🔄 一次注入的基本流程</h2>
-    <div class="flow">
-      <span>👤 使用者輸入</span>→<span>🌐 Web 應用程式</span>→<span>🧩 組出 SQL</span>→<span>⚙️ SQL 解析器</span>→<span>🗄️ 資料庫</span>
-    </div>
-    <p class="note" style="margin-top:12px">弱點就發生在「組出 SQL」這一步：如果輸入被當成語法拼進去，後面解析器就會忠實執行被改寫過的指令。</p>
-  </div>
-  <div class="review-slot" data-q="2"></div>
-  <div class="card">
-    <h3 class="good">✅ 一句話記住</h3>
-    <p>把所有不可信的輸入都當成「<b>資料</b>」，永遠不要讓它變成「<b>SQL 語法</b>」。本實驗室所有防禦技巧，都是在實現這一個原則。</p>
-  </div>
-  <div class="review-slot" data-q="3"></div>
-</section>
-
-<!-- 攻擊型態 -->
-<section id="types" class="section">
-  <div class="card"><h2>🧠 六種常見的 SQL Injection 教學型態</h2>
-    <p class="note">以下皆為概念說明，供課堂理解與防禦設計之用。</p></div>
-  <div class="card type"><span class="tag">1</span><h3>登入繞過 Login Bypass</h3>
-    <p>在帳號/密碼欄位塞入會讓 WHERE 條件恆真，或用註解砍掉密碼比對的輸入，藉此略過驗證。</p>
-    <p class="note">例：<code>admin' --</code> 會讓查詢變成「找 admin，後面都註解掉」。</p></div>
-  <div class="review-slot" data-q="4"></div>
-  <div class="review-slot" data-q="5"></div>
-  <div class="card type"><span class="tag">2</span><h3>UNION-based</h3>
-    <p>利用 <code>UNION SELECT</code> 把其他資料表的欄位併進原本的查詢結果，用來撈出額外資料。前提是欄位數量與型別要對得上。</p></div>
-  <div class="review-slot" data-q="6"></div>
-  <div class="card type"><span class="tag">3</span><h3>布林盲注 Boolean Blind</h3>
-    <p>當頁面不直接顯示資料，但在「條件成立 / 不成立」時回應不同，就能一位一位推測出內容。</p></div>
-  <div class="review-slot" data-q="7"></div>
-  <div class="card type"><span class="tag">4</span><h3>時間盲注 Time-based Blind</h3>
-    <p>連回應差異都看不到時，用讓資料庫延遲（如 SLEEP）當作訊號：有延遲代表條件成立。</p></div>
-  <div class="review-slot" data-q="8"></div>
-  <div class="card type"><span class="tag">5</span><h3>ORDER BY 排序注入</h3>
-    <p>排序欄位是 SQL 的「結構（識別字）」而非「值」，不能用參數綁定處理，必須改用白名單，否則容易成為注入點。</p></div>
-  <div class="card type"><span class="tag">6</span><h3>WAF 繞過</h3>
-    <p>WAF 能攔截部分已知樣式，但攻擊者常以大小寫、編碼、註解拆字等方式變形繞過，所以它只能是輔助防線。</p></div>
-  <div class="review-slot" data-q="9"></div>
-
-  <div class="card"><h2>🧱 攻擊面與對應防禦</h2>
-  <table>
-    <thead><tr><th>位置</th><th>可能風險</th><th>建議防禦</th></tr></thead>
-    <tbody>
-      <tr><td>登入帳號/密碼</td><td>Login Bypass</td><td>參數化查詢</td></tr>
-      <tr><td>搜尋欄位</td><td>資料外洩</td><td>參數化查詢 + 輸入驗證</td></tr>
-      <tr><td>ID 參數</td><td>WHERE 注入</td><td>型別驗證 + 參數化</td></tr>
-      <tr><td>排序欄位</td><td>ORDER BY 注入</td><td>白名單（whitelist）</td></tr>
-      <tr><td>錯誤訊息</td><td>資訊洩漏</td><td>一般化錯誤處理</td></tr>
-    </tbody>
-  </table></div>
-  <div class="review-slot" data-q="10"></div>
-</section>
-
-<!-- 互動沙盒 -->
-<section id="sandbox" class="section">
-  <div class="warnbox">🧪 <b>教育模式</b>：本沙盒只在你的瀏覽器內「模擬」注入的教學行為，<b>不連接真實資料庫，也不對任何外部網站送出請求</b>。</div>
-  <div class="card">
-    <h2>🧪 SQL Injection 互動沙盒</h2>
-    <label>① 選擇教學情境</label>
-    <select id="scenario" onchange="changeScenario()">
-      <option value="login">登入繞過 Login Bypass</option>
-      <option value="union">UNION-based</option>
-      <option value="bool">布林盲注 Boolean Blind</option>
-      <option value="time">時間盲注 Time-based</option>
-      <option value="orderby">ORDER BY 排序注入</option>
-      <option value="waf">WAF 過濾示意</option>
-    </select>
-    <label>② 執行模式</label>
-    <div class="mode">
-      <button id="mVuln" class="selected" onclick="setMode('vuln')">有漏洞（字串拼接）</button>
-      <button id="mSecure" onclick="setMode('secure')">安全（參數化查詢）</button>
-    </div>
-    <label>③ 教學 Payload（點一下帶入）</label>
-    <div id="payloads"></div>
-    <label>④ 使用者輸入</label>
-    <textarea id="sqlInput" placeholder="在這裡輸入測試字串"></textarea>
-    <div class="btnrow"><button class="btn" onclick="runSim()">執行模擬</button>
-      <span class="note">切到「安全」模式再跑一次，對照差異最有感。</span></div>
-  </div>
-  <div class="grid2">
-    <div class="card"><h3>🧩 模擬查詢結果</h3><div id="sqlResult"><div class="note">尚未執行。</div></div></div>
-    <div class="card"><h3>🗄️ 模擬資料庫輸出</h3><div id="dbResult"><div class="note">尚未執行。</div></div></div>
-  </div>
-  <div class="card"><h3>🔍 Token 視覺化</h3><div id="tokens"><span class="note">尚未分析。</span></div></div>
-  <div class="card"><h3>📋 伺服器 Log（示意）</h3><pre id="serverLog" class="log">尚未產生 Log。</pre></div>
-  <div class="card"><h3>👨‍🏫 教學分析</h3><div id="analysis"><div class="note">請先選情境並執行一次。</div></div></div>
-  <div class="review-slot" data-q="11"></div>
-</section>
-
-<!-- 防禦程式碼 -->
-<section id="defense" class="section">
-  <div class="card"><h2>🔐 各語言的安全查詢寫法</h2>
-    <p class="note">共通原則：讓 SQL 結構固定、使用者輸入一律以參數帶入。</p></div>
-
-  <div class="card"><h3 class="bad">❌ 不安全（字串拼接）</h3>
-<pre>sql = "SELECT * FROM users WHERE name = '" + username + "'"</pre>
-    <h3 class="good">✅ 安全（參數化）</h3>
-<pre>sql = "SELECT * FROM users WHERE name = ?"
-cursor.execute(sql, (username,))</pre>
-    <p class="note">重點：參數化把「語句結構」和「輸入資料」分開，輸入不會被當語法執行。</p></div>
-  <div class="review-slot" data-q="12"></div>
-  <div class="review-slot" data-q="13"></div>
-
-  <div class="grid2">
-    <div class="card"><h3>🐍 Python（sqlite3）</h3>
-<pre>import sqlite3
-conn = sqlite3.connect("app.db")
-cur = conn.cursor()
-
-username = request.form["username"]
-cur.execute(
-    "SELECT id, name FROM users WHERE username = ?",
-    (username,),
-)
-rows = cur.fetchall()</pre></div>
-
-    <div class="card"><h3>🐍 Python（PostgreSQL / psycopg）</h3>
-<pre>import psycopg
-with psycopg.connect(DSN) as conn:
-    with conn.cursor() as cur:
-        cur.execute(
-            "SELECT id, name FROM users WHERE username = %s",
-            (username,),
-        )
-        rows = cur.fetchall()</pre></div>
-
-    <div class="card"><h3>🟢 Node.js（mysql2）</h3>
-<pre>const mysql = require("mysql2/promise");
-const conn = await mysql.createConnection(cfg);
-
-const [rows] = await conn.execute(
-  "SELECT id, name FROM users WHERE username = ?",
-  [username]
-);</pre></div>
-
-    <div class="card"><h3>🐘 PHP（PDO）</h3>
-<pre>$pdo = new PDO($dsn, $user, $pass);
-$stmt = $pdo->prepare(
-  "SELECT id, name FROM users WHERE username = :u"
-);
-$stmt->execute([":u" => $username]);
-$rows = $stmt->fetchAll();</pre></div>
-
-    <div class="card"><h3>☕ Java（JDBC PreparedStatement）</h3>
-<pre>String sql =
-  "SELECT id, name FROM users WHERE username = ?";
-try (PreparedStatement ps =
-        conn.prepareStatement(sql)) {
-    ps.setString(1, username);
-    ResultSet rs = ps.executeQuery();
-}</pre></div>
-
-  </div>
-  <div class="review-slot" data-q="14"></div>
-
-  <div class="card"><h3>⚠️ ORDER BY 為什麼要用白名單</h3>
-<pre>// 欄位名是「結構」，不能用參數綁定
-const ALLOWED = ["name", "email", "created_at"];
-if (!ALLOWED.includes(sortBy)) {
-  throw new Error("Invalid sort column");
-}
-const sql =
-  `SELECT * FROM users ORDER BY ${sortBy}`;</pre>
-      <p class="note">值用參數化、識別字用白名單，兩者分工。</p></div>
-  <div class="review-slot" data-q="15"></div>
-  <div class="review-slot" data-q="16"></div>
-
-  <div class="card"><h2>🛡️ 多層防禦（縱深防禦）</h2>
-    <div class="flow">
-      <span>輸入驗證</span>→<span>參數化查詢</span>→<span>最小權限</span>→<span>一般化錯誤處理</span>→<span>記錄 / 告警 + WAF</span>
-    </div>
-    <div class="pillrow" style="margin-top:14px">
-      <div class="pill"><b>① 參數化查詢</b><br>最核心：資料與 SQL 結構分離。</div>
-      <div class="pill"><b>② 輸入驗證</b><br>確認格式/型別/範圍符合預期。</div>
-      <div class="pill"><b>③ 最小權限</b><br>資料庫帳號只給必要權限。</div>
-      <div class="pill"><b>④ 錯誤處理</b><br>不把資料庫細節回傳給使用者。</div>
-      <div class="pill"><b>⑤ 記錄與告警</b><br>留下日誌、異常時示警。</div>
-      <div class="pill"><b>⑥ WAF</b><br>額外防線，不能取代上述。</div>
+<header>
+  <div class="wrap">
+    <p class="backhome"><a href="../">← 回總頁</a></p>
+    <div class="hbar">
+      <a class="brand" href="#/"><span class="dot"></span>SQL Injection 教學關卡<small>10 關</small></a>
     </div>
   </div>
-  <div class="review-slot" data-q="17"></div>
-  <div class="review-slot" data-q="18"></div>
-  <div class="review-slot" data-q="19"></div>
-  <div class="review-slot" data-q="20"></div>
-</section>
-
-<aside class="formcta"><div class="formcta-txt"><b>📝 學習內容驗證（20 題）</b><span>本單元的測驗與進度以此 Google 表單為準（20 題，自動計分）。</span></div><a class="formcta-btn" data-quiz-form="sql" href="#" target="_blank" rel="noopener">📝 開始學習內容驗證 ↗</a></aside>
-
-</main>
-
+</header>
+<div class="wrap"><div id="gsiArea" class="gsi"></div></div>
+<main class="wrap" id="app"></main>
 <footer><div class="wrap">
-  <p>SQL Injection 教學實驗室 · 自製教材 · 僅供合法授權環境的教學與防禦學習之用。 · <a href="../">← 回總頁</a></p>
+  <p>自製教材 · 純瀏覽器模擬，不連線任何真實資料庫。</p>
+  <p style="margin-top:8px">安全模擬教學用途 · <a href="../">← 回總頁</a></p>
 </div></footer>
-
 <script src="https://accounts.google.com/gsi/client" async></script>
 <script src="../js/google-auth-config.js?v=472ebfcb"></script>
 <script src="../js/forms-config.js?v=2efdbf78"></script>
 <script src="../js/student-auth.js?v=1be80cb4"></script>
 <script src="../js/firebase-config.js?v=f9e5bd8d"></script>
 <script src="../js/cloud-sync.js?v=456c4341"></script>
-<script src="js/review-data.js?v=bc7e6205"></script>
+<script src="js/course.js?v=88f31fb1"></script>
+<script src="js/challenges.js?v=a5cc0009"></script>
+<script src="js/review-data.js?v=5c601180"></script>
 <script src="../js/review-core.js?v=e069b3b6"></script>
-<script src="js/app.js?v=362a4e16"></script>
+<script src="../js/level-engine.js?v=1782f987"></script>
 </body>
 </html>

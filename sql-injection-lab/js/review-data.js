@@ -39,6 +39,7 @@ window.REVIEW_DATA = {
 "correct": 2,
 "exp": "不可信輸入被直接拼進 SQL 字串時，資料就可能被當成語法執行。",
 "qv": "ac46a779f2",
+"slug": "cause",
 "tab": "learn"
 },
 {
@@ -74,6 +75,7 @@ window.REVIEW_DATA = {
 "correct": 0,
 "exp": "問題出在應用程式和資料庫互動時把輸入拼進語法；所以要在應用程式端用參數化修補，加密傳輸或更換資料庫都無法解決。",
 "qv": "3452eddd49",
+"slug": "cause",
 "tab": "learn"
 },
 {
@@ -109,6 +111,7 @@ window.REVIEW_DATA = {
 "correct": 3,
 "exp": "資料歸資料、指令歸指令；長度限制、大小寫轉換、HTTPS 都無法阻止輸入改變 SQL 語意。",
 "qv": "20d5fb485a",
+"slug": "cause",
 "tab": "learn"
 },
 {
@@ -144,6 +147,7 @@ window.REVIEW_DATA = {
 "correct": 2,
 "exp": "單引號先閉合帳號字串，-- 讓後面的 AND password = … 變成註解；改用參數化查詢後，這串輸入只會被當成一個奇怪的帳號名稱。",
 "qv": "75f1015af7",
+"slug": "login",
 "tab": "types"
 },
 {
@@ -179,6 +183,7 @@ window.REVIEW_DATA = {
 "correct": 1,
 "exp": "'1'='1' 恆真，OR 之後整個條件恆成立，等於取消了過濾。",
 "qv": "8f2c451050",
+"slug": "login",
 "tab": "types"
 },
 {
@@ -214,6 +219,7 @@ window.REVIEW_DATA = {
 "correct": 0,
 "exp": "UNION 可將另一個 SELECT 的結果合併回來，前提是欄位數與型別相容。",
 "qv": "50cd2d4277",
+"slug": "union",
 "tab": "types"
 },
 {
@@ -249,6 +255,7 @@ window.REVIEW_DATA = {
 "correct": 2,
 "exp": "布林盲注靠真／假造成的回應差異推測資料，時間盲注則看延遲；兩者的根本防禦都是參數化查詢。",
 "qv": "85ed6d84a8",
+"slug": "blind",
 "tab": "types"
 },
 {
@@ -284,6 +291,7 @@ window.REVIEW_DATA = {
 "correct": 3,
 "exp": "讓資料庫在條件成立時延遲回應，用時間差當作 0/1 訊號。",
 "qv": "6693026ec8",
+"slug": "time",
 "tab": "types"
 },
 {
@@ -319,6 +327,7 @@ window.REVIEW_DATA = {
 "correct": 0,
 "exp": "WAF 能擋掉部分已知樣式，但比對規則總有漏網之魚；真正的防線仍是安全的程式寫法，WAF 是額外的一層。",
 "qv": "7add0c0c6e",
+"slug": "waf",
 "tab": "types"
 },
 {
@@ -354,6 +363,7 @@ window.REVIEW_DATA = {
 "correct": 1,
 "exp": "前端檢查可被略過、編碼不是防護、加引號仍是拼接；伺服器端型別驗證擋掉不合理的輸入，參數化確保它不會改變語意。",
 "qv": "465b208c95",
+"slug": "id",
 "tab": "types"
 },
 {
@@ -389,6 +399,7 @@ window.REVIEW_DATA = {
 "correct": 2,
 "exp": "參數化查詢下 SQL 結構已固定，payload 只是一段普通字串；它不是靠刪除或跳脫字元，而是根本不讓輸入進入語法。",
 "qv": "3fd05a445a",
+"slug": "param",
 "tab": "sandbox"
 },
 {
@@ -424,6 +435,7 @@ window.REVIEW_DATA = {
 "correct": 0,
 "exp": "拼接後資料庫分不清哪段是值、哪段是語法，輸入就能改寫 WHERE 條件；這正是參數化查詢要解決的問題。",
 "qv": "5c3168ba7a",
+"slug": "param",
 "tab": "defense"
 },
 {
@@ -459,6 +471,7 @@ window.REVIEW_DATA = {
 "correct": 3,
 "exp": "參數化查詢讓資料庫先編譯語句結構，輸入只當參數帶入，無法改變語意。",
 "qv": "3a068052cd",
+"slug": "param",
 "tab": "defense"
 },
 {
@@ -494,6 +507,7 @@ window.REVIEW_DATA = {
 "correct": 1,
 "exp": "佔位符的值交給驅動程式綁定；注意 psycopg 的 %s 要當成 execute 的第二個參數傳入，自己用 Python 的 % 格式化字串仍是拼接，不安全。",
 "qv": "a49e3010e7",
+"slug": "param",
 "tab": "defense"
 },
 {
@@ -529,6 +543,7 @@ window.REVIEW_DATA = {
 "correct": 2,
 "exp": "參數綁定只處理『值』；識別字（欄位、表名、排序方向）屬結構，需用白名單。",
 "qv": "f8c67eb8f2",
+"slug": "orderby",
 "tab": "defense"
 },
 {
@@ -564,6 +579,7 @@ window.REVIEW_DATA = {
 "correct": 1,
 "exp": "只接受預先定義好的合法欄位名，其餘一律拒絕。",
 "qv": "a73c8013cb",
+"slug": "orderby",
 "tab": "defense"
 },
 {
@@ -599,6 +615,7 @@ window.REVIEW_DATA = {
 "correct": 0,
 "exp": "應用帳號只給必要權限，就算被注入，可破壞的範圍也有限。",
 "qv": "c92f19dc99",
+"slug": "layers",
 "tab": "layers"
 },
 {
@@ -634,6 +651,7 @@ window.REVIEW_DATA = {
 "correct": 3,
 "exp": "詳細錯誤等於替攻擊者畫地圖；應回傳一般化訊息，細節只進日誌。",
 "qv": "66d30bb12f",
+"slug": "layers",
 "tab": "layers"
 },
 {
@@ -669,6 +687,7 @@ window.REVIEW_DATA = {
 "correct": 3,
 "exp": "日誌和告警不會擋下攻擊，但能讓異常被看見、被追查；隱藏錯誤訊息屬於「錯誤處理」那一層。",
 "qv": "2e7c8c5b95",
+"slug": "layers",
 "tab": "layers"
 },
 {
@@ -704,6 +723,7 @@ window.REVIEW_DATA = {
 "correct": 1,
 "exp": "WAF 能擋掉部分已知樣式，但容易被繞過，不能當唯一防線。",
 "qv": "a75ab294e5",
+"slug": "waf",
 "tab": "layers"
 }
 ]
