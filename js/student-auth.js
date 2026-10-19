@@ -57,6 +57,7 @@
         '<b class="gsi-name">' + esc(u.name || "（未提供姓名）") + '</b>' +
         (u.email ? ' <span class="gsi-mail">· ' + esc(u.email) + '</span>' : '') +
         '</div>' +
+        '<div class="gsi-status" id="gsiStatus">' + statusHtml + '</div>' +
         '<span class="gsi-cloud" id="gsiCloud" style="font-size:.82rem;color:var(--muted)">' + cloudHtml + '</span>' +
         '<button type="button" class="gsi-out" id="gsiOut">登出</button>';
       var out = document.getElementById("gsiOut");
@@ -65,8 +66,9 @@
       area.className = "gsi gsi-signedout";
       area.innerHTML =
         '<div class="gsi-txt"><b>🔐 用 Google 登入</b>' +
-        '<span>登入後會顯示你的姓名。本單元的測驗與進度以頁面上的 Google 表單為準。</span></div>' +
+        '<span>登入後會顯示你的姓名，並讀取這個帳號的進度。</span></div>' +
         '<div id="gsiBtn" class="gsi-btn-host"></div>' +
+        '<div class="gsi-status" id="gsiStatus">' + statusHtml + '</div>' +
         '<div class="gsi-hint" id="gsiHint"></div>';
       mountButton();
     }

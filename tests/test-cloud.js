@@ -181,7 +181,15 @@ const AK = 'progress/ming.wang@lgm.kh.edu.tw';
       if (mod === 'owasp-top10') { await pg.evaluate(() => location.hash = '#/'); await sleep(200); }
       check('answer stored', (await done(pg)) === 1, await done(pg));
       c = await waitCloud(pg, /未同步/, 12000); check('shows 未同步 after timeout/failure', /⚠️ 未同步/.test(c), c);
-      check('final review works', await pg.evaluate(() => { const b = document.querySelector('#finalReview [data-act="start"]'); if (!b) return false; b.click(); const o = document.querySelector('#finalReview .rv-opt'); o.click(); return /答對|正確答案/.test(document.getElementById('finalReview').textContent); }));
+      if (mod === 'owasp-top10') {
+        check('map hides unit practice', await pg.evaluate(() => !document.getElementById('finalReview') && !document.querySelector('section.review')));
+        check('login shows level progress', await pg.evaluate(() => /已完成 \d+\/12/.test((document.getElementById('gsiStatus') || {}).textContent || '')));
+        const slug = await pg.evaluate(() => CHALLENGES[0].slug);
+        await pg.evaluate(s => { location.hash = '#/' + s; }, slug); await sleep(200);
+        check('level shows its practice', await pg.evaluate(() => document.querySelectorAll('section.review').length > 0));
+      } else {
+        check('final review works', await pg.evaluate(() => { const b = document.querySelector('#finalReview [data-act="start"]'); if (!b) return false; b.click(); const o = document.querySelector('#finalReview .rv-opt'); o.click(); return /答對|正確答案/.test(document.getElementById('finalReview').textContent); }));
+      }
       check('no reset button', await pg.evaluate(() => !document.getElementById('gsiReset')));
       await pg.evaluate(() => StudentAuth.resetProgress(true)); await sleep(200); check('resetProgress clears this account', (await done(pg)) === 0);
       await pg.click('#gsiOut'); await sleep(200); check('sign-out works', await pg.evaluate(() => !!document.getElementById('gsiBtn')));

@@ -38,7 +38,17 @@
     var a = document.getElementById("pnum"); if (a) a.textContent = n;
     var b = document.getElementById("ptot"); if (b) b.textContent = t;
     var f = document.getElementById("pfill"); if (f) f.style.width = (t ? n / t * 100 : 0) + "%";
+    if (window.ReviewCore) window.ReviewCore.refresh();
+    else if (window.StudentAuth) window.StudentAuth.setStatus(statusPrefix());
   }
+
+  function statusPrefix() { return "已完成 " + getSolved().size + "/" + L.length; }
+  window.reviewStatusPrefix = statusPrefix;
+
+  function formCta() {
+    return '<aside class="formcta"><div class="formcta-txt"><b>📝 學習內容驗證（20 題）</b><span>本單元的測驗與進度以此 Google 表單為準（20 題，自動計分）。</span></div><a class="formcta-btn" data-quiz-form="owasp" href="#" target="_blank" rel="noopener">📝 開始學習內容驗證 ↗</a></aside>';
+  }
+  function wireForms() { if (window.QuizForms) window.QuizForms.wire(); }
 
   /* 隨堂複習：每關頁末 1–2 題（題庫 js/review-data.js 的 slug 對應關卡），由共用 ../js/review-core.js 產生題卡 */
   function reviewFor(slug) {
@@ -81,12 +91,11 @@
       '<p>每一關都是兩階段：先在安全模擬中<b>重現弱點</b>，再閱讀示意用的<b>脆弱程式碼</b>、點出問題行、挑出正確修法，並用<b>同一招</b>驗證攻擊已失效。A05 注入分為 SQL、指令、XSS 三小關。</p>' +
       '<div class="warn">⚠ 全部為教學用<b>安全模擬</b>：使用假資料、不連線任何真實系統、不執行任何真實指令或腳本。僅限在你自己或已獲授權的環境中學習，請勿對未授權的系統進行測試。</div>' +
       '</section>' +
-      '<aside class="formcta"><div class="formcta-txt"><b>📝 學習內容驗證（20 題）</b><span>本單元的測驗與進度以此 Google 表單為準（20 題，自動計分）。</span></div><a class="formcta-btn" data-quiz-form="owasp" href="#" target="_blank" rel="noopener">📝 開始學習內容驗證 ↗</a></aside>' +
-      '<div class="maphead"><h2>關卡</h2><div class="hint">完成一關後自動解鎖下一關</div></div>' +
+      '<div class="maphead"><h2>關卡</h2><div class="hint">完成一關後自動解鎖下一關。點進關卡後才作該關練習。</div></div>' +
       '<div class="grid">' + cells + '</div>' + final +
-      '<section class="final-review" aria-label="總複習"><div id="finalReview"></div></section>';
+      formCta();
     progress();
-    if (window.FinalReview) window.FinalReview.mount(document.getElementById("finalReview"));
+    wireForms();
   }
 
   /* ---------- 兩階段：程式碼修復 ---------- */
@@ -178,10 +187,11 @@
       (next ? '<p style="margin-top:4px">已解鎖下一關 <b>' + esc(next.code) + ' ' + esc(next.nm) + '</b></p>' : '<p style="margin-top:4px">這是最後一關，你已完成全部！</p>') +
       '<div class="pagenav"><a class="btn sec" href="#/">← 回關卡地圖</a><span class="sp"></span>' +
       (next ? '<a class="btn" href="#/' + next.slug + '">下一關 ' + esc(next.code) + ' →</a>' : '') +
-      '</div></div>' + reviewFor(lv.slug);
+      '</div></div>' + reviewFor(lv.slug) + formCta();
     app.innerHTML = html;
     if (window.ReviewCore) window.ReviewCore.mount(app);
     progress();
+    wireForms();
     buildSandbox(lv, idx);
   }
 

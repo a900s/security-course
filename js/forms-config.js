@@ -25,4 +25,5 @@ window.SQL_FORM_URL   = "https://docs.google.com/forms/d/e/1FAIpQLSeGC7T4YPnqbn_
   }
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", wire);
   else wire();
+  window.QuizForms = { wire: wire };
 })();

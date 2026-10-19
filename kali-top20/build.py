@@ -9,10 +9,10 @@ md = (here / "README.md").read_text(encoding="utf-8")
 # Python-Markdown 的巢狀清單需 4 格縮排；README 用 2 格，這裡轉成 4 格以免子清單被攤平
 md = re.sub(r"(?m)^  (?=[-*+] |\d+\. )", "    ", md)
 body = markdown.markdown(md, extensions=["tables", "toc", "sane_lists"])
-# Google 表單測驗卡片：放在 h1 之後（本頁為閱讀教材，不再有勾選式進度）
+# Google 表單放在全文最下方（見 html 模板），不放在標題下。
 FORM_CTA = '''<aside class="formcta"><div class="formcta-txt"><b>📝 學習內容驗證（20 題）</b><span>本單元的測驗與進度以此 Google 表單為準（20 題，自動計分）。</span></div><a class="formcta-btn" data-quiz-form="kali" href="#" target="_blank" rel="noopener">📝 開始學習內容驗證 ↗</a></aside>'''
 GSI_AREA = '<div id="gsiArea" class="gsi"></div>'
-body = body.replace("</h1>", "</h1>\n" + GSI_AREA + "\n" + FORM_CTA, 1)
+body = body.replace("</h1>", "</h1>\n" + GSI_AREA, 1)
 
 # ── 隨堂複習：_quizzes/kali-review20.json，20 個手法章節末各 1 題 ──
 # 這裡只在每章末放插槽 <div class="review-slot" data-q="n">；題卡由共用的 ../js/review-core.js 依 js/review-data.js 產生。
@@ -68,6 +68,7 @@ html = f"""<!doctype html>
 <p class="backhome"><a href="../">← 回總頁</a></p>
 {body}
 {FINAL}
+{FORM_CTA}
 <footer>自製教學教材 · 僅供合法授權環境之防禦教育使用 · 由 build.py 自 README.md 產生 · <a href="../">← 回總頁</a></footer>
 </main>
 <script src="https://accounts.google.com/gsi/client" async></script>\n<script src="{asset('../js/google-auth-config.js')}"></script>\n<script src="{asset('../js/forms-config.js')}"></script>\n<script src="{asset('../js/student-auth.js')}"></script>\n<script src="{asset('../js/firebase-config.js')}"></script>\n<script src="{asset('../js/cloud-sync.js')}"></script>\n<script src="{asset('js/review-data.js')}"></script>\n<script src="{asset('../js/review-core.js')}"></script>\n<script src="{asset('../js/final-review.js')}"></script>

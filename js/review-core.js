@@ -88,7 +88,9 @@
     return "🧠 隨堂複習：答對 " + c.right + "/" + c.total + "（已作答 " + c.done + "/" + c.total + "）";
   }
   function refresh() {
-    /* 測驗進度以 Google 表單為準，登入列不顯示隨堂複習或已完成。 */
+    if (!window.StudentAuth) return;
+    var pre = typeof window.reviewStatusPrefix === "function" ? window.reviewStatusPrefix() : "";
+    window.StudentAuth.setStatus(pre || statusText());
   }
 
   function bind(box) {
