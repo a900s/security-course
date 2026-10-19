@@ -5,10 +5,10 @@
    ・這份 Web 設定（apiKey 等）本來就是公開資訊、不是密碼；真正的存取控制在 firestore.rules。
    取得方式：Firebase 主控台 → 專案設定 → 一般 → 你的應用程式（網頁）→ SDK 設定 → 「設定」。 */
 window.FIREBASE_CONFIG = {
-  apiKey: "",
-  authDomain: "",
-  projectId: "",
-  appId: ""
+  apiKey: "AIzaSyDgxH1j-z73GiZi4DiIBuQIl14uBKR4Gsk",
+  authDomain: "security-course-progress.firebaseapp.com",
+  projectId: "security-course-progress",
+  appId: "1:965650655219:web:35ee6cb115d0c08da99486"
   // storageBucket、messagingSenderId 不需要；有也可以照貼
 };
 /* Firebase JS SDK 版本（固定版本，從 gstatic CDN 以 ES module 動態載入；升級前請先測試） */
