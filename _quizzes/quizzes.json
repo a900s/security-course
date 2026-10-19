@@ -1,12 +1,12 @@
 {
   "generatedBy": "build_quizzes.py",
-  "pointsPerQuestion": 1,
   "quizzes": [
     {
       "id": "owasp",
       "title": "OWASP Top 10 學習內容驗證",
-      "description": "共 20 題，每題 4 選 1、1 分，滿分 20 分。驗證對 OWASP Top 10 各類別概念與防禦的理解。",
-      "totalPoints": 20,
+      "description": "共 20 題，每題 4 選 1、5 分，滿分 100 分。驗證對 OWASP Top 10 各類別概念與防禦的理解。",
+      "pointsPerQuestion": 5,
+      "totalPoints": 100,
       "questions": [
         {
           "number": 1,
@@ -20,7 +20,7 @@
           },
           "correctIndex": 2,
           "correctLetter": "C",
-          "points": 1,
+          "points": 5,
           "explanation": "隱藏或打亂 id 只是增加猜測難度；真正的防線是伺服器端逐筆授權檢查（物件層級授權）。"
         },
         {
@@ -35,7 +35,7 @@
           },
           "correctIndex": 0,
           "correctLetter": "A",
-          "points": 1,
+          "points": 5,
           "explanation": "Base64 不是加密；MD5 太快且易破。密碼應使用加鹽、計算成本高的專用雜湊。"
         },
         {
@@ -50,7 +50,7 @@
           },
           "correctIndex": 3,
           "correctLetter": "D",
-          "points": 1,
+          "points": 5,
           "explanation": "參數化查詢讓資料庫先固定語句結構，使用者輸入只當資料帶入，無法改變語意。"
         },
         {
@@ -65,7 +65,7 @@
           },
           "correctIndex": 1,
           "correctLetter": "B",
-          "points": 1,
+          "points": 5,
           "explanation": "A06（不安全設計）指的是設計本身缺乏安全考量；威脅建模、安全需求應在開發早期就導入。"
         },
         {
@@ -80,7 +80,7 @@
           },
           "correctIndex": 0,
           "correctLetter": "A",
-          "points": 1,
+          "points": 5,
           "explanation": "沿用預設帳密、開放不必要介面都是典型設定錯誤；其餘三者反而是正確作法。"
         },
         {
@@ -95,7 +95,7 @@
           },
           "correctIndex": 2,
           "correctLetter": "C",
-          "points": 1,
+          "points": 5,
           "explanation": "要掌握相依元件清單（SBOM）、追蹤 CVE 並及時更新有漏洞的版本。"
         },
         {
@@ -110,7 +110,7 @@
           },
           "correctIndex": 3,
           "correctLetter": "D",
-          "points": 1,
+          "points": 5,
           "explanation": "MFA 加上登入次數限制／鎖定，可大幅降低猜測與自動化攻擊的成功率。"
         },
         {
@@ -125,7 +125,7 @@
           },
           "correctIndex": 1,
           "correctLetter": "B",
-          "points": 1,
+          "points": 5,
           "explanation": "供應鏈與更新須驗證簽章與來源，避免被植入惡意程式（即 A08 的核心風險）。"
         },
         {
@@ -140,7 +140,7 @@
           },
           "correctIndex": 2,
           "correctLetter": "C",
-          "points": 1,
+          "points": 5,
           "explanation": "沒有日誌與告警，攻擊往往無聲無息、事後也難追查；應記錄並監控關鍵事件。"
         },
         {
@@ -155,7 +155,7 @@
           },
           "correctIndex": 0,
           "correctLetter": "A",
-          "points": 1,
+          "points": 5,
           "explanation": "應限制伺服器可存取的目的地（白名單）、隔離內網並封鎖對中繼資料端點的存取。"
         },
         {
@@ -170,7 +170,7 @@
           },
           "correctIndex": 1,
           "correctLetter": "B",
-          "points": 1,
+          "points": 5,
           "explanation": "改檔名只是藏起來；要關掉除錯、讓設定檔根本不在可瀏覽的目錄裡，並由伺服器規則擋住敏感路徑。"
         },
         {
@@ -185,7 +185,7 @@
           },
           "correctIndex": 3,
           "correctLetter": "D",
-          "points": 1,
+          "points": 5,
           "explanation": "仿冒套件（typosquatting）靠打錯字得逞；核對名稱、鎖版本、用 lockfile 與雜湊驗證，才能確保裝到的是預期的那一份。"
         },
         {
@@ -200,7 +200,7 @@
           },
           "correctIndex": 2,
           "correctLetter": "C",
-          "points": 1,
+          "points": 5,
           "explanation": "SHA-256 計算很快又沒有鹽，相同密碼雜湊相同，可用彩虹表或 GPU 大量猜測；密碼要用加鹽、刻意放慢的專用雜湊。"
         },
         {
@@ -215,7 +215,7 @@
           },
           "correctIndex": 1,
           "correctLetter": "B",
-          "points": 1,
+          "points": 5,
           "explanation": "黑名單式的跳脫總有漏網之魚；參數化查詢從結構上把資料與指令分開，是根本解法。"
         },
         {
@@ -230,7 +230,7 @@
           },
           "correctIndex": 0,
           "correctLetter": "A",
-          "points": 1,
+          "points": 5,
           "explanation": "移除分號、加引號都擋不住 &&、$() 等其他寫法；不經 shell、以參數陣列傳入，再加上字元白名單，輸入就無法變成新指令。"
         },
         {
@@ -245,7 +245,7 @@
           },
           "correctIndex": 3,
           "correctLetter": "D",
-          "points": 1,
+          "points": 5,
           "explanation": "濾掉 <script> 擋不住 <img onerror>；輸出編碼（或 textContent）讓瀏覽器把內容當文字而不是程式碼。"
         },
         {
@@ -260,7 +260,7 @@
           },
           "correctIndex": 2,
           "correctLetter": "C",
-          "points": 1,
+          "points": 5,
           "explanation": "生日、寵物名字都可能公開查得到；問題出在流程設計，應改用寄到已驗證管道的一次性連結並限流。"
         },
         {
@@ -275,7 +275,7 @@
           },
           "correctIndex": 1,
           "correctLetter": "B",
-          "points": 1,
+          "points": 5,
           "explanation": "固定小延遲或隱藏網址都擋不住自動化猜測；鎖定／限流降低嘗試次數，強密碼與 MFA 讓猜中也難以登入。"
         },
         {
@@ -290,7 +290,7 @@
           },
           "correctIndex": 3,
           "correctLetter": "D",
-          "points": 1,
+          "points": 5,
           "explanation": "輸入驗證擋掉壞資料，攔截例外避免崩潰；錯誤細節只留在伺服器日誌，使用者只看到一般訊息。"
         },
         {
@@ -305,7 +305,7 @@
           },
           "correctIndex": 0,
           "correctLetter": "A",
-          "points": 1,
+          "points": 5,
           "explanation": "權限檢查或驗證過程出錯時若放行，攻擊者就能故意製造錯誤來繞過；預設應拒絕並回到安全狀態。"
         }
       ]
@@ -314,6 +314,7 @@
       "id": "kali",
       "title": "Kali 20 種手法與防治 學習內容驗證",
       "description": "共 20 題，每題 4 選 1、1 分，滿分 20 分。以概念、跡象與防治為主，非逐步攻擊教學。",
+      "pointsPerQuestion": 1,
       "totalPoints": 20,
       "questions": [
         {
@@ -622,6 +623,7 @@
       "id": "sql",
       "title": "SQL Injection 學習內容驗證",
       "description": "共 20 題，每題 4 選 1、1 分，滿分 20 分。涵蓋注入型態、參數化查詢、佔位符、白名單、最小權限與記錄告警等防禦。",
+      "pointsPerQuestion": 1,
       "totalPoints": 20,
       "questions": [
         {

@@ -11,7 +11,8 @@ QUIZZES = {
  "owasp": {
   "id": "owasp",
   "title": "OWASP Top 10 學習內容驗證",
-  "desc": "共 20 題，每題 4 選 1、1 分，滿分 20 分。驗證對 OWASP Top 10 各類別概念與防禦的理解。",
+  "desc": "共 20 題，每題 4 選 1、5 分，滿分 100 分。驗證對 OWASP Top 10 各類別概念與防禦的理解。",
+  "points": 5,
   "file": "owasp-quiz.md",
   "questions": [
    ("🔓", "【A01 存取控制失效】學生把網址的 ?id=1001 改成 ?id=1002 就看到別人的成績。最根本的修正是？",
@@ -135,7 +136,7 @@ def build_md(qz):
     lines.append("> 本題庫為自行撰寫之原創教學內容，以概念理解與防禦為主。正解以 **(正解)** 標註。")
     lines.append("")
     for i, (icon, q, opts, ans, exp) in enumerate(qz["questions"], 1):
-        lines.append(f"## 第 {i} 題　{icon}（1 分）")
+        lines.append(f"## 第 {i} 題　{icon}（{qz.get('points', 1)} 分）")
         lines.append("")
         lines.append(f"{q}")
         lines.append("")
@@ -150,20 +151,22 @@ def build_md(qz):
     lines.append("---")
     lines.append("")
     n = len(qz["questions"])
-    lines.append(f"**配分**：共 {n} 題，每題 1 分，滿分 {n} 分。")
+    pts = qz.get("points", 1)
+    lines.append(f"**配分**：共 {n} 題，每題 {pts} 分，滿分 {n * pts} 分。")
     return "\n".join(lines) + "\n"
 
 def build_json():
-    out = {"generatedBy": "build_quizzes.py", "pointsPerQuestion": 1, "quizzes": []}
+    out = {"generatedBy": "build_quizzes.py", "quizzes": []}
     for key, qz in QUIZZES.items():
+        pts = qz.get("points", 1)
         qobj = {"id": qz["id"], "title": qz["title"], "description": qz["desc"],
-                "totalPoints": len(qz["questions"]), "questions": []}
+                "pointsPerQuestion": pts, "totalPoints": len(qz["questions"]) * pts, "questions": []}
         for i, (icon, q, opts, ans, exp) in enumerate(qz["questions"], 1):
             qobj["questions"].append({
                 "number": i, "icon": icon, "question": q,
                 "options": {LETTERS[j]: opts[j] for j in range(4)},
                 "correctIndex": ans, "correctLetter": LETTERS[ans],
-                "points": 1, "explanation": exp,
+                "points": pts, "explanation": exp,
             })
         out["quizzes"].append(qobj)
     return out
