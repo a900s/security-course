@@ -10,7 +10,7 @@ md = (here / "README.md").read_text(encoding="utf-8")
 md = re.sub(r"(?m)^  (?=[-*+] |\d+\. )", "    ", md)
 body = markdown.markdown(md, extensions=["tables", "toc", "sane_lists"])
 # Google 表單測驗卡片：放在 h1 之後（本頁為閱讀教材，不再有勾選式進度）
-FORM_CTA = '''<aside class="formcta"><div class="formcta-txt"><b>📝 學習內容驗證（20 題）</b><span>讀完教材、完成各章隨堂複習與文末總複習後，請作答這份 20 題選擇題測驗（自動計分），檢核學習成效。</span></div><a class="formcta-btn" data-quiz-form="kali" href="#" target="_blank" rel="noopener">📝 開始學習內容驗證 ↗</a></aside>'''
+FORM_CTA = '''<aside class="formcta"><div class="formcta-txt"><b>📝 學習內容驗證（20 題）</b><span>本單元的測驗與進度以此 Google 表單為準（20 題，自動計分）。</span></div><a class="formcta-btn" data-quiz-form="kali" href="#" target="_blank" rel="noopener">📝 開始學習內容驗證 ↗</a></aside>'''
 GSI_AREA = '<div id="gsiArea" class="gsi"></div>'
 body = body.replace("</h1>", "</h1>\n" + GSI_AREA + "\n" + FORM_CTA, 1)
 
@@ -65,9 +65,10 @@ html = f"""<!doctype html>
 <link rel="stylesheet" href="{asset('../css/review.css')}">
 </head>
 <body><main class="wrap">
+<p class="backhome"><a href="../">← 回總頁</a></p>
 {body}
 {FINAL}
-<footer>自製教學教材 · 僅供合法授權環境之防禦教育使用 · 由 build.py 自 README.md 產生 · <a href="teacher.html">👨‍🏫 教師區</a></footer>
+<footer>自製教學教材 · 僅供合法授權環境之防禦教育使用 · 由 build.py 自 README.md 產生 · <a href="../">← 回總頁</a></footer>
 </main>
 <script src="https://accounts.google.com/gsi/client" async></script>\n<script src="{asset('../js/google-auth-config.js')}"></script>\n<script src="{asset('../js/forms-config.js')}"></script>\n<script src="{asset('../js/student-auth.js')}"></script>\n<script src="{asset('../js/firebase-config.js')}"></script>\n<script src="{asset('../js/cloud-sync.js')}"></script>\n<script src="{asset('js/review-data.js')}"></script>\n<script src="{asset('../js/review-core.js')}"></script>\n<script src="{asset('../js/final-review.js')}"></script>
 </body></html>

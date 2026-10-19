@@ -41,50 +41,46 @@ function check(mod, name, cond, info) { console.log((cond ? '  ✓ ' : '  ✗ ')
       if (isO) await go('#/' + slugs[0]);
       const cards = await pg.evaluate(() => document.querySelectorAll('section.review.rv-done-ok,section.review.rv-done-ng').length);
       if (isO) await go('#/');
-      return pg.evaluate((cards) => ({ status: (document.getElementById('gsiStatus') || {}).textContent || '', who: (document.querySelector('.gsi-name') || {}).textContent || '(anon)', cards,
-        solvedCells: document.querySelectorAll('.cell.solved').length, studSum: (document.getElementById('studSum') || {}).textContent || '' }), cards);
+      return pg.evaluate((cards) => {
+        let answered = 0;
+        try { const raw = localStorage.getItem(StudentAuth.key(REVIEW_DATA.storageKey)); answered = raw ? Object.keys(JSON.parse(raw)).length : 0; } catch (e) {}
+        return { answered, who: (document.querySelector('.gsi-name') || {}).textContent || '(anon)', cards,
+          solvedCells: document.querySelectorAll('.cell.solved').length };
+      }, cards);
     }
     async function seedSolved(arr) { await pg.evaluate(a => localStorage.setItem(StudentAuth.key('owasp_course_solved_v1'), JSON.stringify(a)), arr); await go('#/x'); await go('#/'); }
-    const dn = s => +((s.status.match(/已作答 (\d+)/) || [])[1]);
+    const dn = s => s.answered;
+    check(mod, 'no reset or teacher controls', await pg.evaluate(() => !document.getElementById('gsiReset') && !document.getElementById('resetBtn') && !/教師區|教師專區/.test(document.body.innerText) && !!document.querySelector('a[href="../"]')));
     // anon: 1 answer (simulates legacy un-namespaced data)
     await answer(1, false);
-    let s = await state(); check(mod, 'anon 1 answered', dn(s) === 1 && s.who === '(anon)', s.status);
+    let s = await state(); check(mod, 'anon 1 answered', dn(s) === 1 && s.who === '(anon)', String(dn(s)));
     const anonRaw = await pg.evaluate(() => localStorage.getItem(REVIEW_DATA.storageKey));
     check(mod, 'anon uses legacy base key', !!anonRaw);
     // A
     await signIn(A); s = await state();
-    check(mod, 'A starts at 0 (legacy anon data not migrated)', dn(s) === 0 && s.cards === 0 && s.who === '王小明', s.status);
+    check(mod, 'A starts at 0 (legacy anon data not migrated)', dn(s) === 0 && s.cards === 0 && s.who === '王小明', String(dn(s)));
     await answer(2); if (isO) await seedSolved([0, 1, 2]); s = await state();
-    check(mod, 'A answered 2', dn(s) === 2 && /答對 2\//.test(s.status) && (isO ? s.solvedCells === 3 && /3\/12/.test(s.status) && /已完成 3\/12/.test(s.studSum) : s.cards === 2), s.status + ' | ' + s.studSum);
+    check(mod, 'A answered 2', dn(s) === 2 && (isO ? s.solvedCells === 3 : s.cards === 2), dn(s) + ' cells ' + s.solvedCells);
     const keyA = await pg.evaluate(() => StudentAuth.key(REVIEW_DATA.storageKey));
     check(mod, 'key namespaced by email hash, email not in key', /::u:[0-9a-f]+$/.test(keyA) && !/ming/i.test(keyA), keyA);
     // sign out -> anon
     await signOut(); s = await state();
-    check(mod, 'sign-out shows anonymous state', dn(s) === 1 && s.who === '(anon)' && (isO ? s.solvedCells === 0 : s.cards === 1), s.status);
+    check(mod, 'sign-out shows anonymous state', dn(s) === 1 && s.who === '(anon)' && (isO ? s.solvedCells === 0 : s.cards === 1), String(dn(s)));
     // B
     await signIn(B); s = await state();
-    check(mod, 'B starts at 0', dn(s) === 0 && s.cards === 0 && (!isO || s.solvedCells === 0) && s.who === '李小華', s.status);
-    await answer(1); s = await state(); check(mod, 'B answered 1', dn(s) === 1, s.status);
+    check(mod, 'B starts at 0', dn(s) === 0 && s.cards === 0 && (!isO || s.solvedCells === 0) && s.who === '李小華', String(dn(s)));
+    await answer(1); s = await state(); check(mod, 'B answered 1', dn(s) === 1, String(dn(s)));
     // back to A (email in different case/space -> same account)
     await signOut(); await signIn(jwt({sub:'999', name:'王小明', email:'ming.wang@LGM.kh.edu.tw'})); s = await state();
-    check(mod, 'back to A restores A (email normalized)', dn(s) === 2 && s.cards === 2 && (!isO || s.solvedCells === 3), s.status);
+    check(mod, 'back to A restores A (email normalized)', dn(s) === 2 && s.cards === 2 && (!isO || s.solvedCells === 3), String(dn(s)));
     // reload keeps A
     await pg.reload({waitUntil: 'load'}); await sleep(300); s = await state();
-    check(mod, 'reload while signed in as A keeps A', dn(s) === 2 && s.who === '王小明', s.status);
-    // reset cancel
-    confirmAnswer = false; await pg.click('#gsiReset'); await sleep(150); s = await state();
-    check(mod, 'reset cancelled keeps progress', dn(s) === 2, s.status);
-    // reset confirm
-    confirmAnswer = true; await pg.click('#gsiReset'); await sleep(300); s = await state();
-    check(mod, 'reset clears A', dn(s) === 0 && s.cards === 0 && (!isO || (s.solvedCells === 0 && /0\/12/.test(s.status))), s.status);
+    check(mod, 'reload while signed in as A keeps A', dn(s) === 2 && s.who === '王小明', String(dn(s)));
+    await pg.evaluate(() => StudentAuth.resetProgress(true)); await sleep(300); s = await state();
+    check(mod, 'resetProgress still clears only this account', dn(s) === 0 && s.cards === 0 && (!isO || s.solvedCells === 0), String(dn(s)));
     // B and anon untouched
-    await signOut(); s = await state(); check(mod, 'anon untouched by A reset', dn(s) === 1, s.status);
-    await signIn(B); s = await state(); check(mod, 'B untouched by A reset', dn(s) === 1, s.status);
-    if (isO) { // footer reset button on a level page
-      await go('#/' + slugs[0]); await pg.click('#resetBtn'); await sleep(300);
-      const h = await pg.evaluate(() => location.hash); s = await state();
-      check(mod, 'footer 重設進度 resets B and returns to map', dn(s) === 0 && (h === '#/' ), h + ' ' + s.status);
-    }
+    await signOut(); s = await state(); check(mod, 'anon untouched by A reset', dn(s) === 1, String(dn(s)));
+    await signIn(B); s = await state(); check(mod, 'B untouched by A reset', dn(s) === 1, String(dn(s)));
     await ctx.close();
   }
   await br.close(); srv.close();

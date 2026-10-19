@@ -57,30 +57,19 @@
         '<b class="gsi-name">' + esc(u.name || "（未提供姓名）") + '</b>' +
         (u.email ? ' <span class="gsi-mail">· ' + esc(u.email) + '</span>' : '') +
         '</div>' +
-        '<div class="gsi-status" id="gsiStatus">' + statusHtml + '</div>' +
         '<span class="gsi-cloud" id="gsiCloud" style="font-size:.82rem;color:var(--muted)">' + cloudHtml + '</span>' +
-        '<button type="button" class="gsi-reset" id="gsiReset" title="只清除這個帳號的本教材進度">重置我的進度</button>' +
         '<button type="button" class="gsi-out" id="gsiOut">登出</button>';
       var out = document.getElementById("gsiOut");
       if (out) out.onclick = function () { window.StudentAuth.signOut(); };
-      bindReset();
     } else {
       area.className = "gsi gsi-signedout";
       area.innerHTML =
-        '<div class="gsi-txt"><b>🔐 用 Google 登入後截圖佐證</b>' +
-        '<span>登入後畫面會顯示你的姓名與學習進度／分數，請整頁截圖繳交給老師。</span></div>' +
+        '<div class="gsi-txt"><b>🔐 用 Google 登入</b>' +
+        '<span>登入後會顯示你的姓名。本單元的測驗與進度以頁面上的 Google 表單為準。</span></div>' +
         '<div id="gsiBtn" class="gsi-btn-host"></div>' +
-        '<div class="gsi-status" id="gsiStatus">' + statusHtml + '</div>' +
-        '<button type="button" class="gsi-reset" id="gsiReset" title="清除未登入（匿名）狀態下在本機的進度">重置我的進度</button>' +
         '<div class="gsi-hint" id="gsiHint"></div>';
-      bindReset();
       mountButton();
     }
-  }
-
-  function bindReset() {
-    var b = document.getElementById("gsiReset");
-    if (b) b.onclick = function () { window.StudentAuth.resetProgress(); };
   }
 
   function mountButton(hostEl) {

@@ -4,21 +4,6 @@
 (function () {
   "use strict";
 
-  /* ===== 教師密碼（SHA-256 雜湊比對）=====
-     前端只存雜湊，不存明碼。任何人仍可離線暴力嘗試，
-     正式使用時教師解答應改由後端驗證。
-     產生新雜湊：echo -n "你的密碼" | sha256sum */
-  var TEACHER_PASSWORD_HASH = "2962e8f9635e056b78825f80970517907447ce4e6c7537d553c24b446d1c3c70";
-
-  function sha256Hex(str) {
-    var data = new TextEncoder().encode(str);
-    return crypto.subtle.digest("SHA-256", data).then(function (buf) {
-      return Array.from(new Uint8Array(buf)).map(function (b) {
-        return b.toString(16).padStart(2, "0");
-      }).join("");
-    });
-  }
-
   function esc(t) {
     return String(t).replace(/[&<>"']/g, function (c) {
       return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c];
@@ -165,23 +150,6 @@
   /* ---------- 隨堂複習／總複習 ----------
      由共用的 ../js/review-core.js 與 ../js/final-review.js 處理（題庫：js/review-data.js，
      由 _quizzes/build_review.py 自 _quizzes/sql-review20.json 產生）。 */
-
-  /* ---------- 教師解答區 ---------- */
-  window.teacherLogin = function () {
-    var v = document.getElementById("teacherPw").value;
-    var msg = document.getElementById("teacherMsg");
-    sha256Hex(v).then(function (h) {
-      if (h === TEACHER_PASSWORD_HASH) {
-        document.getElementById("teacherPanel").classList.add("show");
-        msg.innerHTML = "<span class='good'>✓ 教師模式已解鎖。</span>";
-        if (window.ReviewTeacher) window.ReviewTeacher.render("answerTable");
-      } else {
-        msg.innerHTML = "<span class='bad'>✗ 密碼錯誤。</span>";
-      }
-    }).catch(function () {
-      msg.innerHTML = "<span class='bad'>✗ 瀏覽器不支援 Web Crypto，無法驗證。</span>";
-    });
-  };
 
   /* ---------- 初始化 ---------- */
   document.addEventListener("DOMContentLoaded", function () {

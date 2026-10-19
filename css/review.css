@@ -1,4 +1,7 @@
-/* 三套教材共用：隨堂複習卡、總複習、教師區 20 題答案表（原創）。顏色取自各模組 style.css 的 CSS 變數。 */
+/* 三套教材共用：隨堂複習卡、總複習（原創）。顏色取自各模組 style.css 的 CSS 變數。 */
+.backhome{margin:0 0 14px}
+.backhome a{color:var(--accent,#5ad1b4);font-weight:700;text-decoration:none}
+.backhome a:hover{text-decoration:underline}
 /* 隨堂複習（閱讀中點選一次答案） */
 .review{margin:22px 0 8px;padding:14px 18px;border-radius:12px;border:1px dashed var(--accent2);background:var(--panel)}
 .review.rv-done-ok{border-style:solid;border-color:var(--accent)}

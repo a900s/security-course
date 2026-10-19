@@ -82,7 +82,7 @@ async function page(opts = {}) { // opts.gstatic: 'mock' | 'block' | 'hang' ; op
 const url = m => 'http://localhost:8766/security-course/' + m + '/';
 async function signIn(pg, t) { await pg.waitForFunction(() => window.__gsiCb); await pg.evaluate(t => window.__gsiCb({credential: t}), t); }
 const cloud = pg => pg.evaluate(() => (document.getElementById('gsiCloud') || {}).textContent || '');
-const done = pg => pg.evaluate(() => +(((document.getElementById('gsiStatus') || {}).textContent || '').match(/已作答 (\d+)/) || [0, -1])[1]);
+const done = pg => pg.evaluate(() => { try { const raw = localStorage.getItem(StudentAuth.key(REVIEW_DATA.storageKey)); return raw ? Object.keys(JSON.parse(raw)).length : 0; } catch (e) { return -1; } });
 async function answer(pg, n, right = true) { return pg.evaluate((n, right) => { let c = 0; for (const s of document.querySelectorAll('section.review')) { if (c >= n) break; const b = s.querySelector('.rv-opt[data-ok="' + (right ? 1 : 0) + '"]'); if (b.disabled) continue; b.click(); c++; } return c; }, n, right); }
 async function waitCloud(pg, re, ms = 9000) { const t0 = Date.now(); while (Date.now() - t0 < ms) { const c = await cloud(pg); if (re.test(c)) return c; await sleep(100); } return await cloud(pg); }
 const AK = 'progress/ming.wang@lgm.kh.edu.tw';
@@ -131,7 +131,7 @@ const AK = 'progress/ming.wang@lgm.kh.edu.tw';
   await waitCloud(d2, /已同步/); await sleep(1800);
   check('one debounced write for 2 answers', LOG.filter(x => x.startsWith('/__mock/set')).length === nSet0 + 1, LOG.filter(x => x.startsWith('/__mock/set')).length - nSet0);
   check('cloud now 5', Object.keys(DB[AK].kali.review).length === 5);
-  await d2.click('#gsiReset'); await sleep(300); c = await waitCloud(d2, /已同步/);
+  await d2.evaluate(() => StudentAuth.resetProgress(true)); await sleep(300); c = await waitCloud(d2, /已同步/);
   check('reset: local 0', (await done(d2)) === 0); check('reset: cloud kali.review empty', Object.keys(DB[AK].kali.review).length === 0, JSON.stringify(DB[AK].kali));
   check('reset: sql untouched', !!DB[AK].sql.review['9']);
   check('no errors d2', !d2.__errors.length, d2.__errors.join('|'));
@@ -139,7 +139,7 @@ const AK = 'progress/ming.wang@lgm.kh.edu.tw';
   console.log('== 4. 離線時重置 → 恢復後不被雲端舊資料蓋回');
   await d2.reload({waitUntil: 'load'}); await waitCloud(d2, /已同步/); await answer(d2, 3); await sleep(2200); await waitCloud(d2, /已同步/);
   check('cloud has 3 before offline reset', Object.keys(DB[AK].kali.review).length === 3);
-  MODE = 'fail'; await d2.click('#gsiReset'); c = await waitCloud(d2, /未同步/);
+  MODE = 'fail'; await d2.evaluate(() => StudentAuth.resetProgress(true)); c = await waitCloud(d2, /未同步/);
   check('offline reset: local 0, 未同步', (await done(d2)) === 0 && /未同步/.test(c), c);
   MODE = 'ok'; await d2.reload({waitUntil: 'load'}); c = await waitCloud(d2, /已同步/);
   check('after reload online: local stays 0', (await done(d2)) === 0, await done(d2));
@@ -153,25 +153,20 @@ const AK = 'progress/ming.wang@lgm.kh.edu.tw';
   console.log('== 6. OWASP：關卡（solved/levelProgress）同步');
   { MODE = 'ok'; DB[AK].owasp = { solved: [0, 1], levelProgress: { name: '', challenges: { a01: { updatedAt: '2026-10-01T00:00:00Z', phase: 'fixed' } } }, review: {} };
     const pg = await page({gstatic: 'mock'}); await pg.goto(url('owasp-top10'), {waitUntil: 'load'}); await signIn(pg, A); await waitCloud(pg, /已同步/); await sleep(300);
-    const st = await pg.evaluate(() => ({ cells: document.querySelectorAll('.cell.solved').length, s: document.getElementById('gsiStatus').textContent }));
-    check('OWASP map shows 2 solved from cloud', st.cells === 2 && /2\/12/.test(st.s), st.s);
+    const st = await pg.evaluate(() => ({ cells: document.querySelectorAll('.cell.solved').length, badge: !!document.getElementById('pnum') }));
+    check('OWASP map shows 2 solved from cloud', st.cells === 2 && !st.badge, String(st.cells));
     check('kali field untouched by OWASP page', DB[AK].kali && Array.isArray(Object.keys(DB[AK].kali.review)));
     check('no errors', !pg.__errors.length, pg.__errors.join('|')); await pg.__ctx.close(); }
 
-  console.log('== 7. 教師總表');
-  { DB['teachers/a900s@lgm.kh.edu.tw'] = { name: 'a900s' }; DB['progress/hua@lgm.kh.edu.tw'] = { name: '李小華', email: 'hua@lgm.kh.edu.tw', sql: { review: { '1': {ok: true}, '2': {ok: false} } }, updatedAt: {seconds: 1} };
-    const pg = await page({gstatic: 'mock'}); await pg.goto(url('kali-top20') + 'teacher.html', {waitUntil: 'load'});
-    await pg.evaluate(() => { document.getElementById('panel').hidden = false; });
-    check('teacher panel offers Google sign-in', await pg.evaluate(() => /請用已列入教師名單/.test(document.getElementById('cloudTeacher').textContent)));
-    await signIn(pg, B); await sleep(800);
-    check('non-teacher refused', await pg.evaluate(() => /不在 teachers/.test(document.getElementById('cloudTeacher').textContent)));
-    await pg.evaluate(() => StudentAuth.signOut()); await signIn(pg, T); await sleep(800);
-    const tb = await pg.evaluate(() => Array.from(document.querySelectorAll('#cloudTeacher tbody tr')).map(r => r.textContent));
-    check('teacher sees 2 students', tb.length === 2, tb.join(' / '));
-    check('row counts (hua: SQL 2 answered 1 correct)', tb.some(r => /hua@lgm.kh.edu.tw李小華0000002 ?1/.test(r.replace(/\s/g, '')) || /hua/.test(r)), tb.join(' / '));
-    const csv = await pg.evaluate(() => CloudTeacher._csv([CloudTeacher._row({email: 'a@b', name: '甲,乙', sql: {review: {1: {ok: true}}}, owasp: {solved: [0, 1, 2]}})]));
-    check('CSV has BOM, header, quoting', csv.charCodeAt(0) === 0xfeff && /OWASP 關卡\/12/.test(csv) && /"甲,乙",0,0,3,0,0,1,1/.test(csv), JSON.stringify(csv.split('\r\n')[1]));
-    check('teacher page did not write progress', !LOG.some(x => x.includes('set progress/a900s')));
+  console.log('== 7. 教師區已從課程頁移除');
+  { const pg = await page({gstatic: 'mock'});
+    for (const mod of ['owasp-top10', 'kali-top20', 'sql-injection-lab']) {
+      await pg.goto(url(mod), {waitUntil: 'load'});
+      const info = await pg.evaluate(() => ({ teacher: /教師區|教師專區/.test(document.body.innerText), home: !!document.querySelector('a[href="../"]'), form: !!document.querySelector('[data-quiz-form]') }));
+      check(mod + ' no teacher area', !info.teacher);
+      check(mod + ' links home', info.home);
+      check(mod + ' has google form', info.form);
+    }
     check('no errors', !pg.__errors.length, pg.__errors.join('|')); await pg.__ctx.close(); }
 
   for (const [label, gs, mode] of [['gstatic 被封鎖', 'block', 'ok'], ['gstatic 無回應（逾時）', 'hang', 'ok'], ['Firestore 無回應（逾時）', 'mock', 'hang']]) {
@@ -184,10 +179,11 @@ const AK = 'progress/ming.wang@lgm.kh.edu.tw';
       if (mod === 'owasp-top10') { const slug = await pg.evaluate(() => CHALLENGES[0].slug); await pg.evaluate(s => location.hash = '#/' + s, slug); await sleep(200); }
       check('answer works immediately', (await answer(pg, 1)) === 1);
       if (mod === 'owasp-top10') { await pg.evaluate(() => location.hash = '#/'); await sleep(200); }
-      check('top-right progress updated', (await done(pg)) === 1, await done(pg));
+      check('answer stored', (await done(pg)) === 1, await done(pg));
       c = await waitCloud(pg, /未同步/, 12000); check('shows 未同步 after timeout/failure', /⚠️ 未同步/.test(c), c);
       check('final review works', await pg.evaluate(() => { const b = document.querySelector('#finalReview [data-act="start"]'); if (!b) return false; b.click(); const o = document.querySelector('#finalReview .rv-opt'); o.click(); return /答對|正確答案/.test(document.getElementById('finalReview').textContent); }));
-      await pg.click('#gsiReset'); await sleep(200); check('reset works', (await done(pg)) === 0);
+      check('no reset button', await pg.evaluate(() => !document.getElementById('gsiReset')));
+      await pg.evaluate(() => StudentAuth.resetProgress(true)); await sleep(200); check('resetProgress clears this account', (await done(pg)) === 0);
       await pg.click('#gsiOut'); await sleep(200); check('sign-out works', await pg.evaluate(() => !!document.getElementById('gsiBtn')));
       check('no uncaught errors', !pg.__errors.length, pg.__errors.join('|'));
       await pg.__ctx.close();

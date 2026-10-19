@@ -38,16 +38,7 @@
     var a = document.getElementById("pnum"); if (a) a.textContent = n;
     var b = document.getElementById("ptot"); if (b) b.textContent = t;
     var f = document.getElementById("pfill"); if (f) f.style.width = (t ? n / t * 100 : 0) + "%";
-    // 同步頂端 Google 登入列的進度文字與地圖上的「我的學習進度」（每次進度變動都要更新）
-    var sum = document.getElementById("studSum");
-    if (sum) sum.textContent = "已完成 " + n + "/" + t + " 關" + (window.ReviewCore ? " · " + window.ReviewCore.statusText() : "");
-    // 登入列：關卡進度 n/12 ＋ 隨堂複習 x/20（由共用 ReviewCore 組合，見 window.reviewStatusPrefix）
-    if (window.ReviewCore) window.ReviewCore.refresh();
-    else if (window.StudentAuth) window.StudentAuth.setStatus(statusPrefix());
   }
-
-  function statusPrefix() { return "OWASP Top 10 進度：已完成 " + getSolved().size + "/" + L.length + " 關"; }
-  window.reviewStatusPrefix = statusPrefix;
 
   /* 隨堂複習：每關頁末 1–2 題（題庫 js/review-data.js 的 slug 對應關卡），由共用 ../js/review-core.js 產生題卡 */
   function reviewFor(slug) {
@@ -90,11 +81,7 @@
       '<p>每一關都是兩階段：先在安全模擬中<b>重現弱點</b>，再閱讀示意用的<b>脆弱程式碼</b>、點出問題行、挑出正確修法，並用<b>同一招</b>驗證攻擊已失效。A05 注入分為 SQL、指令、XSS 三小關。</p>' +
       '<div class="warn">⚠ 全部為教學用<b>安全模擬</b>：使用假資料、不連線任何真實系統、不執行任何真實指令或腳本。僅限在你自己或已獲授權的環境中學習，請勿對未授權的系統進行測試。</div>' +
       '</section>' +
-      '<div class="studbar" id="studbar">' +
-        '<b>📒 我的學習進度</b> <span id="studSum"></span>' +
-        '<div class="hint">登入上方 Google 帳號後，畫面會一起顯示你的姓名與進度，請整頁截圖繳交給老師。進度只存在本機瀏覽器。</div>' +
-      '</div>' +
-      '<aside class="formcta"><div class="formcta-txt"><b>📝 學習內容驗證（20 題）</b><span>完成關卡、各關隨堂複習與下方總複習後，請作答這份 20 題選擇題測驗（自動計分），檢核學習成效。</span></div><a class="formcta-btn" data-quiz-form="owasp" href="#" target="_blank" rel="noopener">📝 開始學習內容驗證 ↗</a></aside>' +
+      '<aside class="formcta"><div class="formcta-txt"><b>📝 學習內容驗證（20 題）</b><span>本單元的測驗與進度以此 Google 表單為準（20 題，自動計分）。</span></div><a class="formcta-btn" data-quiz-form="owasp" href="#" target="_blank" rel="noopener">📝 開始學習內容驗證 ↗</a></aside>' +
       '<div class="maphead"><h2>關卡</h2><div class="hint">完成一關後自動解鎖下一關</div></div>' +
       '<div class="grid">' + cells + '</div>' + final +
       '<section class="final-review" aria-label="總複習"><div id="finalReview"></div></section>';
@@ -347,11 +334,6 @@
   }
   window.addEventListener("hashchange", route);
 
-  // 頁尾「重設進度」與登入列「重置我的進度」相同：只清目前帳號，並先確認
-  var rb = document.getElementById("resetBtn");
-  if (rb) rb.onclick = function () {
-    if (window.StudentAuth && window.StudentAuth.resetProgress) window.StudentAuth.resetProgress();
-  };
   window.addEventListener("studentauth:change", function (ev) {
     if (ev.detail && ev.detail.reason === "reset") { if (location.hash.replace(/^#\/?/, "")) { location.hash = "#/"; return; } }
     route(); // 重畫地圖（解鎖狀態、我的學習進度、總複習）或目前關卡（未解鎖會自動回地圖）

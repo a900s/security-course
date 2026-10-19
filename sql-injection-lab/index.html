@@ -8,10 +8,11 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&family=JetBrains+Mono:wght@400;500;700&display=swap">
 <link rel="stylesheet" href="css/style.css?v=07e2aeb0">
-<link rel="stylesheet" href="../css/review.css?v=13f1a401">
+<link rel="stylesheet" href="../css/review.css?v=a46ef01b">
 </head>
 <body>
 <div class="top"><div class="wrap">
+  <p class="backhome"><a href="../">← 回總頁</a></p>
   <h1>🛡️ SQL Injection 資安教學與防禦實驗室</h1>
   <p>原理解說 · 攻擊型態 · 防禦程式碼 · 多層防禦 · 互動沙盒 · 隨堂複習 · 總複習</p>
   <p class="note">自製教學教材 · 全程純瀏覽器模擬，不連線任何真實資料庫</p>
@@ -23,7 +24,6 @@
   <button onclick="showSection('sandbox', this)">🧪 互動沙盒</button>
   <button onclick="showSection('defense', this)">🔐 防禦程式碼</button>
   <button onclick="showSection('quiz', this)">🧠 總複習</button>
-  <button onclick="showSection('teacher', this)">👨‍🏫 教師區</button>
 </div></nav>
 
 <main class="wrap">
@@ -227,53 +227,24 @@ const sql =
 <!-- 總複習 -->
 <section id="quiz" class="section">
   <div id="finalReview" class="final-review"></div>
-  <aside class="formcta"><div class="formcta-txt"><b>📝 學習內容驗證（20 題）</b><span>讀完各段並完成隨堂複習與總複習後，請作答這份 20 題選擇題測驗（自動計分），檢核學習成效。</span></div><a class="formcta-btn" data-quiz-form="sql" href="#" target="_blank" rel="noopener">📝 開始學習內容驗證 ↗</a></aside>
-</section>
-
-<!-- 教師區 -->
-<section id="teacher" class="section">
-  <div class="card teacher-lock">
-    <h2>👨‍🏫 教師解答控制</h2>
-    <p class="note">輸入教師密碼以查看標準答案與解析。</p>
-    <input id="teacherPw" type="password" placeholder="教師密碼" style="max-width:320px;margin:0 auto">
-    <div class="btnrow" style="justify-content:center"><button class="btn" onclick="teacherLogin()">解鎖</button></div>
-    <div id="teacherMsg" style="margin-top:10px"></div>
-  </div>
-  <div id="teacherPanel" class="teacher-panel">
-    <div id="cloudTeacher"></div>
-    <div class="warnbox">
-      <b>🔒 教師密碼驗證</b><br>
-      前端以 SHA-256 雜湊比對，程式碼中不存放明碼。若要更換密碼，請產生新雜湊後寫入
-      <code>js/app.js</code> 的 <code>TEACHER_PASSWORD_HASH</code>：
-      <code>echo -n "你的密碼" | sha256sum</code>。
-      <b>提醒：</b>雜湊仍可能被離線暴力嘗試；正式課堂若需真正保密，應改由後端驗證。
-    </div>
-    <div id="answerTable"></div>
-    <div class="card"><h2>👨‍🏫 教學重點</h2>
-      <p><b>攻擊面：</b>使用者輸入若直接進入 SQL 字串，就可能改變語意。</p>
-      <p><b>核心防禦：</b>參數化查詢 / Prepared Statement。</p>
-      <p><b>縱深防禦：</b>輸入驗證、最小權限、錯誤處理、記錄告警與 WAF。</p>
-    </div>
-  </div>
+  <aside class="formcta"><div class="formcta-txt"><b>📝 學習內容驗證（20 題）</b><span>本單元的測驗與進度以此 Google 表單為準（20 題，自動計分）。</span></div><a class="formcta-btn" data-quiz-form="sql" href="#" target="_blank" rel="noopener">📝 開始學習內容驗證 ↗</a></aside>
 </section>
 
 </main>
 
 <footer><div class="wrap">
-  <p>SQL Injection 教學實驗室 · 自製教材 · 僅供合法授權環境的教學與防禦學習之用。</p>
+  <p>SQL Injection 教學實驗室 · 自製教材 · 僅供合法授權環境的教學與防禦學習之用。 · <a href="../">← 回總頁</a></p>
 </div></footer>
 
 <script src="https://accounts.google.com/gsi/client" async></script>
 <script src="../js/google-auth-config.js?v=472ebfcb"></script>
 <script src="../js/forms-config.js?v=ffba8e9c"></script>
-<script src="../js/student-auth.js?v=7f232515"></script>
+<script src="../js/student-auth.js?v=f904e4bd"></script>
 <script src="../js/firebase-config.js?v=f9e5bd8d"></script>
 <script src="../js/cloud-sync.js?v=456c4341"></script>
 <script src="js/review-data.js?v=bc7e6205"></script>
-<script src="../js/review-core.js?v=c0d2ec28"></script>
+<script src="../js/review-core.js?v=ba9bf6ff"></script>
 <script src="../js/final-review.js?v=6a8b0247"></script>
-<script src="../js/review-teacher.js?v=fc86e0a5"></script>
-<script src="../js/cloud-teacher.js?v=388bd8c0"></script>
-<script src="js/app.js?v=06e1df63"></script>
+<script src="js/app.js?v=362a4e16"></script>
 </body>
 </html>
