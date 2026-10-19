@@ -4,22 +4,30 @@
    v3 紀錄格式：{ "<題號>": { qv: 題目指紋, id: 所選選項的穩定 id, ok, t } }；
    題目或選項改版（指紋不符／找不到該選項）就丟棄該筆，讓學生重新作答，避免舊紀錄套到新題目上。
    動態產生的頁面（如 OWASP 關卡）可在插入插槽後呼叫 ReviewCore.mount(容器)。
+   作答紀錄分帳號：實際鍵＝StudentAuth.key(storageKey)（已登入→依 email 分開；未登入→匿名＝原鍵）。
+   收到 "studentauth:change"（登入／換帳號／登出／重置）就重新載入該帳號的紀錄並重畫所有題卡與登入列。
    登入列狀態：「🧠 隨堂複習：答對 x/20（已作答 y/20）」；若頁面定義 window.reviewStatusPrefix()，會接在它後面。 */
 (function () {
   "use strict";
   var D = window.REVIEW_DATA;
   if (!D) return;
-  var KEY = D.storageKey, TOTAL = D.questions.length;
+  var BASE = D.storageKey, TOTAL = D.questions.length;
+  function curKey() { return window.StudentAuth && window.StudentAuth.key ? window.StudentAuth.key(BASE) : BASE; }
+  var KEY = curKey();
   var BY = {};
   D.questions.forEach(function (q) { BY[String(q.n)] = q; });
   try { (D.stale || []).forEach(function (k) { localStorage.removeItem(k); }); } catch (e) {}
   var st = {};
-  try { st = JSON.parse(localStorage.getItem(KEY)) || {}; } catch (e) { st = {}; }
-  if (typeof st !== "object" || st === null || Array.isArray(st)) st = {};
+  function load() {
+    KEY = curKey();
+    try { st = JSON.parse(localStorage.getItem(KEY)) || {}; } catch (e) { st = {}; }
+    if (typeof st !== "object" || st === null || Array.isArray(st)) st = {};
+    prune();
+  }
   function save() { try { localStorage.setItem(KEY, JSON.stringify(st)); } catch (e) {} }
 
   // 先清掉已改版／格式不符的紀錄（不必等插槽出現在畫面上）
-  (function prune() {
+  function prune() {
     var dirty = false;
     Object.keys(st).forEach(function (k) {
       var r = st[k], q = BY[k], ok = false;
@@ -28,7 +36,8 @@
       if (!ok) { delete st[k]; dirty = true; }
     });
     if (dirty) save();
-  })();
+  }
+  load();
 
   function esc(s) {
     return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) {
@@ -97,6 +106,7 @@
     btns.forEach(function (b) {
       b.addEventListener("click", function () {
         if (st[q] || b.disabled) return;
+        if (KEY !== curKey()) load(); // 保險：帳號已變但尚未重畫時，先切到正確的帳號空間
         st[q] = { qv: qv, id: b.getAttribute("data-id"), ok: isOk(b), t: Date.now() };
         save(); reveal(box, b); refresh();
       });
@@ -114,7 +124,19 @@
     refresh();
   }
 
-  window.ReviewCore = { data: D, mount: mount, refresh: refresh, statusText: statusText, counts: counts,
+  /* 換帳號／登出／重置：重新載入紀錄，把每張題卡換成全新未作答的版本再依新紀錄還原 */
+  function reload() {
+    load();
+    Array.prototype.forEach.call(document.querySelectorAll("section.review[data-q]"), function (box) {
+      var q = BY[box.getAttribute("data-q")];
+      if (q) box.outerHTML = cardHTML(q);
+    });
+    Array.prototype.forEach.call(document.querySelectorAll("section.review[data-q]"), bind);
+    refresh();
+  }
+  window.addEventListener("studentauth:change", reload);
+
+  window.ReviewCore = { reload: reload, storageKey: function () { return KEY; }, data: D, mount: mount, refresh: refresh, statusText: statusText, counts: counts,
     slot: function (n) { return '<div class="review-slot" data-q="' + n + '"></div>'; } };
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", function () { mount(document); });
   else mount(document);

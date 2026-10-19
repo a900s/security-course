@@ -50,6 +50,8 @@ a.formcta-btn:focus-visible{outline:2px solid var(--accent2);outline-offset:2px}
 .gsi .gsi-mail{color:var(--muted);font-size:.85rem}
 .gsi .gsi-status{flex:1;min-width:180px;color:var(--muted);font-size:.9rem}
 .gsi .gsi-out{margin-left:auto;cursor:pointer;background:transparent;border:1px solid var(--line);color:var(--muted);border-radius:8px;padding:6px 12px;font-family:var(--sans)}
+.gsi .gsi-reset{cursor:pointer;background:transparent;border:1px solid var(--line);color:var(--muted);border-radius:8px;padding:6px 12px;font-family:var(--sans)}
+.gsi .gsi-reset:hover,.gsi .gsi-out:hover{color:var(--ink)}
 .gsi .gsi-hint{color:var(--muted);font-size:.8rem;width:100%}
 .gsi .gsi-warn{color:var(--warn);font-size:.85rem}
 

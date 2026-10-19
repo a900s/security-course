@@ -97,6 +97,8 @@
       host.scrollIntoView({ behavior: "smooth", block: "start" });
     }
     setup();
+    // 換帳號／登出／重置：結果卡上的姓名會過時，回到開始畫面重新作答
+    window.addEventListener("studentauth:change", function () { if (document.body.contains(host)) setup(); });
   }
 
   window.FinalReview = { mount: mount };

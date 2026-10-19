@@ -1,9 +1,12 @@
 /* OWASP Top 10 教學關卡引擎 — 原創撰寫。
    採單頁式（hash 路由）：#/ 為關卡地圖，#/<slug> 為單一關卡。
-   進度存在 localStorage，完成一關才解鎖下一關。純前端、無任何後端。 */
+   進度存在 localStorage，完成一關才解鎖下一關。純前端、無任何後端。
+   進度分帳號：鍵名經 StudentAuth.key()（已登入依 email 分開，未登入＝匿名＝原鍵）；
+   登入／換帳號／登出／重置時（"studentauth:change"）重畫地圖或目前關卡。 */
 (function () {
   "use strict";
-  var KEY = "owasp_course_solved_v1";
+  var KEY_BASE = "owasp_course_solved_v1", DKEY_BASE = "owasp_course_progress_v1";
+  function k(base) { return window.StudentAuth && window.StudentAuth.key ? window.StudentAuth.key(base) : base; }
   var L = window.CHALLENGES;
 
   function esc(s) {
@@ -12,14 +15,13 @@
     });
   }
   function getSolved() {
-    try { var c = localStorage.getItem(KEY); return new Set(c ? JSON.parse(c) : []); }
+    try { var c = localStorage.getItem(k(KEY_BASE)); return new Set(c ? JSON.parse(c) : []); }
     catch (e) { return new Set(); }
   }
-  function addSolved(i) { var s = getSolved(); s.add(i); try { localStorage.setItem(KEY, JSON.stringify(Array.from(s))); } catch (e) {} }
+  function addSolved(i) { var s = getSolved(); s.add(i); try { localStorage.setItem(k(KEY_BASE), JSON.stringify(Array.from(s))); } catch (e) {} }
   /* 詳細學習紀錄（供教師區）：各階段時間、payload、選的修法、再驗證狀態 */
-  var DKEY = "owasp_course_progress_v1";
-  function loadP() { try { return JSON.parse(localStorage.getItem(DKEY)) || { name: "", challenges: {} }; } catch (e) { return { name: "", challenges: {} }; } }
-  function saveP(p) { try { localStorage.setItem(DKEY, JSON.stringify(p)); } catch (e) {} }
+  function loadP() { try { return JSON.parse(localStorage.getItem(k(DKEY_BASE))) || { name: "", challenges: {} }; } catch (e) { return { name: "", challenges: {} }; } }
+  function saveP(p) { try { localStorage.setItem(k(DKEY_BASE), JSON.stringify(p)); } catch (e) {} }
   var CUR = null;
   function rec(fn) {
     if (!CUR) return;
@@ -27,7 +29,7 @@
     fn(c); c.updatedAt = new Date().toISOString();
     p.challenges[CUR.slug] = c; saveP(p);
   }
-  function reset() { try { localStorage.removeItem(KEY); localStorage.removeItem(DKEY); } catch (e) {} }
+  k(KEY_BASE); k(DKEY_BASE); // 先登記基底鍵，讓「重置我的進度」也會清到關卡紀錄
   function isUnlocked(i) { return i <= 0 ? true : getSolved().has(i - 1); }
 
   function progress() {
@@ -344,8 +346,15 @@
   }
   window.addEventListener("hashchange", route);
 
+  // 頁尾「重設進度」與登入列「重置我的進度」相同：只清目前帳號，並先確認
   var rb = document.getElementById("resetBtn");
-  if (rb) rb.onclick = function () { reset(); location.hash = "#/"; route(); };
+  if (rb) rb.onclick = function () {
+    if (window.StudentAuth && window.StudentAuth.resetProgress) window.StudentAuth.resetProgress();
+  };
+  window.addEventListener("studentauth:change", function (ev) {
+    if (ev.detail && ev.detail.reason === "reset") { if (location.hash.replace(/^#\/?/, "")) { location.hash = "#/"; return; } }
+    route(); // 重畫地圖（解鎖狀態、我的學習進度、總複習）或目前關卡（未解鎖會自動回地圖）
+  });
 
   route();
 })();

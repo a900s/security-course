@@ -139,13 +139,14 @@
 
   /* 本瀏覽器即時進度 */
   function renderLive() {
+    // 與學生頁相同的分帳號鍵：本分頁已用 Google 登入→該帳號的進度；未登入→匿名進度
+    var SA = window.StudentAuth, u = SA && SA.getUser();
+    function k(b) { return SA && SA.key ? SA.key(b) : b; }
     var solved = [];
-    try { solved = JSON.parse(localStorage.getItem("owasp_lab_solved") || localStorage.getItem("owasp_course_solved_v1") || "[]"); } catch (e) {}
-    // 正確 key
-    try { solved = JSON.parse(localStorage.getItem("owasp_course_solved_v1") || "[]"); } catch (e) { solved = []; }
+    try { solved = JSON.parse(localStorage.getItem(k("owasp_course_solved_v1")) || "[]"); } catch (e) { solved = []; }
     var detail = {};
-    try { detail = JSON.parse(localStorage.getItem("owasp_course_progress_v1") || "{}"); } catch (e) {}
-    var name = detail.name || "（未填姓名）";
+    try { detail = JSON.parse(localStorage.getItem(k("owasp_course_progress_v1")) || "{}"); } catch (e) {}
+    var name = u ? (u.name || u.email) : (detail.name || "（未登入・匿名）");
     var ch = detail.challenges || {};
     var n = Array.isArray(solved) ? solved.length : 0;
     var cells = LEVELS.map(function (lv, i) {
