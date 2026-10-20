@@ -15,9 +15,9 @@ let fails = 0;
 function check(mod, name, cond, info) { console.log((cond ? '  ✓ ' : '  ✗ ') + name + (info ? '  [' + info + ']' : '')); if (!cond) fails++; }
 (async () => {
   const br = await puppeteer.launch({executablePath: '/usr/bin/google-chrome', headless: 'new', args: ['--no-sandbox']});
-  for (const mod of ['owasp-top10', 'kali-top20', 'sql-injection-lab', 'ctf']) {
+  for (const mod of ['owasp-top10', 'kali-top20', 'sql-injection-lab', 'ctf', 'genai-security', 'social-engineering']) {
     console.log('== ' + mod);
-    const solvedKey = { 'owasp-top10': 'owasp_course_solved_v1', 'sql-injection-lab': 'sql_course_solved_v1', 'kali-top20': 'kali_course_solved_v1', 'ctf': 'ctf_course_solved_v1' }[mod];
+    const solvedKey = { 'owasp-top10': 'owasp_course_solved_v1', 'sql-injection-lab': 'sql_course_solved_v1', 'kali-top20': 'kali_course_solved_v1', 'ctf': 'ctf_course_solved_v1', 'genai-security': 'genai_security_solved_v1', 'social-engineering': 'social_engineering_solved_v1' }[mod];
     const ctx = await br.createBrowserContext(); const pg = await ctx.newPage();
     let confirmAnswer = true; pg.on('dialog', d => confirmAnswer ? d.accept() : d.dismiss());
     pg.on('pageerror', e => { console.log('  PAGEERROR', e.message); fails++; });
