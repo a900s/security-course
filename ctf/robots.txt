@@ -1,0 +1,4 @@
+# 公開的路徑清單。沒有放進選單的檔案，名稱仍可能寫在這裡。
+User-agent: *
+Disallow: /security-course/ctf/private/note.txt
+Disallow: /ctf/private/note.txt

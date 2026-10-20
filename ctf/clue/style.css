@@ -1,0 +1,3 @@
+/* 這一關的旗幟寫在樣式表裡，不會當成文章顯示。 */
+/* FLAG{css-is-a-clue} */
+.mark { color: transparent; }

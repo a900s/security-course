@@ -88,12 +88,12 @@
       : "";
     app.innerHTML =
       '<section class="hero">' +
-      '<div class="eyebrow">重現弱點 · 讀程式碼 · 動手修</div>' +
+      '<div class="eyebrow">' + esc(COURSE.eyebrow || "重現弱點 · 讀程式碼 · 動手修") + '</div>' +
       '<h1>' + esc(COURSE.title || "") + '</h1>' +
       '<p>' + (COURSE.lead || "") + '</p>' +
       '<div class="warn">⚠ 全部為教學用<b>安全模擬</b>：使用假資料、不連線任何真實系統、不送出任何外部請求。僅限在你自己或已獲授權的環境中學習。</div>' +
       '</section>' +
-      '<div class="maphead"><h2>關卡</h2><div class="hint">完成一關後自動解鎖下一關。點進關卡後才作該關練習。全部通過後，地圖下方才出現學習內容驗證。</div></div>' +
+      '<div class="maphead"><h2>關卡</h2><div class="hint">' + esc(COURSE.hint || "完成一關後自動解鎖下一關。點進關卡後才作該關練習。全部通過後，地圖下方才出現學習內容驗證。") + '</div></div>' +
       '<div class="grid">' + cells + '</div>' + final +
       (allDone ? formCta() : "");
     progress();
@@ -171,19 +171,23 @@
     var lv = L[idx]; CUR = lv;
     if (!isUnlocked(idx)) { location.hash = "#/"; return; }
     var next = L[idx + 1];
+    var isFlag = lv.phase1 && lv.phase1.type === "flag";
     var html =
       '<div class="lvhead"><div class="lc">' + esc(lv.code) + '</div>' +
       '<div><div class="lt">' + esc(lv.nm) + '</div><div class="le">' + esc(lv.en) + '</div></div></div>' +
       '<div class="card"><span class="lab">情境</span><p>' + lv.scenario + '</p></div>' +
       '<div class="card"><span class="lab">💡 怎麼下手</span><p>' + lv.example + '</p></div>' +
-      '<div class="card"><span class="lab">任務（兩階段：重現 → 修復）</span>' +
-      '<p><b>① 重現：</b>' + esc(lv.goal) + '。<br><b>② 修復：</b>讀下方漏洞程式碼、點出問題行、挑出正確修法套用，再用同一招驗證它已失效。</p></div>' +
-      '<div class="phases"><div class="phase active" id="ph1"><b>STEP 1</b>重現弱點</div>' +
-      '<div class="phase" id="ph2"><b>STEP 2</b>修復並驗證</div></div>' +
+      (isFlag
+        ? '<div class="card"><span class="lab">任務（找出旗幟）</span><p>' + esc(lv.goal) + '。格式是 <b>FLAG{...}</b>，找到後貼到下面送出，才算過關。</p></div>' +
+          '<div class="phases"><div class="phase active" id="ph1"><b>STEP 1</b>找出並送出 FLAG</div></div>'
+        : '<div class="card"><span class="lab">任務（兩階段：重現 → 修復）</span>' +
+          '<p><b>① 重現：</b>' + esc(lv.goal) + '。<br><b>② 修復：</b>讀下方漏洞程式碼、點出問題行、挑出正確修法套用，再用同一招驗證它已失效。</p></div>' +
+          '<div class="phases"><div class="phase active" id="ph1"><b>STEP 1</b>重現弱點</div>' +
+          '<div class="phase" id="ph2"><b>STEP 2</b>修復並驗證</div></div>') +
       '<div class="sandbox" id="sandbox"></div>' +
       '<div class="fixwrap" id="fixwrap" hidden></div>' +
       '<div class="stepmsg" id="step"></div>' +
-      '<div class="success" id="success"><h3>✓ 完成：弱點已修復</h3>' +
+      '<div class="success" id="success"><h3>' + (isFlag ? "✓ 過關：旗幟正確" : "✓ 完成：弱點已修復") + '</h3>' +
       '<div class="donebadge">✓ 已完成這一關：' + esc(lv.en) + '</div>' +
       '<p>' + esc(lv.success) + '</p>' +
       (next ? '<p style="margin-top:4px">已解鎖下一關 <b>' + esc(next.code) + ' ' + esc(next.nm) + '</b></p>' : '<p style="margin-top:4px">這是最後一關，你已完成全部！</p>') +
@@ -217,17 +221,55 @@
     var fixBtn = document.getElementById("fixBtn"); if (fixBtn) fixBtn.hidden = true;
   }
   function verified(lv, idx) {
-    document.getElementById("ph2").className = "phase done";
+    var ph1 = document.getElementById("ph1"); if (ph1) ph1.className = "phase done";
+    var ph2 = document.getElementById("ph2"); if (ph2) ph2.className = "phase done";
     addSolved(idx); progress();
     rec(function (c) { c.solved = true; c.reVerified = true; c.verifiedAt = new Date().toISOString(); c.phase = "verified"; });
     var s = document.getElementById("success"); s.classList.add("show");
     s.scrollIntoView({ behavior: "smooth", block: "center" });
   }
 
+  function sha256Hex(s) {
+    var data = new TextEncoder().encode(s);
+    return crypto.subtle.digest("SHA-256", data).then(function (buf) {
+      return Array.prototype.map.call(new Uint8Array(buf), function (b) {
+        return ("0" + b.toString(16)).slice(-2);
+      }).join("");
+    });
+  }
+
   function buildSandbox(lv, idx) {
     state = { found: false, fixed: false, verified: false };
     var p = lv.phase1, sb = document.getElementById("sandbox");
     var needMode = (lv.slug === "a05-sqli");
+
+    if (p.type === "flag") {
+      sb.innerHTML =
+        '<div class="app-title">🚩 送出你找到的旗幟</div>' +
+        (p.clue ? '<p><a class="btn sec" href="' + esc(p.clue) + '" target="_blank" rel="noopener">開啟這一關的線索</a></p>' : '') +
+        (p.cipher ? '<div class="sqlbar" id="cipher"></div>' : '') +
+        '<label class="fld">FLAG</label>' +
+        '<input id="inp" type="text" placeholder="FLAG{...}" autocomplete="off" spellcheck="false">' +
+        '<div class="btnrow"><button class="btn" id="go">送出旗幟</button></div>' +
+        '<div id="out"></div>';
+      if (p.cipher) document.getElementById("cipher").textContent = p.cipher;
+      document.getElementById("go").onclick = function () {
+        var v = document.getElementById("inp").value.trim();
+        var out = document.getElementById("out");
+        if (!v) { out.innerHTML = '<div class="note">先貼上你找到的 FLAG{...}。</div>'; return; }
+        sha256Hex(v).then(function (hex) {
+          if (hex === p.expect) {
+            out.innerHTML = '<div class="note">✓ 旗幟正確。</div>';
+            if (!state.verified) { state.verified = true; verified(lv, idx); }
+          } else {
+            out.innerHTML = '<div class="note">這不是這一關的旗幟。再去線索裡找找，大小寫與大括號都要一致。</div>';
+          }
+        }).catch(function () {
+          out.innerHTML = '<div class="note">這個瀏覽器無法核對旗幟，請改用電腦上的 Chrome 或 Firefox。</div>';
+        });
+      };
+      return;
+    }
 
     if (p.type === "action") {
       sb.innerHTML = '<div class="app-title">' + esc(p.label) + '</div>' +
