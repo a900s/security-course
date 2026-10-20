@@ -34,7 +34,7 @@
    },
    "correctIndex": 0,
    "explanation": "問題出在應用程式和資料庫互動時把輸入拼進語法；所以要在應用程式端用參數化修補，加密傳輸或更換資料庫都無法解決。",
-   "slug": "cause"
+   "slug": "where"
   },
   {
    "section": 3,
@@ -51,7 +51,7 @@
    },
    "correctIndex": 3,
    "explanation": "資料歸資料、指令歸指令；長度限制、大小寫轉換、HTTPS 都無法阻止輸入改變 SQL 語意。",
-   "slug": "cause"
+   "slug": "principle"
   },
   {
    "section": 4,
@@ -85,7 +85,7 @@
    },
    "correctIndex": 1,
    "explanation": "'1'='1' 恆真，OR 之後整個條件恆成立，等於取消了過濾。",
-   "slug": "login"
+   "slug": "always"
   },
   {
    "section": 6,
@@ -204,7 +204,7 @@
    },
    "correctIndex": 0,
    "explanation": "拼接後資料庫分不清哪段是值、哪段是語法，輸入就能改寫 WHERE 條件；這正是參數化查詢要解決的問題。",
-   "slug": "param"
+   "slug": "concat"
   },
   {
    "section": 13,
@@ -221,7 +221,7 @@
    },
    "correctIndex": 3,
    "explanation": "參數化查詢讓資料庫先編譯語句結構，輸入只當參數帶入，無法改變語意。",
-   "slug": "param"
+   "slug": "primary"
   },
   {
    "section": 14,
@@ -238,7 +238,7 @@
    },
    "correctIndex": 1,
    "explanation": "佔位符的值交給驅動程式綁定；注意 psycopg 的 %s 要當成 execute 的第二個參數傳入，自己用 Python 的 % 格式化字串仍是拼接，不安全。",
-   "slug": "param"
+   "slug": "placeholder"
   },
   {
    "section": 15,
@@ -272,7 +272,7 @@
    },
    "correctIndex": 1,
    "explanation": "只接受預先定義好的合法欄位名，其餘一律拒絕。",
-   "slug": "orderby"
+   "slug": "whitelist"
   },
   {
    "section": 17,
@@ -306,7 +306,7 @@
    },
    "correctIndex": 3,
    "explanation": "詳細錯誤等於替攻擊者畫地圖；應回傳一般化訊息，細節只進日誌。",
-   "slug": "layers"
+   "slug": "dberr"
   },
   {
    "section": 19,
@@ -323,7 +323,7 @@
    },
    "correctIndex": 3,
    "explanation": "日誌和告警不會擋下攻擊，但能讓異常被看見、被追查；隱藏錯誤訊息屬於「錯誤處理」那一層。",
-   "slug": "layers"
+   "slug": "audit"
   },
   {
    "section": 20,
@@ -340,7 +340,7 @@
    },
    "correctIndex": 1,
    "explanation": "WAF 能擋掉部分已知樣式，但容易被繞過，不能當唯一防線。",
-   "slug": "waf"
+   "slug": "wafrole"
   }
  ]
 }

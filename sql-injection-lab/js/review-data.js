@@ -75,7 +75,7 @@ window.REVIEW_DATA = {
 "correct": 0,
 "exp": "問題出在應用程式和資料庫互動時把輸入拼進語法；所以要在應用程式端用參數化修補，加密傳輸或更換資料庫都無法解決。",
 "qv": "3452eddd49",
-"slug": "cause",
+"slug": "where",
 "tab": "learn"
 },
 {
@@ -111,7 +111,7 @@ window.REVIEW_DATA = {
 "correct": 3,
 "exp": "資料歸資料、指令歸指令；長度限制、大小寫轉換、HTTPS 都無法阻止輸入改變 SQL 語意。",
 "qv": "20d5fb485a",
-"slug": "cause",
+"slug": "principle",
 "tab": "learn"
 },
 {
@@ -183,7 +183,7 @@ window.REVIEW_DATA = {
 "correct": 1,
 "exp": "'1'='1' 恆真，OR 之後整個條件恆成立，等於取消了過濾。",
 "qv": "8f2c451050",
-"slug": "login",
+"slug": "always",
 "tab": "types"
 },
 {
@@ -435,7 +435,7 @@ window.REVIEW_DATA = {
 "correct": 0,
 "exp": "拼接後資料庫分不清哪段是值、哪段是語法，輸入就能改寫 WHERE 條件；這正是參數化查詢要解決的問題。",
 "qv": "5c3168ba7a",
-"slug": "param",
+"slug": "concat",
 "tab": "defense"
 },
 {
@@ -471,7 +471,7 @@ window.REVIEW_DATA = {
 "correct": 3,
 "exp": "參數化查詢讓資料庫先編譯語句結構，輸入只當參數帶入，無法改變語意。",
 "qv": "3a068052cd",
-"slug": "param",
+"slug": "primary",
 "tab": "defense"
 },
 {
@@ -507,7 +507,7 @@ window.REVIEW_DATA = {
 "correct": 1,
 "exp": "佔位符的值交給驅動程式綁定；注意 psycopg 的 %s 要當成 execute 的第二個參數傳入，自己用 Python 的 % 格式化字串仍是拼接，不安全。",
 "qv": "a49e3010e7",
-"slug": "param",
+"slug": "placeholder",
 "tab": "defense"
 },
 {
@@ -579,7 +579,7 @@ window.REVIEW_DATA = {
 "correct": 1,
 "exp": "只接受預先定義好的合法欄位名，其餘一律拒絕。",
 "qv": "a73c8013cb",
-"slug": "orderby",
+"slug": "whitelist",
 "tab": "defense"
 },
 {
@@ -651,7 +651,7 @@ window.REVIEW_DATA = {
 "correct": 3,
 "exp": "詳細錯誤等於替攻擊者畫地圖；應回傳一般化訊息，細節只進日誌。",
 "qv": "66d30bb12f",
-"slug": "layers",
+"slug": "dberr",
 "tab": "layers"
 },
 {
@@ -687,7 +687,7 @@ window.REVIEW_DATA = {
 "correct": 3,
 "exp": "日誌和告警不會擋下攻擊，但能讓異常被看見、被追查；隱藏錯誤訊息屬於「錯誤處理」那一層。",
 "qv": "2e7c8c5b95",
-"slug": "layers",
+"slug": "audit",
 "tab": "layers"
 },
 {
@@ -723,7 +723,7 @@ window.REVIEW_DATA = {
 "correct": 1,
 "exp": "WAF 能擋掉部分已知樣式，但容易被繞過，不能當唯一防線。",
 "qv": "a75ab294e5",
-"slug": "waf",
+"slug": "wafrole",
 "tab": "layers"
 }
 ]

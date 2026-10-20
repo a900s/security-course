@@ -158,7 +158,7 @@ const AK = 'progress/ming.wang@lgm.kh.edu.tw';
     check('kali field untouched by OWASP page', DB[AK].kali && Array.isArray(Object.keys(DB[AK].kali.review)));
     check('no errors', !pg.__errors.length, pg.__errors.join('|')); await pg.__ctx.close(); }
 
-  const LEVEL = { 'owasp-top10': ['owasp_course_solved_v1', 12, 'owasp'], 'sql-injection-lab': ['sql_course_solved_v1', 10, 'sql'], 'kali-top20': ['kali_course_solved_v1', 20, 'kali'], 'ctf': ['ctf_course_solved_v1', 8, ''] };
+  const LEVEL = { 'owasp-top10': ['owasp_course_solved_v1', 12, 'owasp'], 'sql-injection-lab': ['sql_course_solved_v1', 20, 'sql'], 'kali-top20': ['kali_course_solved_v1', 20, 'kali'], 'ctf': ['ctf_course_solved_v1', 20, ''] };
   console.log('== 7. 教師區已從課程頁移除');
   { const pg = await page({gstatic: 'mock'});
     for (const mod of Object.keys(LEVEL)) {

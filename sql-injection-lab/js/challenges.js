@@ -285,6 +285,326 @@
           ["ON ERROR SHOW NOTHING  # 只把錯誤藏起來，帳號權限不變", false]
         ]
       }
+    },
+    {
+      code: "S11", slug: "where", nm: "發生在哪一層", en: "組 SQL 的那一步",
+      goal: "指出問題出在哪一步，而不是資料庫或瀏覽器本身",
+      scenario: "使用者打字、程式組出 SQL、資料庫執行、網路傳輸，是四件不同的事。注入是其中一步把輸入和語法接在一起。",
+      example: "問：誰負責把使用者輸入拼進查詢？不是瀏覽器顯示網頁，也不是硬碟存檔。",
+      phase1: {
+        type: "choose",
+        label: "弱點主要發生在哪一步？",
+        options: [
+          "應用程式把輸入組成 SQL，再交給資料庫",
+          "瀏覽器把網頁畫出來",
+          "資料庫把資料寫進硬碟"
+        ],
+        answer: 0,
+        wrong: "那一步沒有把輸入變成 SQL 語法。",
+        leak: "問題在應用程式組查詢的地方。換資料庫或只加密傳輸，都沒有把資料和語法分開。"
+      },
+      success: "修補要做在組 SQL 的那一步。",
+      codefix: {
+        lang: "查詢組裝", bad: 1,
+        lines: [
+          "name = request.form['name']",
+          "sql = \"SELECT id FROM members WHERE name = '\" + name + \"'\"",
+          "db.query(sql)"
+        ],
+        fixes: [
+          ["db.query('SELECT id FROM members WHERE name = ?', [name])", true],
+          ["response.headers['Strict-Transport-Security'] = 'max-age=31536000'", false],
+          ["db = connect(new_database_version)", false]
+        ]
+      }
+    },
+    {
+      code: "S12", slug: "principle", nm: "輸入只當資料", en: "核心原則",
+      goal: "挑出所有防禦都要守住的那一條",
+      scenario: "長度限制、改大寫、改用 HTTPS，都沒有回答「這段輸入能不能變成語法」。",
+      example: "不可信的內容只能當要查的值，不能當 SQL 的一部分。",
+      phase1: {
+        type: "choose",
+        label: "哪一條才是共同原則？",
+        options: [
+          "把輸入轉成大寫再拼進查詢",
+          "不可信的輸入只當資料，不讓它變成 SQL 語法",
+          "網站有 HTTPS 就夠了"
+        ],
+        answer: 1,
+        wrong: "這樣仍可能把輸入拼進語法，或根本沒處理查詢怎麼組。",
+        leak: "原則是：輸入當資料。參數化查詢就是在落實這件事。"
+      },
+      success: "後面的修法都是在守這一條，不是在換一種拼接方式。",
+      codefix: {
+        lang: "原則", bad: 1,
+        lines: [
+          "raw = request.form['q']",
+          "sql = \"SELECT id FROM items WHERE name = '\" + raw.upper() + \"'\"",
+          "db.query(sql)"
+        ],
+        fixes: [
+          ["db.query('SELECT id FROM items WHERE name = ?', [raw])", true],
+          ["sql = \"SELECT id FROM items WHERE name = '\" + raw[:8] + \"'\"", false],
+          ["if request.is_secure: db.query(sql)", false]
+        ]
+      }
+    },
+    {
+      code: "S13", slug: "always", nm: "條件不再篩選", en: "永遠成立",
+      goal: "認出查詢條件被改成永遠成立時，結果會變成什麼",
+      scenario: "原本的 WHERE 要篩出一筆符合的資料。若條件變成永遠為真，篩選就不再做它該做的事。",
+      example: "比較三種結果：只查到一筆、條件失效所以交回整批、以及輸入被當成資料所以查不到那筆。",
+      phase1: {
+        type: "choose",
+        label: "條件被改成永遠成立時，查詢會怎樣？",
+        options: [
+          "篩選失效，可能一次交回不該一起看到的資料",
+          "瀏覽器會自動改成參數化查詢",
+          "只是把字變大寫，結果跟原條件一樣"
+        ],
+        answer: 0,
+        wrong: "永遠成立代表篩選沒有在擋。它不會自己變成安全查詢。",
+        leak: "條件不再篩選時，查詢交回的範圍會變大。參數化讓這段輸入變不回語法。"
+      },
+      success: "這一關要留下的判斷是：篩選失效，不是「字變大了」或「瀏覽器會自己修好」。",
+      codefix: {
+        lang: "條件", bad: 1,
+        lines: [
+          "account = request.form['account']",
+          "sql = \"SELECT id FROM users WHERE account = '\" + account + \"'\"",
+          "return db.query(sql)"
+        ],
+        fixes: [
+          ["return db.query('SELECT id FROM users WHERE account = ?', [account])", true],
+          ["return db.query(sql.upper())", false],
+          ["return db.query(sql) if len(account) < 12 else []", false]
+        ]
+      }
+    },
+    {
+      code: "S14", slug: "concat", nm: "字串拼接", en: "資料混進語法",
+      goal: "看出哪一種寫法會讓輸入變成查詢的一部分",
+      scenario: "查詢字串用加號把使用者輸入接進去時，資料庫看到的是一整句，分不出哪一段是值。",
+      example: "比較：把輸入接到引號中間，以及把輸入放進佔位符。",
+      phase1: {
+        type: "choose",
+        label: "哪一種寫法會讓輸入混進 SQL 語法？",
+        options: [
+          "查詢字串用加號接上使用者輸入",
+          "查詢字串只留佔位符，輸入另外送出",
+          "輸入只寫進紀錄，不進查詢"
+        ],
+        answer: 0,
+        wrong: "這種寫法沒有把輸入接進 SQL 字串。",
+        leak: "拼接讓輸入和語法變成同一句。佔位符是把值跟句子分開送。"
+      },
+      success: "認得出拼接，才知道該改的是組字串的那一行。",
+      codefix: {
+        lang: "拼接", bad: 1,
+        lines: [
+          "username = request.form['username']",
+          "sql = \"SELECT id FROM users WHERE username = '\" + username + \"'\"",
+          "row = db.query(sql)"
+        ],
+        fixes: [
+          ["row = db.query('SELECT id FROM users WHERE username = ?', [username])", true],
+          ["sql = \"SELECT id FROM users WHERE username = '\" + username.replace(' ', '') + \"'\"", false],
+          ["row = db.query(sql + ' LIMIT 1')", false]
+        ]
+      }
+    },
+    {
+      code: "S15", slug: "primary", nm: "最根本的修法", en: "參數化查詢",
+      goal: "從三個作法裡挑出真正把資料和語法分開的那個",
+      scenario: "擋關鍵字、把錯誤藏起來、改用參數化，三件事不一樣。只有一件處理了成因。",
+      example: "問：哪一個讓輸入不可能再變成 SQL 語法。",
+      phase1: {
+        type: "choose",
+        label: "防禦 SQL Injection 最主要的做法是？",
+        options: [
+          "用黑名單刪掉幾個關鍵字",
+          "使用參數化查詢，輸入只當資料",
+          "不要把資料庫錯誤顯示給使用者"
+        ],
+        answer: 1,
+        wrong: "那是輔助。它沒有把輸入和 SQL 語法分開。",
+        leak: "參數化查詢是核心。黑名單和隱藏錯誤都不能取代它。"
+      },
+      success: "先把查詢改成參數化，其他措施才是加在外面的。",
+      codefix: {
+        lang: "修法", bad: 1,
+        lines: [
+          "q = request.args['q']",
+          "if 'select' not in q.lower(): db.query(\"SELECT id FROM docs WHERE title = '\" + q + \"'\")",
+          ""
+        ],
+        fixes: [
+          ["db.query('SELECT id FROM docs WHERE title = ?', [q])", true],
+          ["db.query(\"SELECT id FROM docs WHERE title = '\" + q.replace('select', '') + \"'\")", false],
+          ["try: db.query(\"SELECT id FROM docs WHERE title = '\" + q + \"'\")\nexcept Exception: return 'error'", false]
+        ]
+      }
+    },
+    {
+      code: "S16", slug: "placeholder", nm: "佔位符", en: "值跟句子分開",
+      goal: "認出不同語言裡的佔位符是在做同一件事",
+      scenario: "Python 的 ?、另一套資料庫的 %s、PHP 的 :u，寫法不同，角色相同：句子裡留位置，值另外送。",
+      example: "佔位符不是把輸入再拼回字串，而是告訴資料庫「這裡是一個值」。",
+      phase1: {
+        type: "choose",
+        label: "這些佔位符的共同作用是？",
+        options: [
+          "讓輸入只被當成資料，不會變成 SQL 語法",
+          "把輸入加密後再拼進查詢字串",
+          "自動刪掉輸入裡的引號再拼接"
+        ],
+        answer: 0,
+        wrong: "佔位符不是加密，也不是先刪字再拼回去。",
+        leak: "?、%s、:u 都是把值和查詢分開。資料庫收到的語法裡沒有那段輸入。"
+      },
+      success: "看到佔位符，先確認值是另外送出的，不是又被加號接回去。",
+      codefix: {
+        lang: "佔位符", bad: 1,
+        lines: [
+          "email = request.form['email']",
+          "sql = \"SELECT id FROM users WHERE email = '%s'\" % email",
+          "db.query(sql)"
+        ],
+        fixes: [
+          ["db.query('SELECT id FROM users WHERE email = %s', [email])", true],
+          ["db.query(\"SELECT id FROM users WHERE email = '%s'\" % email.replace(\"'\", \"\"))", false],
+          ["db.query(\"SELECT id FROM users WHERE email = '\" + hash(email) + \"'\")", false]
+        ]
+      }
+    },
+    {
+      code: "S17", slug: "whitelist", nm: "欄位名要用白名單", en: "識別字不是值",
+      goal: "看出欄位名稱不能只靠佔位符",
+      scenario: "佔位符保護的是值。欄位名、資料表名屬於句子的結構，資料庫不會把佔位符換成識別字。",
+      example: "排序欄位先對照允許的名稱，對上了才放進查詢。對不上就用預設欄位。",
+      phase1: {
+        type: "choose",
+        label: "處理排序欄位時，建議怎麼做？",
+        options: [
+          "把欄位名放進佔位符，當成一般的值",
+          "只允許名單上的欄位名，其餘用預設",
+          "把使用者輸入的欄位名直接接在 ORDER BY 後面"
+        ],
+        answer: 1,
+        wrong: "欄位名是句子的結構。佔位符不會把它變成安全的識別字，直接拼接也不行。",
+        leak: "白名單先決定可以用哪個欄位，查詢裡的其他值仍用參數化。"
+      },
+      success: "結構用白名單，值用參數化。兩件都要做。",
+      codefix: {
+        lang: "排序欄位", bad: 1,
+        lines: [
+          "sort = request.args['sort']",
+          "sql = \"SELECT id, name FROM members ORDER BY \" + sort",
+          "return db.query(sql)"
+        ],
+        fixes: [
+          ["allowed = {'name': 'name', 'id': 'id'}\ncol = allowed.get(sort, 'id')\nreturn db.query('SELECT id, name FROM members ORDER BY ' + col)", true],
+          ["return db.query('SELECT id, name FROM members ORDER BY ?', [sort])", false],
+          ["return db.query(\"SELECT id, name FROM members ORDER BY \" + sort.lower())", false]
+        ]
+      }
+    },
+    {
+      code: "S18", slug: "dberr", nm: "不要回傳資料庫錯誤", en: "一般化訊息",
+      goal: "挑出錯誤發生時應該給使用者看的內容",
+      scenario: "資料庫的完整錯誤常帶有資料表、欄位或查詢形狀。那是給維護的人看的，不是給訪客看的。",
+      example: "頁面顯示一般訊息。完整錯誤寫進只有維護人員能看的紀錄。",
+      phase1: {
+        type: "choose",
+        label: "查詢失敗時，頁面應該顯示什麼？",
+        options: [
+          "資料庫回傳的完整錯誤原文",
+          "一般訊息，例如「暫時無法處理」，細節只寫進紀錄",
+          "把整句 SQL 貼給使用者核對"
+        ],
+        answer: 1,
+        wrong: "完整錯誤和整句 SQL 會把結構洩漏出去。",
+        leak: "使用者看到的是一般訊息。資料表、欄位和查詢原文留在紀錄裡。"
+      },
+      success: "藏起細節是為了不洩漏結構，不是為了取代參數化查詢。",
+      codefix: {
+        lang: "錯誤處理", bad: 1,
+        lines: [
+          "try:",
+          "    db.query(stmt, [value])",
+          "except Exception as e: return str(e)"
+        ],
+        fixes: [
+          ["except Exception as e:\n    log.exception(e)\n    return '暫時無法處理'", true],
+          ["except Exception as e: return 'SQL failed: ' + stmt + ' ' + str(e)", false],
+          ["except Exception: return stmt", false]
+        ]
+      }
+    },
+    {
+      code: "S19", slug: "audit", nm: "記錄與告警", en: "事後查得回來",
+      goal: "指出紀錄在縱深防禦裡負責什麼",
+      scenario: "紀錄不會把不安全的查詢變成安全的。它讓你事後知道發生過什麼、能不能對上是誰。",
+      example: "參數化負責擋住成因。紀錄負責留下時間、帳號和異常查詢，並在短時間大量失敗時告警。",
+      phase1: {
+        type: "choose",
+        label: "記錄與告警最主要的貢獻是？",
+        options: [
+          "取代參數化查詢",
+          "讓異常查詢事後查得到，並能即時通知",
+          "把所有輸入自動改成安全的"
+        ],
+        answer: 1,
+        wrong: "紀錄不會改寫查詢，也不能取代把資料和語法分開。",
+        leak: "紀錄用來發現和追查。查詢本身仍要參數化。"
+      },
+      success: "這一關把「擋得住」和「查得到」分開。兩件都要有。",
+      codefix: {
+        lang: "紀錄", bad: 1,
+        lines: [
+          "db.query(stmt, [value])",
+          "# 不記錄查詢失敗",
+          ""
+        ],
+        fixes: [
+          ["try:\n    db.query(stmt, [value])\nexcept Exception as e:\n    log.warning('query failed', extra={'user': user})\n    alert_if_repeated(user)\n    raise", true],
+          ["# 只靠紀錄就好，查詢維持字串拼接", false],
+          ["log.info(stmt + value)  # 把值和句子拼起來寫進紀錄", false]
+        ]
+      }
+    },
+    {
+      code: "S20", slug: "wafrole", nm: "WAF 的定位", en: "輔助不是核心",
+      goal: "指出 WAF 在防禦裡該站的位置",
+      scenario: "WAF 可以多擋一層、也可以幫忙告警。它看的是請求長相，不是查詢怎麼組。",
+      example: "比較：只有 WAF、WAF 加上參數化、以及把 WAF 規則愈寫愈多但仍拼接查詢。",
+      phase1: {
+        type: "choose",
+        label: "WAF 的正確定位是？",
+        options: [
+          "唯一防線，程式可以繼續把輸入拼進 SQL",
+          "額外的一層，核心仍是參數化查詢",
+          "把輸入加密後再拼接"
+        ],
+        answer: 1,
+        wrong: "WAF 擋的是它認得的樣式。它沒有把資料和語法分開。",
+        leak: "WAF 可以留著當告警和額外阻擋。查詢仍要用參數化。"
+      },
+      success: "二十關的收尾是：核心修法不變，WAF 只放在外面。",
+      codefix: {
+        lang: "分層", bad: 1,
+        lines: [
+          "q = request.args['q']",
+          "if waf.allow(q): db.query(\"SELECT id FROM docs WHERE title = '\" + q + \"'\")",
+          ""
+        ],
+        fixes: [
+          ["db.query('SELECT id FROM docs WHERE title = ?', [q])  # WAF 另作告警，不當唯一防線", true],
+          ["waf.block('union'); db.query(\"SELECT id FROM docs WHERE title = '\" + q + \"'\")", false],
+          ["db.query(\"SELECT id FROM docs WHERE title = '\" + encrypt(q) + \"'\")", false]
+        ]
+      }
     }
   ];
 })();
