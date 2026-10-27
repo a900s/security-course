@@ -29,14 +29,20 @@ service cloud.firestore {
     function okSimple(o) {
       return o is map && o.keys().hasOnly(['review']) && (!('review' in o) || okReview(o.review));
     }
+    function okCt(o) {
+      return o is map && o.keys().hasOnly(['solved', 'examBest'])
+        && o.solved is list && o.solved.size() <= 12
+        && (!('examBest' in o) || (o.examBest is int && o.examBest >= 0 && o.examBest <= 20));
+    }
     function validProgress(d) {
-      return d.keys().hasOnly(['owasp', 'kali', 'sql', 'name', 'email', 'updatedAt'])
+      return d.keys().hasOnly(['owasp', 'kali', 'sql', 'ct', 'name', 'email', 'updatedAt'])
         && d.email == me()
         && d.name is string && d.name.size() <= 200
         && d.updatedAt == request.time
         && (!('owasp' in d) || okOwasp(d.owasp))
         && (!('kali' in d) || okSimple(d.kali))
-        && (!('sql' in d) || okSimple(d.sql));
+        && (!('sql' in d) || okSimple(d.sql))
+        && (!('ct' in d) || okCt(d.ct));
     }
 
     match /progress/{email} {
